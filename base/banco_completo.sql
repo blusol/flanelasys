@@ -53,7 +53,7 @@ DROP TABLE IF EXISTS `fla_descontos`;
 CREATE TABLE `fla_descontos` (
   `cod_desconto` int(6) NOT NULL AUTO_INCREMENT,
   `des_desconto` varchar(50) NOT NULL,
-  `val_desconto` decimal(5,0) DEFAULT NULL,
+  `val_desconto` decimal(5,2) DEFAULT NULL,
   PRIMARY KEY (`cod_desconto`)
 ) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 
