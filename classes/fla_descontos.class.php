@@ -7,16 +7,46 @@ class fla_descontos {
 	private $val_desconto;
 
 
-    function buscaDescontos(){
+	public function get_cod_desconto() {
+		return $this->cod_desconto;
+	}
+	
+	public function get_des_desconto() {
+		return $this->des_desconto();
+	}
+	
+	public function get_val_desconto() {
+		return $this->val_desconto();
+	}
+	
+	public function set_cod_desconto($cod_desconto) {
+		$this->cod_desconto = $cod_desconto;
+	}
+	
+	public function set_des_desconto($des_desconto) {
+		$this->des_desconto = $des_desconto;
+	}
+	
+	public function set_val_desconto($val_desconto) {
+		$this->val_desconto = $val_desconto;
+	}
+	
+    function buscaDescontos($objDesconto){
         $objConexao = new fla_conexao();
+		
+		if ($objDesconto->get_cod_desconto() != "") {
+		    $where = " WHERE cod_desconto = " . $objDesconto->get_cod_desconto();
+		}				
+		
         $SQL = "SELECT
                     cod_desconto,
                     des_desconto,
                     val_desconto
                 FROM
-                    fla_descontos
+                    fla_descontos "
+				. $where . "							
                 ORDER BY
-                    des_desconto";
+                    des_desconto";			
         $rsDescontos = $objConexao->query($SQL);
         $arrDescontos = array();
         $aux = 0;
