@@ -5,7 +5,7 @@
 	require_once($path_relative.'verifica.php');
 	$objDescontos     = new fla_descontos();
 	
-	if (isset($_GET)) {
+	if (isset($_GET['cod_desconto'])) {
 		$cod_desconto = $_GET["cod_desconto"];
 	} else {
 		$cod_desconto = 0;
@@ -41,7 +41,7 @@
 	
 	if ($cod_desconto > 0) {
 		$objDescontos->set_cod_desconto($cod_desconto);
-		$arrDesconto = $objDescontos->buscaUsuarios($objDescontos);
+		$arrDesconto = $objDescontos->buscaDescontos($objDescontos);
 	}
 
 ?>
@@ -49,7 +49,9 @@
 	<head>
 		<title>Cadastro de descontos - Administração - Flanela Sys</title>
 		<link href="../../images/style.css" rel="stylesheet" type="text/css" />
-		<link href="../images/style.css" rel="stylesheet" type="text/css" />                                                                                   
+        <script src="<?php echo $url_lib_jquery; ?>jquery.js" type="text/javascript"></script>
+		<script type="text/javascript" src="<?php echo $url_includes.'script.js';?>"></script>
+		<script type="text/javascript" src="<?php echo $url_lib_jquery.'jquery.maskedinput.js';?>"></script>
 
                 <style type="text/css">
                 /* menu styles */
@@ -94,8 +96,6 @@
                                         #jsddm li ul li a:hover
                                         {	background: #8EA344}
                 </style>
-                <script src="<?php echo $url_lib_jquery; ?>jquery.js" type="text/javascript"></script>
-				<script type="text/javascript" src="<?php echo $url_includes.'script.js';?>"></script>
                 <script type="text/javascript">
                 var timeout         = 500;
                 var closetimer		= 0;
@@ -123,10 +123,9 @@
 
                 document.onclick = jsddm_close;
 				
-				
-				function setaModelo(modelo) {
-					document.getElementById("codigo_modelo").value = modelo;
-				}				
+				jQuery(function($){   
+					$("#val_desconto").mask("99.99");
+				});									
                 </script>		
 	</head>
 	<body>
@@ -145,10 +144,9 @@
 						</tr>
 						
 						<tr>
-							<td> Valor </td>
-							<td> <input class="text" type="text" value="<?php echo $arrDesconto[0]['val_desconto']; ?>" id="val_desconto" name="val_desconto"></td>
+							<td> Valor R$ </td>
+							<td> <input class="text" type="text" value="<?php echo str_pad($arrDesconto[0]['val_desconto'], 5, "0", STR_PAD_LEFT);  ?>" id="val_desconto" name="val_desconto"></td>
 						</tr>					
-
 						<tr>
 						    <td>
 						        <input type="hidden" name="cod_desconto" value="<?php echo $cod_desconto; ?>">
