@@ -44,7 +44,7 @@
 				$hor_entrada   = $cartao['hor_entrada'];
 				$dat_entrada   = $cartao['dat_cadastro'];				
 				$hora_saida    = date("H:i:s");
-				$dat_saida     = date("Y/m/d");
+				$dat_saida     = date("Y-m-d");
 				$cod_marca     = $cartao['cod_marca'];
 				$cod_modelo    = $cartao['cod_modelo'];
 				$des_cor       = $cartao['des_cor'];
