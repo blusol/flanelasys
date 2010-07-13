@@ -17,7 +17,7 @@
 
         $arrDescontos = array();
         $objDescontos = new fla_descontos();
-        $arrDescontos = $objDescontos->buscaDescontos();
+        $arrDescontos = $objDescontos->buscaDescontos($objDescontos);
 
         $objRotatividade = new fla_rotatividade();
 

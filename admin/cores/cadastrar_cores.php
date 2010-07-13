@@ -1,4 +1,5 @@
 <?php
+	session_start();
 	include_once('../../includes/config.php');
 	include_once('../../includes/funcao.php');
 	include_once($path_classes.'fla_cores.class.php');
@@ -28,11 +29,11 @@
 					FROM
 						fla_cores
 					WHERE
-						des_cor = '" . $objCores->get_des_cor()."'";
+						upper(des_cor) = '" . strtoupper($objCores->get_des_cor())."'";
 			$cor = $objConexao->prepare($SQL);
 			$cor->Execute();
 			// Se a consulta retornar vazia, é porque a cor não está cadastrada anda
-			if ($cor->rowCount() == 0) {		
+			if ($cor->rowCount() == 0) {
 				$objCores->insereCores($objCores);
 				$msgRetorno = 'Nova cor cadastrada com sucesso!';
 			} else {

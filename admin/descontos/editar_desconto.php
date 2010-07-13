@@ -14,9 +14,7 @@
 	if (!empty($_POST)) {
 		$cod_desconto = $_POST['cod_desconto'];
 		$des_desconto = $_POST['des_desconto'];
-		$val_desconto   = $_POST['val_desconto'];
-		$des_senha   = $_POST['des_senha'];
-		$cod_tipo    = $_POST['cod_tipo'];
+		$val_desconto = $_POST['val_desconto'];
 		if (isset($_POST['ind_ativo'])) {
 			$ind_ativo    = $_POST['ind_ativo'];
 		} else {
@@ -26,17 +24,21 @@
 		$objDescontos->set_cod_desconto($cod_desconto);
 		$objDescontos->set_des_desconto($des_desconto);
 		$objDescontos->set_val_desconto($val_desconto);
-		$objDescontos->set_des_senha($des_senha);
-		$objDescontos->set_cod_tipo($cod_tipo);
-		$objDescontos->set_ind_ativo($ind_ativo);
 		
 		if (empty($cod_desconto)) {
-			$objDescontos->insereUsuarios($objDescontos);
-			$msgRetorno = 'Usuário cadastrado com sucesso!';
+			$objDescontos->insereDescontos($objDescontos);
+			$msgRetorno = 'Desconto cadastrado com sucesso!';
 		} else {
-			$objDescontos->editaUsuario($objDescontos);
+			$objDescontos->editaDescontos($objDescontos);
 			$msgRetorno = 'Dados atualizados com sucesso!';
 		}
+?>
+	<script language="javascript">
+		alert('<?php echo $msgRetorno; ?>');
+		window.location = 'index.php';
+	</script>
+<?php		
+		
 	}
 	
 	if ($cod_desconto > 0) {
@@ -136,7 +138,6 @@
 			<form method="POST" action="">
 			<div class="data">
 				<h1> Módulo de rotatividade </h1>				
-				<div class="success"> <?php echo $msgRetorno; ?> </div>
 					<table>
 						<tr>
 							<td width="30%"> Descrição </td>

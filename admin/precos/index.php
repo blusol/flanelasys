@@ -1,4 +1,5 @@
 <?php
+	session_start();
     include_once('../../includes/config.php');
     include_once('../../includes/funcao.php');
 	include_once($path_classes.'fla_precos.class.php');
@@ -97,7 +98,7 @@
 ?>
 			<div class="data">		
 				<h1 style="text-align:center;"> Preços </h1>
-				<p> <a href="editar_preco.php"> Cadastrar novo preço </a> </p>
+				<p style="border-bottom:none;"> <a href="editar_preco.php"> Cadastrar novo preço </a> </p>
 				<table style="width:100%;" border="1" align="center">
 					<tr>
 						<th> Preços </th>

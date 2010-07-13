@@ -1,4 +1,5 @@
 <?php
+	session_start();
 	include_once('../../includes/config.php');
 	include_once('../../includes/funcao.php');
     require_once($path_relative.'verifica.php');
@@ -23,8 +24,9 @@
 
 		$cod_marca  = $_POST['cod_marca2'];		
 		$objMarcas->set_cod_marca($cod_marca);
-		$objModelos->set_cod_marca($cod_marca);
+		$objModelos->set_cod_marca($cod_marca);		
 		$arrModelos = $objModelos->buscaModelos($objModelos);		
+		$objMarcas->set_cod_marca("");
 		$arrMarca = $objMarcas->buscaMarcas($objMarcas);				
 		
 	} else {
@@ -123,7 +125,7 @@
 ?>
 			<div class="data">
 				<h1> Módulo de veiculos </h1>				
-				<div class="success"> <?php echo $msgRetorno; ?> </div>
+				<p style="border-bottom:none;">  <a href="cadastrar_modelo.php"> Cadastrar novo veiculo </a></p>
 				<form method="POST" action="">
 					<table>
 						<tr>
@@ -144,7 +146,7 @@
 								 <input type="submit" name="_submit" id="_submit" value="Buscar">
 							</td>
 							</form>							
-							<p> <a href="cadastrar_modelo.php"> Cadastrar novo veiculo </a></p>
+
 						</tr>
 						<form method="POST">
 						<tr>

@@ -90,11 +90,16 @@
                 </style>
                 <script src="<?php echo $url_lib_jquery; ?>jquery.js" type="text/javascript"></script>
 				<script type="text/javascript" src="<?php echo $url_includes.'script.js';?>"></script>
+		<script type="text/javascript" src="<?php echo $url_lib_jquery.'jquery.maskedinput.js';?>"></script>				
                 <script type="text/javascript">
                 var timeout         = 500;
                 var closetimer		= 0;
                 var ddmenuitem      = 0;
 
+				jQuery(function($){   
+					$("#des_placa").mask("aaa-9999");
+				});						
+				
                 function jsddm_open()
                 {	jsddm_canceltimer();
                         jsddm_close();
@@ -140,7 +145,7 @@
 						
 						<tr>
 							<td> Placa </td>
-							<td> <input type="text" value="<?php echo $arrCliente[0]['des_placa']; ?>" id="des_placa" name="des_placa"></td>
+							<td> <input style="text-transform: uppercase;" type="text" value="<?php echo $arrCliente[0]['des_placa']; ?>" id="des_placa" name="des_placa"></td>
 						</tr>					
 						
 						<tr>
@@ -148,29 +153,26 @@
 							<td>
 								<select name="cod_marca" onchange="exibeModeloSelect(this.value);" id="cod_marca">
 									<option value="">Selecione</option>						
-									<!-- Loop que percorre o array e monta o combo das marcas -->
-
-									<?php 
-											$marca = get_marcas();
-											for ($i=0;$i < count($marca);$i++) {
-												if ($marca[$i]['id_marca'] == $arrCliente[0]['cod_marca']) {
-													echo sprintf('<option selected value="%s">%s</option>',$marca[$i]['id_marca'],$marca[$i]['ds_marca']);
-												} else {
-													echo sprintf('<option value="%s">%s</option>',$marca[$i]['id_marca'],$marca[$i]['ds_marca']);
-												}
-											} 
-									?>
+<?php 
+								$marca = get_marcas();
+								$ind_popular = true;
+								for ($i=0;$i < count($marca);$i++) {								
+									if ($arrCliente[0]['cod_marca'] == $marca[$i]['id_marca']) {
+										echo sprintf('<option selected value="%s">%s</option>',$marca[$i]['id_marca'],$marca[$i]['ds_marca']);
+									} else {
+										echo sprintf('<option value="%s">%s</option>',$marca[$i]['id_marca'],$marca[$i]['ds_marca']);
+									}
+								}
+?>	
 							</td>						
 						</tr>
 
 						<tr>
 							<td> Modelo </td>
 							<td>
-								<div id="ajax_marca">
-										<select name="cod_modelo" onChange="setaModelo(this.value);" onBlur="setaModelo(this.value);" id="cod_modelo">
-										   <option value="">Selecione</option>
-										</select>
-								 </div>
+								<select name="cod_modelo" onChange="setaModelo(this.value);" onBlur="setaModelo(this.value);" id="cod_modelo">
+								   <option value="0">Selecione</option>
+								</select>
 							</td>						
 						</tr>
 						

@@ -1,4 +1,5 @@
 <?php
+	session_start();
     include_once('../../includes/config.php');
     include_once('../../includes/funcao.php');
 	include_once($path_classes.'fla_descontos.class.php');
@@ -98,7 +99,7 @@
 ?>
 			<div class="data">		
 				<h1 style="text-align:center;"> Preços </h1>
-				<p style="border-bottom:none;"> <a href="editar_preco.php"> Cadastrar desconto </a> </p>
+				<p style="border-bottom:none;"> <a href="editar_desconto.php"> Cadastrar desconto </a> </p>
 				<table style="width:100%;" border="1" align="center">
 					<tr>
 						<th> Preços </th>

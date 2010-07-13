@@ -1,4 +1,5 @@
 <?php
+	session_start();
 	include_once('../../includes/config.php');
     include_once('../../includes/funcao.php');
 	include_once($path_classes.'fla_cores.class.php');
