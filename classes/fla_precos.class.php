@@ -241,24 +241,26 @@ class fla_precos {
 						// Se o cliente ficou menos que o tempo minimo, cobra o valor minimo
 						if ($minutos <= $tem_minimo) {
 							$val_total = str_pad($val_minimo, 4, "0");
-						} else {	
+						} else {								
 							// Verifica se será cobrado diária 
 							if ($minutos >= $tem_diaria) {
 								$val_total = $val_diaria;
 								$des_justificativa = "Cobrado diaria";
-							} else {
+							} else {								
 								if ( ($minutos > $tem_minimo) && ($minutos <= $tempo_tolerancia_primeira_hora) ) {
 									$val_total = str_pad($val_hora, 4, "0");
 								} else {
 									// Senão cobra o valor normal do rotativo
 									$minutos = number_format($minutos/60,2);
-									$arrTempoPermanencia = explode('.',$minutos);							
-									
+									$arrTempoPermanencia = explode('.',$minutos);																
 									$tempo_horas = $arrTempoPermanencia[0] - 1;
 									$val_horas = $val_hora + ($tempo_horas * $val_fracao);
 									// Verificando se o cliente ficou além do tempo de tolerância de cada hora, se sim, calcula o valor a mais
 									if (round($arrTempoPermanencia[1]) >= $tem_tolerancia) {
 										$val_total = $val_horas + $val_fracao;
+										$val_total = str_pad($val_total, 1, "0");
+									} else {
+										$val_total = $val_horas;
 										$val_total = str_pad($val_total, 1, "0");
 									}
 								}
