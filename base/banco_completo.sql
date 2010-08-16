@@ -126,6 +126,7 @@ CREATE TABLE `fla_rotatividade` (
   `hor_entrada` time DEFAULT NULL,
   `hor_saida` time DEFAULT NULL,
   `dat_cadastro` date DEFAULT NULL,
+  `dat_saida`    date DEFAULT NULL,
   `cod_preco` int(1) DEFAULT NULL,
   `val_total` decimal(5,2) DEFAULT NULL,
   `val_cobrado` decimal(5,2) DEFAULT NULL,
