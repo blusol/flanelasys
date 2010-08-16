@@ -162,6 +162,8 @@ class fla_rotatividade {
 								, cod_desconto = %s
 							WHERE
 								cod_cartao = %s
+								AND des_placa = "%s"
+								AND dat_cadastro = "%s"
 						   ',$objRotatividade->get_hor_saida()
 						    ,$objRotatividade->get_dat_saida()
 						    ,$objRotatividade->get_val_total()
@@ -169,8 +171,10 @@ class fla_rotatividade {
 							,$objRotatividade->get_des_justificativa()
 							,$objRotatividade->get_tem_permanencia()
 							,$objRotatividade->get_cod_desconto()
-							,$objRotatividade->get_cod_cartao());
-
+							,$objRotatividade->get_cod_cartao()
+							,$objRotatividade->get_des_placa()
+							,$objRotatividade->get_dat_cadastro())
+							;
 			$rsRemoveRotatividade = $objConexao->prepare($SQL);
 			$rsRemoveRotatividade->execute();
 		}
