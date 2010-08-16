@@ -70,7 +70,7 @@ class fla_clientes {
                 FROM
                     fla_clientes
                 WHERE
-                    des_placa = '" . $objCliente->get_des_placa()."'";
+                    des_placa = '" . $objCliente->get_des_placa()."'";			
         $cliente = $objConexao->prepare($SQL);
         $cliente->Execute();
         if ($cliente->rowCount() == 0) {
@@ -88,7 +88,7 @@ class fla_clientes {
                             , $objCliente->get_des_placa()
                             , $objCliente->get_cod_modelo()
                             , $objCliente->get_cod_marca()
-                          );
+                          );			  
             $query = $objConexao->prepare($SQL);
             $query->Execute();
         }

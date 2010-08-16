@@ -24,8 +24,15 @@
 				$val_desconto = $desconto['val_desconto'];
 				$val_cobrado = ($val_cobrado - $val_desconto);
 				
+				if ($val_cobrado < 0) {
+					$val_cobrado = 0;
+					$valor_negativo = "yes";
+				} else {
+					$valor_negativo = "no";
+				}
+				
 				$val_cobrado = number_format($val_cobrado, 2, ',', ' ');				
-				echo sprintf('new Array("%s","%s","%s")',$des_desconto,$val_desconto,$val_cobrado);
+				echo sprintf('new Array("%s","%s","%s","%s")',$des_desconto,$val_desconto,$val_cobrado,$valor_negativo);
 			}
 		}
 	}		

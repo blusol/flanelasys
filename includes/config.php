@@ -33,4 +33,7 @@
   // Definindo o caminho do jquery
   $url_lib_jquery = $url . 'libs' . DS . 'jquery' . DS;
   $url_includes   = $url . 'includes' . DS;
+  
+  // Setando o fuso horario manualmente
+  ini_set('date.timezone', 'America/Sao_Paulo');
 ?>

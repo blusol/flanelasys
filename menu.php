@@ -1,13 +1,13 @@
 <ul id="jsddm">
     <li><a href="#">Estacionamento</a>
         <ul>
-            <li><a href="<?php echo $url.'rotatividade/index.php';?>">Rotatividade</a></li>
+            <li><a href="<?php echo $url.'rotatividade/index.php';?>">:: Rotatividade</a></li>
         </ul>
     </li>
 
     <li><a href="#">Relatórios</a>
         <ul>
-            <li><a href="<?php echo $url; ?>relatorios/fechamento_caixa.php">Fechamento de Caixa </a></li>
+            <li><a href="<?php echo $url; ?>relatorios/fechamento_caixa.php">:: Fechamento de Caixa </a></li>
         </ul>
     </li>
 
@@ -16,14 +16,14 @@
 ?>    
         <li><a href="#">Administração</a>
             <ul>
-                <li><a href="<?php echo $url; ?>admin/clientes/index.php">Módulo Clientes</a></li>
-				<li><a href="<?php echo $url; ?>admin/cores/index.php">Módulo Cores</a></li>
-                <li><a href="<?php echo $url; ?>admin/descontos/index.php">Módulo Descontos</a></li>				
-                <li><a href="<?php echo $url; ?>admin/marcas/listar_marca.php">Módulo Marcas</a></li>
-                <li><a href="<?php echo $url; ?>admin/precos/index.php">Módulo Preços</a></li>				
-                <li><a href="<?php echo $url; ?>admin/usuarios/index.php">Módulo Usuários</a></li>
-                <li><a href="<?php echo $url; ?>admin/modelos/listar_modelo.php">Módulo Veiculos</a></li>			
-                <li><a href="#">Configurações Gerais</a></li>
+                <li><a href="<?php echo $url; ?>admin/clientes/index.php">:: Módulo Clientes</a></li>
+				<li><a href="<?php echo $url; ?>admin/cores/index.php">:: Módulo Cores</a></li>
+                <li><a href="<?php echo $url; ?>admin/descontos/index.php">:: Módulo Descontos</a></li>				
+                <li><a href="<?php echo $url; ?>admin/marcas/listar_marca.php">:: Módulo Marcas</a></li>
+                <li><a href="<?php echo $url; ?>admin/precos/index.php">:: Módulo Preços</a></li>				
+                <li><a href="<?php echo $url; ?>admin/usuarios/index.php">:: Módulo Usuários</a></li>
+                <li><a href="<?php echo $url; ?>admin/modelos/listar_modelo.php">:: Módulo Veiculos</a></li>			
+                <!--<li><a href="#">Configurações Gerais</a></li>-->
             </ul>
         </li>
 <?php

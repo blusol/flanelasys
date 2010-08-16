@@ -8,12 +8,14 @@ class fla_rotatividade {
         private $hor_saida;
         private $dat_cadastro;
         private $cod_preco;
+		private $cod_desconto;
         private $val_total;
         private $val_cobrado;
         private $des_justificativa;
 		private $tem_permanencia;
         private $des_situacao;
         private $cod_cartao;
+		private $dat_saida;		
 
         public function get_cod_rotativade() {
             return $this->cod_rotativade;
@@ -55,6 +57,14 @@ class fla_rotatividade {
             $this->dat_cadastro = $dat_cadastro;
         }
 
+		public function get_dat_saida() {
+			return $this->dat_saida;
+		}
+		
+		public function set_dat_saida($dat_saida) {
+			$this->dat_saida = $dat_saida;
+		}
+		
         public function get_cod_preco() {
             return $this->cod_preco;
         }
@@ -63,6 +73,14 @@ class fla_rotatividade {
             $this->cod_preco = $cod_preco;
         }
 
+        public function get_cod_desconto() {
+            return $this->cod_desconto;
+        }
+
+        public function set_cod_desconto($cod_desconto) {
+            $this->cod_desconto = $cod_desconto;
+        }		
+		
         public function get_val_total() {
             return $this->val_total;
         }
@@ -116,15 +134,15 @@ class fla_rotatividade {
 			  // Verificando 
 			$SQL = sprintf('INSERT INTO
 								fla_rotatividade
-							  (des_placa,hor_entrada,dat_cadastro,cod_preco,cod_cartao,des_situacao)
+							  (des_placa,hor_entrada,dat_cadastro,cod_preco,cod_cartao,des_situacao,dat_saida)
 								VALUES
-								("%s","%s","%s","%s",%s,"%s")',
+								("%s","%s","%s","%s",%s,"%s","0000/00/00")',
 							$objRotatividade->get_des_placa(),
 							$objRotatividade->get_hor_entrada(),
 							$objRotatividade->get_dat_cadastro(),
 							$objRotatividade->get_cod_preco(),
 							$objRotatividade->get_cod_cartao(),
-							$objRotatividade->get_des_situacao());								
+							$objRotatividade->get_des_situacao());
 				 $query = $objConexao->prepare($SQL) or die ($objConexao->errorInfo());
 				 $query->Execute();
 		}
@@ -135,18 +153,22 @@ class fla_rotatividade {
 								fla_rotatividade
 							SET
 								hor_saida = "%s"
+								, dat_saida = "%s"
 								, val_total = "%s"
 								, val_cobrado = "%s"
 								, des_justificativa = "%s"
 								, tem_permanencia = "%s"
 								, des_situacao = "L"
+								, cod_desconto = %s
 							WHERE
 								cod_cartao = %s
 						   ',$objRotatividade->get_hor_saida()
+						    ,$objRotatividade->get_dat_saida()
 						    ,$objRotatividade->get_val_total()
 							,$objRotatividade->get_val_cobrado()
 							,$objRotatividade->get_des_justificativa()
 							,$objRotatividade->get_tem_permanencia()
+							,$objRotatividade->get_cod_desconto()
 							,$objRotatividade->get_cod_cartao());
 
 			$rsRemoveRotatividade = $objConexao->prepare($SQL);
@@ -181,16 +203,13 @@ class fla_rotatividade {
 						modelo.des_modelo,
                         rot.cod_preco
 					from
-						fla_clientes cli,
-						fla_rotatividade rot,
-						fla_modelos modelo
+						fla_clientes cli 
+						LEFT JOIN fla_modelos modelo ON (cli.cod_modelo = modelo.cod_modelo OR cli.cod_modelo IS NULL)
+						LEFT JOIN fla_rotatividade rot ON (rot.des_placa = cli.des_placa)
 					where
-						cli.des_placa = rot.des_placa
-						and rot.des_situacao = 'P'
-						and (cli.cod_modelo IS NULL OR modelo.cod_modelo = cli.cod_modelo)
+						rot.des_situacao = 'P'
 					order by
 						rot.hor_entrada DESC";
-			
 			$rsCarrosEstacionados = $objConexao->prepare($SQL);
 			$rsCarrosEstacionados->execute();
 			$arrCarrosEstacionados = array();

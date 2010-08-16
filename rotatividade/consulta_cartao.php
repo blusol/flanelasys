@@ -1,5 +1,5 @@
 <?php
-	ini_set('date.timezone', 'America/Sao_Paulo');
+	//ini_set('date.timezone', 'America/Sao_Paulo');
 	include('../includes/config.php');
 	include_once('../includes/funcao.php');
 	include_once($path_classes.'fla_conexao.class.php');
