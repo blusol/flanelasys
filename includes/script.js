@@ -48,8 +48,6 @@ function validaEntradaVeiculos() {
 		document.form.cod_cartao.focus();
 		return false;
 	}
-	
-	
 }				
 
 
@@ -144,9 +142,9 @@ function clearAll(){
 	document.getElementById('val_cobrado2').value = "";
 	document.getElementById('des_justificativa').value = "";
 	document.getElementById('codigo_modelo').value = "";
-	document.getElementById('dat_entrada').value = ""
+	document.getElementById('dat_entrada').value = "";
 	showHide('data_entrada','hidden');
-	
+	showHide('display_liberacao','hidden');	
 	document.getElementById('cod_desconto').disabled = false;					
 	document.getElementById('val_cobrado').disabled = false;										
 	document.getElementById('des_justificativa').disabled = false;	
@@ -237,6 +235,7 @@ function processReqChange() {
 								document.getElementById('dat_entrada').value = myArray[11];
 								showHide('data_entrada','');
 							}
+							showHide('display_liberacao','');
                             document.getElementById('des_situacao').value = "L";
 							
 						} else {

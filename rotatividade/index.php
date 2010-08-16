@@ -1,16 +1,17 @@
 <?php
         session_start();
 		include_once('../includes/config.php');
-        include_once('../includes/funcao.php');        
-        require_once($path_relative."verifica.php");         
-		ini_set('date.timezone', 'America/Sao_Paulo');
-
+        include_once('../includes/funcao.php');   
+        require_once($path_relative."verifica.php");
         include_once($path_classes.'fla_precos.class.php');
         include_once($path_classes.'fla_descontos.class.php');
         include_once($path_classes.'fla_rotatividade.class.php');
         include_once($path_classes.'fla_clientes.class.php');
         include_once('processa.php');
 
+			
+		$mktime = mktime(date("H"),date("i"),date("s"),date("m"),date("d"),date("Y"));
+		$mktime = substr($mktime, 6,4);
         $arrPrecos = array();
         $objPrecos = new fla_precos();
         $arrPrecos = $objPrecos->buscaPrecos($objPrecos);
@@ -27,6 +28,7 @@
             $cod_cartao 		= $_POST['cod_cartao'];
             $des_placa  		= $_POST['des_placa'];
             $hor_entrada 		= date("H:i:s");
+			$dat_saida   		= gravaData(date("d/m/Y"));
             $dat_cadastro 		= gravaData($_POST['dat_cadastro']);
             $cod_preco 			= $_POST['cod_preco'];
             $des_situacao  		= $_POST['des_situacao'];
@@ -40,6 +42,18 @@
 			$val_cobrado        = $_POST['val_cobrado'];
 			$des_justificativa  = $_POST['des_justificativa'];
 
+			if (empty($des_placa)) {
+				$des_placa = "XXX-".$mktime;
+			}			
+			
+			if (empty($cod_modelo)) {
+				$cod_modelo = 0;
+			}
+			
+			if (empty($cod_desconto)) {
+				$cod_desconto = 0;
+			}
+			
 			$objRotatividade->set_cod_cartao($cod_cartao);
 			$objRotatividade->set_des_placa($des_placa);
 			$objRotatividade->set_hor_entrada($hor_entrada);
@@ -63,13 +77,16 @@
 				}
 			} else {
 				$objRotatividade->set_hor_saida($hor_saida);
-				//$objRotatividade->set_cod_desconto($cod_desconto);
+				$objRotatividade->set_dat_saida($dat_saida);
+				$objRotatividade->set_cod_desconto($cod_desconto);
 				$objRotatividade->set_val_total(str_replace(",",".",$val_total));
 				$objRotatividade->set_val_cobrado(str_replace(",",".",$val_cobrado));
 				$objRotatividade->set_des_justificativa($des_justificativa);				
 				$objRotatividade->set_tem_permanencia($tem_permanencia);
 				$objRotatividade->removeRotatividade($objRotatividade);
 				$msgRetorno = 'Veiculo liberado com sucesso';
+				
+				$val_total = "";
 			}
         }
 		
@@ -201,7 +218,7 @@
 		<p> Módulo de rotatividade </p>
 		<div class="success"> <?php echo $msgRetorno; ?> </div>		
 		<div id="centro">
-			<div>
+			<div id="display_liberacao" style="display:none;">
 				<strong>Placa</strong> <input type="text" name="des_placa2" id="des_placa2" size="8" readonly style="text-transform: uppercase;height:40px;color:red;font-weight:bolder;font-size:32pt;">
 				<strong>Valor</strong> <input type="text" name="val_cobrado2" id="val_cobrado2" size="8" readonly style="text-transform: uppercase;height:40px;color:red;font-weight:bolder;font-size:32pt;">
 			</div>
@@ -264,7 +281,7 @@
 					</fieldset>	
 					<fieldset>
 						<legend>Estacionamento </legend>				
-						<label for="hor_entrada">Entrada</label>: <input type="text"  class="text"  name="hor_entrada" id="hor_entrada" size="7" value="<?php echo $hora_entrada; ?>">
+						<label for="hor_entrada">Entrada</label>: <input type="text" readonly class="text"  name="hor_entrada" id="hor_entrada" size="7" value="<?php echo $hora_entrada; ?>">
 						<label for="hor_saida">Saída</label>: <input type="text"  readonly  class="text"  name="hor_saida" id="hor_saida" size="7" value="<?php echo $hora_saida; ?>">
 						<label for="tem_permanencia">Tempo</label>: <input type="text" readonly class="text" name="tem_permanencia" id="tem_permanencia" size="5"><br>
 						<label for="cod_preco">Forma de cobrança</label>: <select id="cod_preco" name="cod_preco" onChange="alteraFormaCobranca(document.form.cod_cartao.value,this.value);">

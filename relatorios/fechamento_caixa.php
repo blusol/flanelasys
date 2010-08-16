@@ -9,7 +9,7 @@
 	$objPrecos  = new fla_precos();
 	$arrPrecos = $objPrecos->buscaPrecos($objPrecos);
 	
-	$dat_inicio = date("Y-m-01"); 
+	$dat_inicio = date("Y-m-d"); 
 	$dat_final  = date("Y-m-d"); 
 	$tip_cobranca = "";
 	$exibe_estacionados = "";
@@ -61,7 +61,7 @@
 			   join fla_marcas mar ON (cli.cod_marca = mar.cod_marca)
 			   join fla_modelos mode ON (cli.cod_modelo = mode.cod_modelo)
 			   join fla_precos pre ON (pre.cod_preco = rot.cod_preco)
-						where dat_cadastro between "%s" and "%s" %s %s',$dat_inicio,$dat_final,$where_tip_cobranca,$where_exibe_estacionados);
+						where dat_cadastro between "%s" and "%s" %s %s ORDER BY dat_cadastro, hor_entrada, hor_saida ',$dat_inicio,$dat_final,$where_tip_cobranca,$where_exibe_estacionados);
 
 		$rsFechamentoCaixa = $objConexao->prepare($SQL);
 		$rsFechamentoCaixa->execute();		
@@ -202,7 +202,7 @@
 						<th> Valor Pago </th>
 						<th> Justificativa </th>						
 <?php
-						echo $exibe_estacionados != "" ? '<th> Situação </th>' : "";
+						echo $exibe_estacionados != "" ? '<th> Situação </th>' : "&nbsp;";
 ?>						
 					</tr>
 <?php					
@@ -221,11 +221,11 @@
 							echo sprintf('<td>%s</td>',$movimento['hor_saida']).chr(10);
 							echo sprintf('<td>%s</td>',$movimento['des_preco']).chr(10);
 							echo sprintf('<td>%s</td>',$movimento['tem_permanencia']).chr(10);
-							echo sprintf('<td>%s</td>',$movimento['val_total']).chr(10);
-							echo sprintf('<td>%s</td>',$movimento['val_desconto']).chr(10);
-							echo sprintf('<td>%s</td>',$movimento['val_cobrado']).chr(10);
+							echo sprintf('<td>%s</td>',str_replace(".",",",$movimento['val_total'])).chr(10);
+							echo sprintf('<td>%s</td>',str_replace(".",",",$movimento['val_desconto'])).chr(10);
+							echo sprintf('<td>%s</td>',str_replace(".",",",$movimento['val_cobrado'])).chr(10);
 							echo sprintf('<td>%s</td>',$movimento['des_justificativa']).chr(10);						
-							echo $exibe_estacionados != "" ? '<td> ' . $situacao . ' </td>' : "";
+							echo $exibe_estacionados != "" ? '<td> ' . $situacao . ' </td>' : "&nbsp;";
 							echo '</tr>'.chr(10);
 							$total_pago = $total_pago + $movimento['val_cobrado'];
 							$carros_estacionados++;
