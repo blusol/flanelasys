@@ -194,6 +194,10 @@
 
 							</td>						
 						</tr>
+                                                <tr>
+                                                    <td> Ultima vez que estacionou </td>
+                                                    <td> 00/00/0000 </td>
+                                                </tr>
 						<tr>
 							<td>
 								<input type="hidden" name="cod_cliente" id="cod_cliente" value="<?php echo $cod_cliente; ?>">					

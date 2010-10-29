@@ -33,6 +33,7 @@ class fla_descontos {
 	
     public function buscaDescontos($objDesconto){
         $objConexao = new fla_conexao();
+        $where = "";
 		
 		if ($objDesconto->get_cod_desconto() != "") {
 		    $where = " WHERE cod_desconto = " . $objDesconto->get_cod_desconto();

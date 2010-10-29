@@ -1,6 +1,6 @@
 <?php
         session_start();
-		include_once('../includes/config.php');
+	include_once('../includes/config.php');
         include_once('../includes/funcao.php');   
         require_once($path_relative."verifica.php");
         include_once($path_classes.'fla_precos.class.php');
@@ -8,10 +8,11 @@
         include_once($path_classes.'fla_rotatividade.class.php');
         include_once($path_classes.'fla_clientes.class.php');
         include_once('processa.php');
+        
+        $msgRetorno = "";
 
-			
-		$mktime = mktime(date("H"),date("i"),date("s"),date("m"),date("d"),date("Y"));
-		$mktime = substr($mktime, 6,4);
+	$mktime = mktime(date("H"),date("i"),date("s"),date("m"),date("d"),date("Y"));
+	$mktime = substr($mktime, 6,4);
         $arrPrecos = array();
         $objPrecos = new fla_precos();
         $arrPrecos = $objPrecos->buscaPrecos($objPrecos);
@@ -233,7 +234,7 @@
 						<input style="text-transform: uppercase;"  class="text"  value="" onChange="consultaPlaca(this.value);" onBlur="consultaPlaca(this.value)"; type="text" name="des_placa" id="des_placa" maxlength="8" size="10">
 						<br>
 						<label for="cod_marca">Marca:</label>
-						<select name="cod_marca" onChange="exibeModeloSelect(this.value);" onBlur="exibeModeloSelect(this.value);" id="cod_marca">
+						<select name="cod_marca" onChange="exibeModeloSelect(this.value,document.form.cod_modelo.value);" onBlur="exibeModeloSelect(this.value,document.form.cod_modelo.value);" id="cod_marca">
 							<option value="0">Selecione</option>
 <?php 
 								$marca = get_marcas();

@@ -4,6 +4,7 @@
     $objUsuarios = new fla_usuarios();
     $arrUsuario = array();
     $msg = "";
+    $msgRetorno = "";
     
     if (!empty($_POST)) {
         $login = $_POST['login'];

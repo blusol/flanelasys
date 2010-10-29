@@ -94,6 +94,7 @@ class fla_precos {
 
     function buscaPrecos($objPreco) {
         $objConexao = new fla_conexao();
+        $where = "";
 		
 		if ($objPreco->get_cod_preco() != "") {
 		    $where = " WHERE cod_preco = " . $objPreco->get_cod_preco();

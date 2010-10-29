@@ -60,35 +60,38 @@ include_once($path_classes.'fla_conexao.class.php');
 	return $tabela_modelo;
  }
 
- switch ($_POST['acao']) {
-	case "exibeModeloSelect":
-		$txt .= '<option value="0">Selecione o Modelo</option>';
+$txt = "" ;
+if (isset($_POST['acao'])) {
+     switch ($_POST['acao']) {
+            case "exibeModeloSelect":
+                    $txt .= '<option value="0">Selecione o Modelo</option>';
 
-                $modelo = get_modelos($_POST['id_marca']);
+                    $modelo = get_modelos($_POST['id_marca']);
 
-		if (!empty($_POST['id_modelo'])) {		
-			$id_modelo = $_POST['id_modelo'];
-		} else {
-			$id_modelo = "";
-		}
-		
-		$ind_popular = true;		
-		for ($i=0;$i < count($modelo);$i++) {
-		
-		if ($ind_popular == true && $modelo[$i]['ind_popular'] == 0) {
-			$txt .= '<option value="0"></option>';
-			$ind_popular = false;
-		}
-		
-		
-			if ($id_modelo == $modelo[$i]['id_modelo']) {
-				$txt .= '<option selected value="'.$modelo[$i]['id_modelo'].'">' . $modelo[$i]['ds_modelo'] . '</option>';
-			} else {
-				$txt .= '<option value="'.$modelo[$i]['id_modelo'].'">' . $modelo[$i]['ds_modelo'] . '</option>';			
-			}
-		}
+                    if (!empty($_POST['id_modelo'])) {
+                            $id_modelo = $_POST['id_modelo'];
+                    } else {
+                            $id_modelo = "";
+                    }
 
-		echo $txt;
-	break;
+                    $ind_popular = true;
+                    for ($i=0;$i < count($modelo);$i++) {
+
+                    if ($ind_popular == true && $modelo[$i]['ind_popular'] == 0) {
+                            $txt .= '<option value="0"></option>';
+                            $ind_popular = false;
+                    }
+
+
+                            if ($id_modelo == $modelo[$i]['id_modelo']) {
+                                    $txt .= '<option selected value="'.$modelo[$i]['id_modelo'].'">' . $modelo[$i]['ds_modelo'] . '</option>';
+                            } else {
+                                    $txt .= '<option value="'.$modelo[$i]['id_modelo'].'">' . $modelo[$i]['ds_modelo'] . '</option>';
+                            }
+                    }
+
+                    echo $txt;
+            break;
+     }
  }
 ?>
