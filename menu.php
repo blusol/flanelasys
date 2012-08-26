@@ -23,7 +23,7 @@
                 <li><a href="<?php echo $url; ?>admin/precos/index.php">:: Módulo Preços</a></li>				
                 <li><a href="<?php echo $url; ?>admin/usuarios/index.php">:: Módulo Usuários</a></li>
                 <li><a href="<?php echo $url; ?>admin/modelos/listar_modelo.php">:: Módulo Veiculos</a></li>			
-                <!--<li><a href="#">Configurações Gerais</a></li>-->
+                <li><a href="<?php echo $url; ?>admin/gerais/index.php">:: Configurações Gerais</a></li>
             </ul>
         </li>
 <?php

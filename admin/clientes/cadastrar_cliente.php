@@ -195,6 +195,16 @@
 							</td>						
 						</tr>
                                                 <tr>
+                                                    <td> Tipo de cliente </td>
+                                                    <td>
+                                                        <select name="tipo_cliente" id="tipo_cliente">
+                                                            <option value="R">Rotativo</option>
+                                                            <option value="M">Mensalista</option>
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                                
+                                                <tr>
                                                     <td> Ultima vez que estacionou </td>
                                                     <td> 00/00/0000 </td>
                                                 </tr>
@@ -208,6 +218,19 @@
 						</tr>
 					</table>
 				</form>	
+                                <h1> Histórico </h1>
+                                <table>
+                                    <tr>
+                                        <td>Data</td>
+                                        <td>Entrada</td>
+                                        <td>Saída</td>
+                                    </tr>
+                                    <tr>
+                                        <td><?php echo date("d/m/Y");?></td>
+                                        <td><?php echo date("h:i");?></td>
+                                        <td><?php echo date("h:i");?></td>
+                                    </tr>                                    
+                                </table>
 			</div>
 		</div>
 	</body>

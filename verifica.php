@@ -1,5 +1,5 @@
 <?php
-//	session_start();
+	session_start();
 	include_once('includes/config.php');
 	if ($_SESSION["NOM_USUARIO"] == false ) {
         $url = $url . "index.php";
