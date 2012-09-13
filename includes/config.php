@@ -18,6 +18,8 @@
   $path_libraries = $path_relative . 'libs' . DS;
   $path_admin = $path_relative . DS . 'admin' . DS;
   $path_classes = $path_relative . DS . 'classes' . DS;
+  $path_nfes = $path_relative . 'nfes' . DS;
+  $path_notablu = $path_nfes . 'notablu' . DS;
   
   // Defiinindo caminho lógicos das bibliotecas externas
   $path_lib_adodb = $path_libraries_relative . DS .'adodb' . DS;

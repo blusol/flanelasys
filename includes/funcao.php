@@ -78,4 +78,18 @@
 
         return sprintf('%02d:%02d', $h, $m); 
     }  	
+    
+    function existeDiretorio($periodo,$caminho) {
+        if ($periodo == "A") {
+            if (!is_dir($caminho.date("Y"))){
+                mkdir($caminho.date("Y"),0777);
+            }
+        }
+        
+        if ($periodo == "M") {
+            if (!is_dir($caminho.date("m"))){
+                mkdir($caminho.date("m"),0777);
+            }
+        }        
+    }
 ?>
