@@ -143,7 +143,7 @@ class fla_clientes {
 					LEFT JOIN fla_marcas mar ON (cli.cod_marca = mar.cod_marca)
 				" . $where . " 	
 				ORDER BY
-					cli.nom_cliente";			
+					cli.nom_cliente";
 		$rsClientes = $objConexao->prepare($SQL);
 		$rsClientes->execute() or die ($objConexao->errorInfo());
 		$arrClientes = array();

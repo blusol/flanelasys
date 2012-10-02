@@ -24,7 +24,6 @@ $arrDescontos = $objDescontos->buscaDescontos($objDescontos);
 $objRotatividade = new fla_rotatividade();
 
 $objClientes = new fla_clientes();
-
 if (isset($_POST['cod_cartao'])) {
     $cod_cartao = $_POST['cod_cartao'];
     $des_placa = $_POST['des_placa'];
@@ -42,6 +41,7 @@ if (isset($_POST['cod_cartao'])) {
     $val_total = $_POST['val_total'];
     $val_cobrado = $_POST['val_cobrado'];
     $des_justificativa = $_POST['des_justificativa'];
+    $cod_rotatividade = $_POST["cod_rotatividade"];
 
     if (empty($des_placa)) {
         $des_placa = "XXX-" . $mktime;
@@ -57,8 +57,6 @@ if (isset($_POST['cod_cartao'])) {
 
     $objRotatividade->set_cod_cartao($cod_cartao);
     $objRotatividade->set_des_placa($des_placa);
-    $objRotatividade->set_hor_entrada($hor_entrada);
-    $objRotatividade->set_dat_cadastro($dat_cadastro);
     $objRotatividade->set_cod_preco($cod_preco);
     $objRotatividade->set_des_situacao("P");
 
@@ -69,14 +67,19 @@ if (isset($_POST['cod_cartao'])) {
         $objClientes->set_cod_modelo($cod_modelo);
         $objClientes->insereCliente($objClientes);
 
-        $verifica = $objRotatividade->buscaCarro($objRotatividade->get_des_placa(), $objRotatividade->get_cod_cartao());
-        if (!empty($verifica)) {
+        $verifica = $objRotatividade->buscaCarro($objRotatividade,"P");
+        if ($verifica == false) {
+            $objRotatividade->set_hor_entrada($hor_entrada);
+            $objRotatividade->set_dat_cadastro($dat_cadastro);            
             $objRotatividade->insereRotatividade($objRotatividade);
             $msgRetorno = 'Entrada de veiculo feito com sucesso';
         } else {
             $msgRetorno = 'Este veiculo já se encontra estacionado';
         }
     } else {
+        $objRotatividade->set_hor_entrada($hor_entrada);
+        $objRotatividade->set_dat_cadastro($dat_cadastro);        
+        $objRotatividade->set_cod_rotatividade($cod_rotatividade);
         $objRotatividade->set_hor_saida($hor_saida);
         $objRotatividade->set_dat_saida($dat_saida);
         $objRotatividade->set_cod_desconto($cod_desconto);
@@ -86,7 +89,7 @@ if (isset($_POST['cod_cartao'])) {
         $objRotatividade->set_tem_permanencia($tem_permanencia);
         $objRotatividade->removeRotatividade($objRotatividade);
         $msgRetorno = 'Veiculo liberado com sucesso';
-        $msgRetorno .= '<br> Deseja imprimir RPS? <a href="'.$url.'rotatividade/nfeblu.php?placa='.$des_placa.'&valor='.$val_total.'">Sim</a>';
+        $msgRetorno .= '<br> Deseja imprimir RPS? <a href="'.$url.'rotatividade/nfeblu.php?cod_rotatividade='.$cod_rotatividade.'">Sim</a>';
         $val_total = "";
     }
 }
@@ -149,8 +152,8 @@ $arrRotatividade = $objRotatividade->buscaCarrosEstacionados();
             jQuery(function($){   
                 $("#des_placa").mask("aaa-9999");
                 $("#val_cobrado").mask("99,99");
-            });		
-
+            });
+            
             $(
             function()
             {
@@ -206,9 +209,6 @@ $arrRotatividade = $objRotatividade->buscaCarrosEstacionados();
             #jsddm li ul li a:hover
             {	background: #8EA344}
         </style>
-        <script src="jquery.min.js" type="text/javascript"></script>
-        <script type="text/javascript">			
-        </script>
     </head>
     <body onload="carrega();">
         <div class="content">
@@ -314,6 +314,7 @@ $arrRotatividade = $objRotatividade->buscaCarrosEstacionados();
                             </fieldset>
                             <input type="hidden" id="des_situacao" name="des_situacao" value="">
                             <input type="hidden" name="codigo_modelo" id="codigo_modelo" value="0">
+                            <input type="hidden" name="cod_rotatividade" id="cod_rotatividade" value="<?php echo $cod_rotatividade; ?>">
                             <input type="hidden" name="dat_cadastro" id="dat_cadastro" value="<?php echo date('d/m/Y'); ?>">
                             <input type="hidden" name="hor_entrada" id="hor_entrada" value="<?php echo $hora_entrada; ?>">												
                             <input type="submit" name="_submit" value="Enviar">

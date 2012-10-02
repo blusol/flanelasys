@@ -1,11 +1,5 @@
 <?php
     function calculaMinutos($data1,$data2) {
-        //$arrHor1 = explode(":",$data1);
-        //$arrHor2 = explode(":",$data2);
-		
-        ///$minutos_1 = ($arrHor1[0] * 60) + $arrHor1[1];
-		
-        //$minutos_2 = ($arrHor2[0] * 60) + $arrHor2[1];
 		$ano1    = substr($data1,0,4);
 		$mes1    = substr($data1,5,2);
 		$dia1    = substr($data1,8,2);
@@ -92,4 +86,22 @@
             }
         }        
     }
+    
+    // Converte uma string para Hexadecimal
+    function strToHex($string) {
+        $hex = '';
+        for ($i = 0; $i < strlen($string); $i++) {
+            $hex .= dechex(ord($string[$i]));
+        }
+        return $hex;
+    }
+
+    // Converte um texto em hexadecimal para string
+    function hexToStr($hex) {
+        $string = '';
+        for ($i = 0; $i < strlen($hex) - 1; $i+=2) {
+            $string .= chr(hexdec($hex[$i] . $hex[$i + 1]));
+        }
+        return $string;
+    }    
 ?>

@@ -2,29 +2,44 @@
 include_once('../includes/config.php');
 include_once($path_includes.'funcao.php');
 include_once($path_classes.'fla_conexao.class.php');
+include_once($path_classes.'fla_rotatividade.class.php');
+include_once($path_classes.'fla_clientes.class.php');
 
-$des_placa = "";
+$cod_rotatividade = "";
 $valor = 0;
 
-if (isset($_GET['placa']) && !empty($_GET['placa'])) {
-    $des_placa = $_GET['placa'];
-    $des_placa = strtoupper($des_placa);
+if (isset($_GET['cod_rotatividade']) && !empty($_GET['cod_rotatividade'])) {
+    $cod_rotatividade = $_GET['cod_rotatividade'];
+    $cod_rotatividade = base64_decode(hexToStr($cod_rotatividade));
+} else {
+    Header("Location:".$url."index.php");
 }
 
-if (isset($_GET['valor']) && !empty($_GET['valor'])) {
-    $valor = $_GET['valor'];
-}
-
-geraLoteRPS($des_placa,$valor);
+geraLoteRPS($cod_rotatividade);
 
 
-function geraLoteRPS($placa,$valor) {
+function geraLoteRPS($cod_rotatividade) {
+    $objRotatividade = new fla_rotatividade();
+    $objClientes = new fla_clientes();
     global $path_notablu;
+    
     $ano_atual = date("Y");
     $mes_atual = date("m");
     $hoje = date("d");
     $caminho_arquivo = $path_notablu.$ano_atual.DS.$mes_atual.DS;
     $nome_arquivo = date("d").".txt";
+    
+    existeDiretorio("A",$path_notablu);
+    existeDiretorio("M",$path_notablu.$ano_atual.DS);    
+    
+    $objRotatividade->set_cod_rotatividade($cod_rotatividade);
+    $objRotatividade->set_des_situacao("L");
+    $arrRotatividade = $objRotatividade->buscaCarro($objRotatividade);
+    
+    $objClientes->set_des_placa($arrRotatividade[0]['des_placa']);
+    $objClientes->buscaClientes($objClientes);
+    
+    
     $serie_rps = "71"; // Confirmar contadora
     $serie_rps = str_pad($serie_rps,15," ",STR_PAD_RIGHT);
     $serie_rps = str_replace(" "," ",$serie_rps);
@@ -64,7 +79,7 @@ function geraLoteRPS($placa,$valor) {
     $email_tomador = "denisbr@gmail.com";
     $email_tomador = str_pad($email_tomador,80," ",STR_PAD_RIGHT);
     $email_tomador = str_replace(" "," ",$email_tomador);
-    $discriminacao_servico = "Estacionamento rotativo de veiculo|Placa: ".$placa;
+    $discriminacao_servico = "Estacionamento rotativo de veiculo|Placa: ".$cod_rotatividade;
     
     $valor_rps = $valor;
     $valor_rps = str_replace(array(",","."),array("",""),$valor_rps);
@@ -93,9 +108,6 @@ function geraLoteRPS($placa,$valor) {
     $valor_pis = $valor; // Confirmar contadora
     $valor_pis = str_replace(array(",","."),array("",""),$valor_pis);
     $valor_pis = str_pad($$valor_pis,15,"0",STR_PAD_LEFT);
-    
-    existeDiretorio("A",$path_notablu);
-    existeDiretorio("M",$path_notablu.$ano_atual.DS);
     
     $conteudo_arquivo = sprintf("20%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
                                     $serie_rps,

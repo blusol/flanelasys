@@ -49,6 +49,7 @@
 				$cod_modelo    = $cartao['cod_modelo'];
 				$des_cor       = $cartao['des_cor'];
 				$des_situacao  = $cartao['des_situacao'];
+                                $cod_rotatividade = strToHex(base64_encode($cartao['cod_rotatividade']));
 
 				if ($_GET["cod_preco"] != "") {
 					$cod_preco  = $_GET['cod_preco'];
@@ -67,7 +68,7 @@
 				$objPrecos->set_cod_preco($cod_preco);
 				$arrPreco = $objPrecos->buscaPrecoPagar($objPrecos,$minutos);
                 
-				echo sprintf('new Array("%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s")',$des_placa,$hor_entrada,$cod_marca,$cod_modelo,$des_cor,$cod_preco,$arrPreco['val_total'],$hora_saida,$arrPreco['tempo_permanencia'],$des_situacao,$arrPreco['des_justificativa'],$dat_entrada);
+				echo sprintf('new Array("%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s")',$des_placa,$hor_entrada,$cod_marca,$cod_modelo,$des_cor,$cod_preco,$arrPreco['val_total'],$hora_saida,$arrPreco['tempo_permanencia'],$des_situacao,$arrPreco['des_justificativa'],$dat_entrada,$cod_rotatividade);
 			}
 		} else {
 				echo sprintf('new Array("")');
