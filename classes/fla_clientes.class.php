@@ -3,13 +3,47 @@
 include_once($path_classes.'fla_conexao.class.php');
 
 class fla_clientes {
-    private $cod_cliente;
+    private $data = array();
+    public $declared = 1;
+    private $hidden = 2;
+    /*private $cod_cliente;
     private $nom_cliente;
     private $des_cor;
     private $cod_modelo;
     private $cod_marca;
+    private $des_placa;
+    private $cpf_cnpj_cliente;
+    private $insc_municipal_cliente;
+    private $insc_estadual_cliente;
+    private $email_cliente;
+    private $cep_cliente;
+    private $tip_rua_cliente;
+    private $des_end_cliente;
+    private $num_end_cliente;
+    private $com_end_cliente;
+    private $bairro_end_cliente;
+    private $estado_cliente;
+    private $cidade_cliente;
+    private $tipo_cliente;*/
+
+    public function __set($name, $value) {
+        $this->data[$name] = $value;
+    }
     
-    public function get_cod_cliente() {
+    public function __get($name) {
+        if (array_key_exists($name, $this->data)) {
+            return $this->data[$name];
+        }
+
+        $trace = debug_backtrace();
+        trigger_error(
+            'Undefined property via __get(): ' . $name .
+            ' in ' . $trace[0]['file'] .
+            ' on line ' . $trace[0]['line'],
+            E_USER_NOTICE);
+        return null;
+     }
+    /*public function get_cod_cliente() {
         return $this->cod_cliente;
     }
     
@@ -59,7 +93,7 @@ class fla_clientes {
     
     public function set_cod_marca($cod_marca) {
         $this->cod_marca = $cod_marca;
-    }
+    }*/
     
     public function insereCliente($objCliente) {
         $objConexao = new fla_conexao();
@@ -104,16 +138,41 @@ class fla_clientes {
 					des_cor     = %s,
 					des_placa   = "%s",
 					cod_modelo  = %s,
-					cod_marca   = %s
+					cod_marca   = %s,
+                                        cpf_cnpj_cliente = %s,
+                                        insc_municipal_cliente = %s,
+                                        insc_estadual_cliente = %s,
+                                        email_cliente = "%s",
+                                        cep_cliente = "%s",
+                                        tip_rua_cliente = "%s",
+                                        des_end_cliente = "%s",
+                                        num_end_cliente = %s,
+                                        com_end_cliente = "%s",
+                                        bairro_end_cliente = "%s",
+                                        estado_cliente = "%s",
+                                        cidade_cliente = "%s",
+                                        tipo_cliente = "%s"                                        
 				WHERE	
 					cod_cliente = %s'
-				,$objCliente->get_nom_cliente()
-				,$objCliente->get_des_cor()
-				,$objCliente->get_des_placa()
-				,$objCliente->get_cod_modelo()
-				,$objCliente->get_cod_marca()
-				,$objCliente->get_cod_cliente());
-	
+				,$objCliente->nom_cliente
+				,$objCliente->des_cor
+				,$objCliente->des_placa
+				,$objCliente->cod_modelo
+				,$objCliente->cod_marca
+                                ,$objCliente->cpf_cnpj_cliente
+                                ,$objCliente->insc_municipal_cliente
+                                ,$objCliente->insc_estadual_cliente
+                                ,$objCliente->email_cliente
+                                ,$objCliente->cep_cliente
+                                ,$objCliente->tip_rua_cliente
+                                ,$objCliente->des_end_cliente
+                                ,$objCliente->num_end_cliente
+                                ,$objCliente->com_end_cliente
+                                ,$objCliente->bairro_end_cliente
+                                ,$objCliente->estado_cliente
+                                ,$objCliente->cidade_cliente
+                                ,$objCliente->tipo_cliente                                
+				,$objCliente->cod_cliente);
 		$query = $objConexao->prepare($SQL);
         $query->Execute();
 	}
@@ -121,8 +180,8 @@ class fla_clientes {
 	public function buscaClientes($objCliente) {
 		$objConexao = new fla_conexao();
 		
-		if ($objCliente->get_cod_cliente() != "") {
-		    $where = " WHERE cod_cliente = " . $objCliente->get_cod_cliente();
+		if ($objCliente->cod_cliente != "") {
+		    $where = " WHERE cod_cliente = " . $objCliente->cod_cliente;
 		}
 		
 		// Query SQL

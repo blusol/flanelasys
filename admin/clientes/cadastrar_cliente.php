@@ -13,26 +13,28 @@ if (isset($_GET)) {
 }
 
 if (!empty($_POST)) {
-    $cod_cliente = $_POST['cod_cliente'];
+    
+    /*$cod_cliente = $_POST['cod_cliente'];
     $nom_cliente = $_POST['nom_cliente'];
     $des_placa = $_POST['des_placa'];
     $cod_marca = $_POST['cod_marca'];
     $cod_modelo = $_POST['codigo_modelo'];
     $des_cor = $_POST['des_cor'];
-
-    $objClientes->set_cod_cliente($cod_cliente);
-    $objClientes->set_nom_cliente($nom_cliente);
-    $objClientes->set_des_placa($des_placa);
-    $objClientes->set_cod_marca($cod_marca);
-    $objClientes->set_cod_modelo($cod_modelo);
-    $objClientes->set_des_cor($des_cor);
+    */
+    print_r($_POST);
+    if (is_array($_POST)) {
+        foreach ($_POST as $key => $value) {
+            if ($key != "select_tipo_doc")
+                $objClientes->$key = $value;
+        }
+    }
 
     $objClientes->editaCliente($objClientes);
 
     $msgRetorno = 'Dados atualizados com sucesso!';
 }
 
-$objClientes->set_cod_cliente($cod_cliente);
+$objClientes->cod_cliente = $cod_cliente;
 $arrCliente = $objClientes->buscaClientes($objClientes);
 
 $arrCores = $objCores->buscaCores($objCores);
@@ -97,7 +99,37 @@ $arrCores = $objCores->buscaCores($objCores);
             jQuery(function($){   
                 $("#des_placa").mask("aaa-9999");
                 $("#cep_cliente").mask("99999-999");
-            });		
+                
+                $("#select_tipo_doc").change(function() {
+                    var opcao = ($(this).val());
+                    if(opcao=="cnpj"){
+                            $("#cpfcnpj").text('CNPJ:');
+                            $("#cpf_cnpj_cliente").val('');
+                            $("#insc_municipal_cliente").val('');
+                            $("#insc_estadual_cliente").val('');
+                            $("#cpf_cnpj_cliente").unmask().mask("99.999.999/9999-99");
+                            $(".tr_cnpj").show();
+                            //$("#insc_estadual_cliente").show();
+                            //
+                    } else {
+                            $("#cpfcnpj").text('CPF:');
+                            $("#cpf_cnpj_cliente").val('');
+                            $("#insc_municipal_cliente").val('');
+                            $("#insc_estadual_cliente").val('');
+                            $("#cpf_cnpj_cliente").unmask().mask("999.999.999-99");
+                            $(".tr_cnpj").hide();
+                            //$("#insc_estadual_cliente").hide();
+                            //$("#ie").hide();
+                    }
+                });
+                $(window).load(function() {
+                    $(".tr_cnpj").hide();
+                    $("#nom_cliente").focus();
+                    $("#nom_cliente").select();
+                });
+                
+            });	
+            
             function jsddm_open()
             {	jsddm_canceltimer();
                 jsddm_close();
@@ -128,30 +160,6 @@ $arrCores = $objCores->buscaCores($objCores);
             $(function() {
                 $("input.numeric").numeric();
             });
-            /*
-            $(document).ready(function(){//Equivalente ao window.onload porem mais rapido
-                    if($("input:radio[name='select_tipo_doc']:checked").val()=="cnpj"){
-                            $("#cpf_cnpj_cliente").mask("99.999.999/9999-99");
-                            $("#cpfcnpj").text('Digite o CNPJ:');
-                    } else {
-                            $("#cpf_cnpj_cliente").mask("999.999.999-99");
-                            //$("#ie").hide();
-                    }
-
-            $("input[name=select_tipo_doc]:radio").change(function(){
-                    $('input[name=documento]').unmask();//Remove a mascara
-                    if($(this).val()=="cpf"){//Acaso seja CPF
-                            $("#cpf_cnpj_cliente").mask("999.999.999-99");
-                            //$("#ie").hide();
-                            $("#cpfcnpj").text('Digite o CPF:');
-                    } else {//Acaso seja Cnpj
-                            $("#cpf_cnpj_cliente").mask("99.999.999/9999-99");
-                            //$("#ie").show();
-                            $("#cpfcnpj").text('Digite o CNPJ:');
-                    }
-            })
-            }); */           
-            
         </script>		
     </head>
     <body onLoad="exibeModeloSelect(<?php echo $arrCliente[0]['cod_marca']; ?>,<?php echo $arrCliente[0]['cod_modelo']; ?>);setaModelo(<?php echo $arrCliente[0]['cod_modelo']; ?>)">
@@ -169,27 +177,33 @@ include_once("../../menu.php");
                             <td> <input type="text" value="<?php echo $arrCliente[0]['nom_cliente']; ?>" id="nom_cliente" name="nom_cliente"></td>
                         </tr>
                         <tr>
-                            <td> CPF ou CNPJ </td>
-                            <td> 
+                            <td> Identificação </td>
+                            <td>
+                                <select name="select_tipo_doc" id="select_tipo_doc">
+                                    <option value="cpf" selected="selected">CPF</option>
+                                    <option value="cnpj">CNPJ</option>                                    
+                                </select>
+                            </td>
+                            <!--<td> 
                                 <input type="radio" name="select_tipo_doc" id="select_tipo_doc" value="cnpj" />CNPJ
                                 <input type="radio" name="select_tipo_doc" id="select_tipo_doc" value="cpf" />CPF
-                            </td>
+                            </td>-->
                         </tr>
                         <tr>
                             <td>
-                                <label id="cpfcnpj"><span>Digite o CPF:</span></label>
+                                <label id="cpfcnpj"><span>CPF:</span></label>
                             </td>
                             <td>
                                 <input type="text" value="" id="cpf_cnpj_cliente" name="cpf_cnpj_cliente">
                             </td>
                         </tr>
-                        <tr>
+                        <tr class="tr_cnpj">
                             <td> Inscrição Municipal </td>
-                            <td> <input type="text" value="" id="insc_municipal_cliente" name="insc_municipal_cliente"></td>
+                            <td> <input type="text" value="0" id="insc_municipal_cliente" name="insc_municipal_cliente"></td>
                         </tr>
-                        <tr>
+                        <tr class="tr_cnpj">
                             <td> Inscrição Estadual </td>
-                            <td> <input type="text" value="" id="insc_estadual_cliente" name="insc_estadual_cliente"></td>
+                            <td> <input type="text" value="0" id="insc_estadual_cliente" name="insc_estadual_cliente"></td>
                         </tr>
                         <tr>
                             <td> E-mail </td>
