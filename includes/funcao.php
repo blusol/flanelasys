@@ -1,4 +1,6 @@
 <?php
+    $arrEstadosSiglas = array("AC","AL","AM","AP","BA","CE","DF","ES","GO","MA","MG","MS","MT","PA","PB","PE","PI","PR","RJ","RN","RO","RR","RS","SC","SE","SP","TO");
+    $arrTiposRuas  = array("Outros","Aeroporto","Alameda","Área","Avenida","Campo","Chácara","Colônia","Condomínio","Conjunto","Distrito","Esplanada","Estação","Estrada","Favela","Fazenda","Feira","Jardim","Ladeira","Lago","Lagoa","Largo","Loteamento","Morro","Núcleo","Parque","Passarela","Pátio","Praça","Quadra","Recanto","Residencial","Rodovia","Rua","Setor","Sítio","Travessa","Trecho","Trevo","Vale","Vereda","Via","Viaduto","Viela","Vila");
     function calculaMinutos($data1,$data2) {
 		$ano1    = substr($data1,0,4);
 		$mes1    = substr($data1,5,2);
@@ -104,4 +106,18 @@
         }
         return $string;
     }    
+    
+    function imprimeCodigo($objeto,$nomeObjeto) {
+            $arrAtributosClasse = get_class_methods($objeto);
+            foreach ($arrAtributosClasse as $key => $value) {
+                $prefixo_metodo = substr($value, 0, 3);
+                $atributo = substr($value, 4);
+                if ($prefixo_metodo == "set") {
+                    $a = "<p>" . '$obj'.$nomeObjeto.'->' . $value . '(' . '$_POST["' . $atributo . '"])' . ";</p>";
+                    //eval("\$a = objClientes\->set_\"$value\"=\"$_POST[$value]\";");
+                    //var_dump($a);
+                    echo $a;
+                }
+        }
+    }
 ?>

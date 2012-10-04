@@ -8,9 +8,10 @@ include_once($path_relative . 'admin/clientes/processa.php');
 $objClientes = new fla_clientes();
 $objCores = new fla_cores();
 
-if (isset($_GET)) {
+if ( (isset($_GET)) && (!empty($_GET['cod_cliente'])) || isset($_POST))
     $cod_cliente = $_GET["cod_cliente"];
-}
+else
+    Header("Location:".$url);
 
 if (!empty($_POST)) {
     
@@ -21,21 +22,60 @@ if (!empty($_POST)) {
     $cod_modelo = $_POST['codigo_modelo'];
     $des_cor = $_POST['des_cor'];
     */
-    print_r($_POST);
+    //print_r($_POST);
     if (is_array($_POST)) {
-        foreach ($_POST as $key => $value) {
-            if ($key != "select_tipo_doc")
-                $objClientes->$key = $value;
-        }
+        $cod_cliente = $_POST["cod_cliente"];
+        $objClientes->set_cod_cliente($_POST["cod_cliente"]);
+
+        $objClientes->set_nom_cliente($_POST["nom_cliente"]);
+
+        $objClientes->set_des_cor($_POST["des_cor"]);
+
+        $objClientes->set_des_placa($_POST["des_placa"]);
+
+        $objClientes->set_cod_modelo($_POST["cod_modelo"]);
+
+        $objClientes->set_cod_marca($_POST["cod_marca"]);
+
+        $objClientes->set_cpf_cnpj_cliente($_POST["cpf_cnpj_cliente"]);
+
+        $objClientes->set_insc_municipal_cliente($_POST["insc_municipal_cliente"]);
+
+        $objClientes->set_insc_estadual_cliente($_POST["insc_estadual_cliente"]);
+
+        $objClientes->set_email_cliente($_POST["email_cliente"]);
+
+        $objClientes->set_cep_cliente($_POST["cep_cliente"]);
+
+        $objClientes->set_tip_rua_cliente($_POST["tip_rua_cliente"]);
+
+        $objClientes->set_des_end_cliente($_POST["des_end_cliente"]);
+
+        $objClientes->set_num_end_cliente($_POST["num_end_cliente"]);
+
+        $objClientes->set_com_end_cliente($_POST["com_end_cliente"]);
+
+        $objClientes->set_bairro_end_cliente($_POST["bairro_end_cliente"]);
+
+        $objClientes->set_estado_cliente($_POST["estado_cliente"]);
+
+        $objClientes->set_cidade_cliente($_POST["cidade_cliente"]);
+
+        $objClientes->set_tipo_cliente($_POST["tipo_cliente"]);
     }
+    //var_dump($objClientes);exit;
 
     $objClientes->editaCliente($objClientes);
 
     $msgRetorno = 'Dados atualizados com sucesso!';
 }
 
-$objClientes->cod_cliente = $cod_cliente;
-$arrCliente = $objClientes->buscaClientes($objClientes);
+$objClientes->ResetObject();
+$objClientes->set_cod_cliente($cod_cliente);
+if (is_array($objClientes->buscaClientes($objClientes)))
+    $arrCliente = $objClientes->buscaClientes($objClientes);
+else
+    Header("Location:".$url);
 
 $arrCores = $objCores->buscaCores($objCores);
 ?>
@@ -194,125 +234,69 @@ include_once("../../menu.php");
                                 <label id="cpfcnpj"><span>CPF:</span></label>
                             </td>
                             <td>
-                                <input type="text" value="" id="cpf_cnpj_cliente" name="cpf_cnpj_cliente">
+                                <input type="text" value="<?php echo $arrCliente[0]['cpf_cnpj_cliente'];?>" id="cpf_cnpj_cliente" name="cpf_cnpj_cliente">
                             </td>
                         </tr>
                         <tr class="tr_cnpj">
                             <td> Inscrição Municipal </td>
-                            <td> <input type="text" value="0" id="insc_municipal_cliente" name="insc_municipal_cliente"></td>
+                            <td> <input type="text" value="<?php echo $arrCliente[0]['insc_municipal_cliente'];?>" id="insc_municipal_cliente" name="insc_municipal_cliente"></td>
                         </tr>
                         <tr class="tr_cnpj">
                             <td> Inscrição Estadual </td>
-                            <td> <input type="text" value="0" id="insc_estadual_cliente" name="insc_estadual_cliente"></td>
+                            <td> <input type="text" value="<?php echo $arrCliente[0]['insc_estadual_cliente'];?>" id="insc_estadual_cliente" name="insc_estadual_cliente"></td>
                         </tr>
                         <tr>
                             <td> E-mail </td>
-                            <td> <input type="text" value="" id="email_cliente" name="email_cliente"></td>
+                            <td> <input type="text" value="<?php echo $arrCliente[0]['email_cliente'];?>" id="email_cliente" name="email_cliente"></td>
                         </tr>
                         <tr>
                             <td> Cep </td>
-                            <td> <input type="text" value="" id="cep_cliente" name="cep_cliente" onblur="getEndereco(this.value)"></td>
+                            <td> <input type="text" value="<?php echo $arrCliente[0]['cep_cliente'];?>" id="cep_cliente" name="cep_cliente" onblur="getEndereco(this.value)"></td>
                         </tr>
                         <tr>
                             <td> Endereço </td>
                             <td>
                                 <select name="tip_rua_cliente" id="tip_rua_cliente">
-                                    <option value="">Selecione</option>		
-					<option value="">Outros</option>										
-					<option value = "Aeroporto">Aeroporto</option>
-					<option value = "Alameda">Alameda</option>
-					<option value = "Área">Área</option>
-					<option value = "Avenida">Avenida</option>														
-					<option value = "Campo">Campo</option>
-					<option value = "Chácara">Chácara</option>
-					<option value = "Colônia">Colônia</option>
-					<option value = "Condomínio">Condomínio</option>
-					<option value = "Conjunto">Conjunto</option>
-					<option value = "Distrito">Distrito</option>
-					<option value = "Esplanada">Esplanada</option>
-					<option value = "Estação">Estação</option>
-					<option value = "Estrada">Estrada</option>
-					<option value = "Favela">Favela</option>
-					<option value = "Fazenda">Fazenda</option>
-					<option value = "Feira">Feira</option>
-					<option value = "Jardim">Jardim</option>
-					<option value = "Ladeira">Ladeira</option>
-					<option value = "Lago">Lago</option>
-					<option value = "Lagoa">Lagoa</option>
-					<option value = "Largo">Largo</option>
-					<option value = "Loteamento">Loteamento</option>
-					<option value = "Morro">Morro</option>
-					<option value = "Núcleo">Núcleo</option>
-					<option value = "Parque">Parque</option>
-					<option value = "Passarela">Passarela</option>
-					<option value = "Pátio">Pátio</option>
-					<option value = "Praça">Praça</option>
-					<option value = "Quadra">Quadra</option>
-					<option value = "Recanto">Recanto</option>
-					<option value = "Residencial">Residencial</option>
-					<option value = "Rodovia">Rodovia</option>
-					<option value = "Rua" selected="selected">Rua</option>
-					<option value = "Setor">Setor</option>
-					<option value = "Sítio">Sítio</option>
-					<option value = "Travessa">Travessa</option>
-					<option value = "Trecho">Trecho</option>
-					<option value = "Trevo">Trevo</option>
-					<option value = "Vale">Vale</option>
-					<option value = "Vereda">Vereda</option>
-					<option value = "Via">Via</option>
-					<option value = "Viaduto">Viaduto</option>
-					<option value = "Viela">Viela</option>
-					<option value = "Vila">Vila</option>                                    
+                                <?php
+                                    foreach($arrTiposRuas as $value) {
+                                        if ($arrCliente[0]['tip_rua_cliente'] == $value)
+                                            echo sprintf('<option selected="selected" value="%s">%1$s</option>',$value).chr(10);
+                                        else
+                                            echo sprintf('<option value="%s">%1$s</option>',$value).chr(10);
+                                    }
+                                ?>	
+					<option value="">Outros</option>
                                 </select>&nbsp;
-                                <input type="text" value="Descrição" id="des_end_cliente" name="des_end_cliente">&nbsp;
-                                <input type="text" value="Número" id="num_end_cliente" name="num_end_cliente">
+                                <input type="text" value="<?php echo $arrCliente[0]['des_end_cliente'];?>" id="des_end_cliente" name="des_end_cliente">&nbsp;
+                                <input type="text" value="<?php echo $arrCliente[0]['num_end_cliente'];?>" id="num_end_cliente" name="num_end_cliente">
                             </td>
                         </tr>
                         <tr>
                             <td> Complemento </td>
-                            <td> <input type="text" value="" id="com_end_cliente" name="com_end_cliente"></td>
+                            <td> <input type="text" value="<?php echo $arrCliente[0]['com_end_cliente'];?>" id="com_end_cliente" name="com_end_cliente"></td>
                         </tr>
                         <tr>
                             <td> Bairro </td>
-                            <td> <input type="text" value="" id="bairro_end_cliente" name="bairro_end_cliente"></td>
+                            <td> <input type="text" value="<?php echo $arrCliente[0]['bairro_end_cliente'];?>" id="bairro_end_cliente" name="bairro_end_cliente"></td>
                         </tr>
                         <tr>
                             <td> Estado </td>
                             <td> 
                                 <select id="estado_cliente" name="estado_cliente">
-                                    <option value="AC">AC</option>
-                                    <option value="AL">AL</option>
-                                    <option value="AM">AM</option>
-                                    <option value="AP">AP</option>
-                                    <option value="BA">BA</option>
-                                    <option value="CE">CE</option>
-                                    <option value="DF">DF</option>
-                                    <option value="ES">ES</option>
-                                    <option value="GO">GO</option>
-                                    <option value="MA">MA</option>
-                                    <option value="MG">MG</option>
-                                    <option value="MS">MS</option>
-                                    <option value="MT">MT</option>
-                                    <option value="PA">PA</option>
-                                    <option value="PB">PB</option>
-                                    <option value="PE">PE</option>
-                                    <option value="PI">PI</option>
-                                    <option value="PR">PR</option>
-                                    <option value="RJ">RJ</option>
-                                    <option value="RN">RN</option>
-                                    <option value="RO">RO</option>
-                                    <option value="RR">RR</option>
-                                    <option value="RS">RS</option>
-                                    <option value="SC">SC</option>
-                                    <option value="SE">SE</option>
-                                    <option value="SP">SP</option>
-                                    <option value="TO">TO</option>                                    
+                                <?php
+                                    foreach($arrEstadosSiglas as $value) {
+                                        if ($arrCliente[0]['estado_cliente'] == $value)
+                                            echo sprintf('<option selected="selected" value="%s">%1$s</option>',$value).chr(10);
+                                        else
+                                            echo sprintf('<option value="%s">%1$s</option>',$value).chr(10);
+                                    }
+                                ?>
                                 </select>
                             </td>
                         </tr>
                         <tr>
                             <td> Cidade </td>
-                            <td> <input type="text" value="" id="cidade_cliente" name="cidade_cliente"></td>
+                            <td> <input type="text" value="<?php echo $arrCliente[0]['cidade_cliente'];?>" id="cidade_cliente" name="cidade_cliente"></td>
                         </tr>
                         <tr>
                             <td> Placa </td>
@@ -355,10 +339,10 @@ include_once("../../menu.php");
                                     <option value="0">Selecione</option>
 <?php
 for ($i = 0; $i < count($arrCores); $i++) {
-    if ($arrCores[$i]['cod_cor'] == $arrCliente[0]['cod_cor']) {
-        echo sprintf('<option selected value="%s">%s</option>', $arrCores[$i]['cod_cor'], $arrCores[$i]['des_cor']);
+    if ($arrCores[$i]['cod_cor'] == $arrCliente[0]['des_cor']) {
+        echo sprintf('<option selected value="%s">%s</option>', $arrCores[$i]['cod_cor'], $arrCores[$i]['des_cor']).chr(10);
     } else {
-        echo sprintf('<option value="%s">%s</option>', $arrCores[$i]['cod_cor'], $arrCores[$i]['des_cor']);
+        echo sprintf('<option value="%s">%s</option>', $arrCores[$i]['cod_cor'], $arrCores[$i]['des_cor']).chr(10);
     }
 }
 ?>
@@ -370,8 +354,8 @@ for ($i = 0; $i < count($arrCores); $i++) {
                             <td> Tipo de cliente </td>
                             <td>
                                 <select name="tipo_cliente" id="tipo_cliente">
-                                    <option value="R">Rotativo</option>
-                                    <option value="M">Mensalista</option>
+                                    <option <?php echo $arrCliente[0]['tipo_cliente'] == "R" ? 'selected="selected"' : '';?> value="R">Rotativo</option>
+                                    <option <?php echo $arrCliente[0]['tipo_cliente'] == "M" ? 'selected="selected"' : '';?> value="M">Mensalista</option>
                                 </select>
                             </td>
                         </tr>
