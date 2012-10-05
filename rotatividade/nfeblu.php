@@ -7,6 +7,7 @@ include_once($path_classes.'fla_clientes.class.php');
 
 $cod_rotatividade = "";
 $valor = 0;
+$arrClientes = array();
 
 if (isset($_GET['cod_rotatividade']) && !empty($_GET['cod_rotatividade'])) {
     $cod_rotatividade = $_GET['cod_rotatividade'];
@@ -17,6 +18,9 @@ if (isset($_GET['cod_rotatividade']) && !empty($_GET['cod_rotatividade'])) {
 
 geraLoteRPS($cod_rotatividade);
 
+function geraRPS() {
+    
+}
 
 function geraLoteRPS($cod_rotatividade) {
     $objRotatividade = new fla_rotatividade();
@@ -37,51 +41,79 @@ function geraLoteRPS($cod_rotatividade) {
     $arrRotatividade = $objRotatividade->buscaCarro($objRotatividade);
     
     $objClientes->set_des_placa($arrRotatividade[0]['des_placa']);
-    $objClientes->buscaClientes($objClientes);
+    $arrClientes = $objClientes->buscaClientes($objClientes);
+    if (!is_array($arrClientes)) {
+        echo "Voltou zero!";
+    }
     
     
     $serie_rps = "71"; // Confirmar contadora
-    $serie_rps = str_pad($serie_rps,15," ",STR_PAD_RIGHT);
+    $serie_rps = str_pad($serie_rps,5," ",STR_PAD_RIGHT);
     $serie_rps = str_replace(" "," ",$serie_rps);
+    
     $numero_rps = str_pad(1,15,"0",STR_PAD_LEFT);
+    
     $data_rps = date("Ymd");
+    
     $situacao_rps = "T";
+    
     $codigo_servico_rps = "44448888"; // Confirmar contadora
+    
     $aliquota_rps = "00000"; // Confirmar contadora
+    
     $iss_retido_rps = "0"; // Confirmar contadora
+    
     $indicador_cnpj_cpf_tomador_rps = "1";
-    $cnpj_cpf_tomador_rps = "03366544996";
-    $inscricao_municipal_tomador = "";
-    $inscricao_estadual_tomador = "";
-    $nome_tomador = "";
+    
+    $cnpj_cpf_tomador_rps = $arrClientes[0]["cpf_cnpj_cliente"];
+    
+    if (strlen($arrClientes[0]["cpf_cnpj_cliente"]) == "14") {
+        $inscricao_municipal_tomador = $arrClientes[0]["insc_municipal_cliente"];
+        $inscricao_estadual_tomador = $arrClientes[0]["insc_estadual_cliente"];
+    } else {
+        $inscricao_municipal_tomador = "";
+        $inscricao_estadual_tomador = "";        
+    }
+    
+    $nome_tomador = $arrClientes[0]["nom_cliente"];
     $nome_tomador = str_pad($nome_tomador,115," ",STR_PAD_RIGHT);
     $nome_tomador = str_replace(" "," ",$nome_tomador);
-    $tipo_endereco = "Rua";
+    
+    $tipo_endereco = $arrClientes[0]["tip_rua_cliente"];
     $tipo_endereco = str_pad($tipo_endereco,15," ",STR_PAD_RIGHT);
     $tipo_endereco = str_replace(" "," ",$tipo_endereco);
-    $endereco_tomador = "Divinopolis";
+    
+    $endereco_tomador = $arrClientes[0]["des_end_cliente"];
     $endereco_tomador = str_pad($endereco_tomador,100," ",STR_PAD_RIGHT);
     $endereco_tomador = str_replace(" "," ",$endereco_tomador);
-    $numero_endereco_tomador = "866";
+    
+    $numero_endereco_tomador = $arrClientes[0]["num_end_cliente"];
     $numero_endereco_tomador = str_pad($numero_endereco_tomador,10," ",STR_PAD_RIGHT);
     $numero_endereco_tomador = str_replace(" "," ",$numero_endereco_tomador);
-    $complemento_endereco_tomador = "Bloco 4 Ap 421";
+    
+    $complemento_endereco_tomador = $arrClientes[0]["com_end_cliente"];
     $complemento_endereco_tomador = str_pad($complemento_endereco_tomador,60," ",STR_PAD_RIGHT);
     $complemento_endereco_tomador = str_replace(" "," ",$complemento_endereco_tomador);
-    $bairro_tomador = "Velha";
+    
+    $bairro_tomador = $arrClientes[0]["bairro_end_cliente"];
     $bairro_tomador = str_pad($bairro_tomador,72," ",STR_PAD_RIGHT);
-    $bairro_tomador = str_replace(" "," ",$bairro_tomador);    
-    $cidade_tomador = "Blumenau";
+    $bairro_tomador = str_replace(" "," ",$bairro_tomador);
+    
+    $cidade_tomador = $arrClientes[0]["cidade_cliente"];
     $cidade_tomador = str_pad($cidade_tomador,50," ",STR_PAD_RIGHT);
-    $cidade_tomador = str_replace(" "," ",$cidade_tomador);    
-    $estado_tomador = "SC";
-    $cep_tomador = 89040400;
-    $email_tomador = "denisbr@gmail.com";
+    $cidade_tomador = str_replace(" "," ",$cidade_tomador);
+    
+    $estado_tomador = $arrClientes[0]["estado_cliente"];
+    
+    $cep_tomador = $arrClientes[0]["cep_cliente"];
+    
+    $email_tomador = $arrClientes[0]["email_cliente"];
     $email_tomador = str_pad($email_tomador,80," ",STR_PAD_RIGHT);
     $email_tomador = str_replace(" "," ",$email_tomador);
-    $discriminacao_servico = "Estacionamento rotativo de veiculo|Placa: ".$cod_rotatividade;
     
-    $valor_rps = $valor;
+    $discriminacao_servico = "Estacionamento rotativo de veiculo|Placa: ".strtoupper($arrRotatividade[0]['des_placa']);
+    
+    $valor_rps = $arrRotatividade[0]["val_cobrado"];
     $valor_rps = str_replace(array(",","."),array("",""),$valor_rps);
     $valor_rps = str_pad($valor_rps,15,"0",STR_PAD_LEFT);    
     

@@ -15,14 +15,6 @@ else
 
 if (!empty($_POST)) {
     
-    /*$cod_cliente = $_POST['cod_cliente'];
-    $nom_cliente = $_POST['nom_cliente'];
-    $des_placa = $_POST['des_placa'];
-    $cod_marca = $_POST['cod_marca'];
-    $cod_modelo = $_POST['codigo_modelo'];
-    $des_cor = $_POST['des_cor'];
-    */
-    //print_r($_POST);
     if (is_array($_POST)) {
         $cod_cliente = $_POST["cod_cliente"];
         $objClientes->set_cod_cliente($_POST["cod_cliente"]);
@@ -33,9 +25,9 @@ if (!empty($_POST)) {
 
         $objClientes->set_des_placa($_POST["des_placa"]);
 
-        $objClientes->set_cod_modelo($_POST["cod_modelo"]);
+        $objClientes->set_cod_modelo($_POST["codigo_modelo"]);
 
-        $objClientes->set_cod_marca($_POST["cod_marca"]);
+        $objClientes->set_cod_marca($_POST["codigo_marca"]);
 
         $objClientes->set_cpf_cnpj_cliente($_POST["cpf_cnpj_cliente"]);
 
@@ -63,7 +55,6 @@ if (!empty($_POST)) {
 
         $objClientes->set_tipo_cliente($_POST["tipo_cliente"]);
     }
-    //var_dump($objClientes);exit;
 
     $objClientes->editaCliente($objClientes);
 
@@ -72,12 +63,26 @@ if (!empty($_POST)) {
 
 $objClientes->ResetObject();
 $objClientes->set_cod_cliente($cod_cliente);
-if (is_array($objClientes->buscaClientes($objClientes)))
+if (is_array($objClientes->buscaClientes($objClientes))) {
     $arrCliente = $objClientes->buscaClientes($objClientes);
-else
+    $arrHistoricoUltimo = $objClientes->consultahistorico($arrCliente[0]["des_placa"],1);
+    $arrHistoricoCompleto = $objClientes->consultahistorico($arrCliente[0]["des_placa"]);
+} else {
     Header("Location:".$url);
+}
 
 $arrCores = $objCores->buscaCores($objCores);
+$select_tipo_doc = "cpf";
+if (strlen($arrCliente[0]["cpf_cnpj_cliente"]) == 14) {
+    $select_tipo_doc = "cnpj";
+    $arrCliente[0]["cpf_cnpj_cliente"] = mascara_string("##.###.###/####-##",$arrCliente[0]["cpf_cnpj_cliente"]);
+    $arrCliente[0]["insc_municipal_cliente"] = mascara_string("###.###.###",$arrCliente[0]["insc_municipal_cliente"]);
+    $arrCliente[0]["insc_estadual_cliente"] = mascara_string("###.###.###",$arrCliente[0]["insc_estadual_cliente"]);
+} else {
+    $select_tipo_doc = "cpf";
+    $arrCliente[0]["cpf_cnpj_cliente"] = mascara_string("###.###.###-##",$arrCliente[0]["cpf_cnpj_cliente"]);
+}
+    
 ?>
 <html>
     <head>
@@ -140,22 +145,28 @@ $arrCores = $objCores->buscaCores($objCores);
                 $("#des_placa").mask("aaa-9999");
                 $("#cep_cliente").mask("99999-999");
                 
+                $.fn.selecionaTipoDocumento = function(tipo_documento) {
+                    if (tipo_documento == "cnpj") {
+                        $("#cpfcnpj").text('CNPJ:');
+                        $("#cpf_cnpj_cliente").unmask().mask("99.999.999/9999-99");
+                        $(".tr_cnpj").show();                        
+                    } else {
+                        $("#cpfcnpj").text('CPF:');
+                        $("#cpf_cnpj_cliente").unmask().mask("999.999.999-99");
+                        $(".tr_cnpj").hide();                        
+                    }
+                }
+                
                 $("#select_tipo_doc").change(function() {
                     var opcao = ($(this).val());
                     if(opcao=="cnpj"){
                             $("#cpfcnpj").text('CNPJ:');
-                            $("#cpf_cnpj_cliente").val('');
-                            $("#insc_municipal_cliente").val('');
-                            $("#insc_estadual_cliente").val('');
                             $("#cpf_cnpj_cliente").unmask().mask("99.999.999/9999-99");
                             $(".tr_cnpj").show();
                             //$("#insc_estadual_cliente").show();
                             //
                     } else {
                             $("#cpfcnpj").text('CPF:');
-                            $("#cpf_cnpj_cliente").val('');
-                            $("#insc_municipal_cliente").val('');
-                            $("#insc_estadual_cliente").val('');
                             $("#cpf_cnpj_cliente").unmask().mask("999.999.999-99");
                             $(".tr_cnpj").hide();
                             //$("#insc_estadual_cliente").hide();
@@ -163,9 +174,10 @@ $arrCores = $objCores->buscaCores($objCores);
                     }
                 });
                 $(window).load(function() {
-                    $(".tr_cnpj").hide();
+                    //$(".tr_cnpj").hide();
                     $("#nom_cliente").focus();
                     $("#nom_cliente").select();
+                    $().selecionaTipoDocumento("<?php echo $select_tipo_doc;?>");
                 });
                 
             });	
@@ -197,6 +209,10 @@ $arrCores = $objCores->buscaCores($objCores);
                 document.getElementById("codigo_modelo").value = modelo;
             }   
             
+            function setaMarca(marca) {
+                document.getElementById("codigo_marca").value = marca;
+            }             
+            
             $(function() {
                 $("input.numeric").numeric();
             });
@@ -208,7 +224,8 @@ $arrCores = $objCores->buscaCores($objCores);
 include_once("../../menu.php");
 ?>
             <div class="data">
-                <h1> Módulo de rotatividade </h1>				
+                <h1> Cadastro de clientes </h1>	
+                <p style="border:none;"> <a href="index.php">Voltar a lista de clientes</a></p>
                 <div class="success"> <?php echo $msgRetorno; ?> </div>
                 <form method="POST" action="cadastrar_cliente.php">
                     <table>
@@ -220,14 +237,10 @@ include_once("../../menu.php");
                             <td> Identificação </td>
                             <td>
                                 <select name="select_tipo_doc" id="select_tipo_doc">
-                                    <option value="cpf" selected="selected">CPF</option>
-                                    <option value="cnpj">CNPJ</option>                                    
+                                    <option value="cpf" <?php echo $select_tipo_doc == 'cpf' ? 'selected="selected"' : '';?>>CPF</option>
+                                    <option value="cnpj" <?php echo $select_tipo_doc == 'cnpj' ? 'selected="selected"' : '';?>>CNPJ</option>                                    
                                 </select>
                             </td>
-                            <!--<td> 
-                                <input type="radio" name="select_tipo_doc" id="select_tipo_doc" value="cnpj" />CNPJ
-                                <input type="radio" name="select_tipo_doc" id="select_tipo_doc" value="cpf" />CPF
-                            </td>-->
                         </tr>
                         <tr>
                             <td>
@@ -306,7 +319,7 @@ include_once("../../menu.php");
                         <tr>
                             <td> Marca </td>
                             <td>
-                                <select name="cod_marca" onchange="exibeModeloSelect(this.value);" id="cod_marca">
+                                <select name="cod_marca" onchange="exibeModeloSelect(this.value);setaMarca(this.value);" onBlur="setaMarca(this.value);" id="cod_marca">
                                     <option value="">Selecione</option>						
                                     <?php
                                     $marca = get_marcas();
@@ -362,13 +375,13 @@ for ($i = 0; $i < count($arrCores); $i++) {
 
                         <tr>
                             <td> Ultima vez que estacionou </td>
-                            <td> 00/00/0000 </td>
+                            <td> <?php echo mostraData($arrHistoricoUltimo[0]["dat_cadastro"]);?></td>
                         </tr>
                         <tr>
                             <td>
                                 <input type="hidden" name="cod_cliente" id="cod_cliente" value="<?php echo $cod_cliente; ?>">					
-                                <input type="hidden" name="cod_marca" id="cod_marca" value="<?php echo $arrCliente[0]['cod_marca']; ?>">					
-                                <input type="hidden" name="codigo_modelo" id="codigo_modelo" value="<?php echo $arrCliente[0]['cod_modelo']; ?>">					
+                                <input type="hidden" name="codigo_marca" id="codigo_marca" value="<?php echo $arrCliente[0]['cod_marca']; ?>">					
+                                <input type="hidden" name="codigo_modelo" id="codigo_modelo" value="<?php echo $arrCliente[0]['cod_modelo']; ?>">
                                 <input type="submit" name="_submit" value="Cadastrar">
                             </td>
                         </tr>
@@ -382,9 +395,13 @@ for ($i = 0; $i < count($arrCores); $i++) {
                         <td>Saída</td>
                     </tr>
                     <tr>
-                        <td><?php echo date("d/m/Y"); ?></td>
-                        <td><?php echo date("h:i"); ?></td>
-                        <td><?php echo date("h:i"); ?></td>
+                        <?php
+                            for ($i = 0; $i < count($arrHistoricoCompleto); $i++) {
+                                echo sprintf("<td>%s</td>",  mostraData($arrHistoricoCompleto[$i]['dat_cadastro'])).chr(10);
+                                echo sprintf("<td>%s</td>",  $arrHistoricoCompleto[$i]['hor_entrada']).chr(10);
+                                echo sprintf("<td>%s</td>",  $arrHistoricoCompleto[$i]['hor_saida']).chr(10);
+                            }
+                        ?>
                     </tr>
                 </table>
             </div>

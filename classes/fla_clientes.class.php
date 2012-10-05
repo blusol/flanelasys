@@ -225,21 +225,23 @@ class fla_clientes {
         $aux = 1;
         if (is_array($parametros_where)) {
             foreach ($parametros_where as $atributo => $valor) {
-                if (!is_null($valor)) {
-                    if ($aux != $tamanho_parametros) {
-                        $and = " , ";
-                    } else {
-                        $and = "";
-                    }
-                    
-                    if ($atributo == "cpf_cnpj_cliente") {
-                        $valor = str_replace(array("-","/",".   "), array(""),$valor);
-                    }
-                    
-                    if (is_numeric($valor)) {
-                        $update .= $atributo." = ".$valor.$and;
-                    } else {
-                        $update .= $atributo." = '".$valor."'".$and;
+                if (($atributo != "cod_cliente")) {
+                    if ( (!is_null($valor)) ) {
+                        if ($aux != $tamanho_parametros) {
+                            $and = " , ";
+                        } else {
+                            $and = "";
+                        }
+
+                        if ( ($atributo == "cpf_cnpj_cliente") || ($atributo == "insc_municipal_cliente") || ($atributo == "insc_estadual_cliente")) {
+                            $valor = str_replace(array("-","/","."), array(""),$valor);
+                        }
+
+                        if (is_numeric($valor) && (!in_array($atributo,array("cpf_cnpj_cliente","insc_municipal_cliente","insc_estadual_cliente")))) {
+                            $update .= $atributo." = ".$valor.$and;
+                        } else {
+                            $update .= $atributo." = '".$valor."'".$and;
+                        }
                     }
                 }
                 $aux++;
@@ -247,8 +249,48 @@ class fla_clientes {
                 
         }        
         $SQL = sprintf('UPDATE fla_clientes SET '.$update . ' WHERE cod_cliente = %s',$objCliente->get_cod_cliente());
+        //echo $SQL;exit;
         $query = $objConexao->prepare($SQL);
         $query->Execute();
+    }
+    
+    public function consultahistorico($des_placa,$limite = null) {
+        $objConexao = new fla_conexao();
+        $arrHistorico = array();
+        if (!is_null($limite))
+            $limite = " LIMIT ".$limite;
+        else
+            $limite = "";
+        
+        $SQL = 'SELECT 
+                    dat_cadastro
+                    , hor_entrada
+                    , hor_saida
+                 FROM 
+                    fla_rotatividade
+                 WHERE 
+                    des_placa = "'.$des_placa.'"
+                 ORDER BY 
+                    dat_cadastro DESC'.$limite;
+        
+        $rsHistorico = $objConexao->prepare($SQL);
+        $rsHistorico->execute();
+        $count = $rsHistorico->rowCount();
+        $aux = 0;
+        if ($count > 0) {
+            while ($historico = $rsHistorico->fetch(PDO::FETCH_ASSOC)) {
+                foreach ($historico as $key => $value) {
+                    if (!empty($value))
+                        $arrHistorico[$aux][$key] = $value;
+                    else
+                        $arrHistorico[$aux][$key] = 0;
+                }
+                $aux++;
+            }
+            return $arrHistorico;
+        } else {
+            return false;
+        }        
     }
 
     public function buscaClientes($objCliente) {

@@ -3,8 +3,10 @@ include_once('../../includes/config.php');
 include_once('../../includes/funcao.php');
 require_once($path_relative . 'verifica.php');
 include_once($path_classes . 'fla_clientes.class.php');
+include_once($path_classes . 'fla_modelos.class.php');
 
 $objClientes = new fla_clientes();
+$objModelos = new fla_modelos();
 $arrClientes = $objClientes->buscaClientes($objClientes);
 ?>
 <html>
@@ -65,11 +67,20 @@ $arrClientes = $objClientes->buscaClientes($objClientes);
             ?>
             <div class="data">		
                 <h1 style="text-align:center;"> Clientes </h1>
+                <form>
+                        Palavra chave: <input name="palavra_chave" id="palava_chave" />
+                        <select>
+                                <option value="">Busca por </option>
+                                <option value="Nome">Nome</option>
+                                <option value="Placa">Placa</option>
+                        </select>
+                </form>
                 <table style="width:100%;" border="1" align="center">
                     <tr>
                         <th> Nome </th>
                         <th> Placa </th>
                         <th> Modelo </th>
+                        <th> Tipo de cliente </th>
                         <th> Editar </th>
                     </tr>
                     <?php
@@ -81,7 +92,11 @@ $arrClientes = $objClientes->buscaClientes($objClientes);
                             echo '<td>' . $arrClientes[$i]['nom_cliente'] . '</td>' . chr(10);
                         }
                         echo '<td>' . $arrClientes[$i]['des_placa'] . '</td>' . chr(10);
-                        echo '<td>' . $arrClientes[$i]['des_modelo'] . '</td>' . chr(10);
+                        $objModelos->set_cod_modelo($arrClientes[$i]['cod_modelo']);
+                        $arrModelos = $objModelos->buscaModelos($objModelos);
+                        $tipo_cliente = $arrClientes[$i]['tipo_cliente'] == "M" ? "Mensalista" : "Rotativo";
+                        echo '<td>' . $arrModelos[0]['des_modelo'] . '</td>' . chr(10);
+                        echo '<td>' . $tipo_cliente . '</td>' . chr(10);
                         echo sprintf('<td> <a href="cadastrar_cliente.php?cod_cliente=%s">Alterar dados</a> </td>', $arrClientes[$i]['cod_cliente']) . chr(10);
                         echo '</tr>' . chr(10);
                     }
