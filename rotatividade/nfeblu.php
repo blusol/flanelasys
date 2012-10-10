@@ -63,9 +63,19 @@ function geraLoteRPS($cod_rotatividade) {
     
     $iss_retido_rps = "0"; // Confirmar contadora
     
-    $indicador_cnpj_cpf_tomador_rps = "1";
-    
     $cnpj_cpf_tomador_rps = $arrClientes[0]["cpf_cnpj_cliente"];
+    
+    if (strlen($cnpj_cpf_tomador_rps) == 14) {
+        $indicador_cnpj_cpf_tomador_rps = "2";
+        $nome_tomador = $arrClientes[0]["nom_cliente"];       
+    } elseif ($cnpj_cpf_tomador_rps == 11) {
+        $indicador_cnpj_cpf_tomador_rps = "1";
+        $nome_tomador = "";
+    } else {
+        $indicador_cnpj_cpf_tomador_rps = "3";
+        $cnpj_cpf_tomador_rps = 0;
+        $nome_tomador = "";
+    }
     
     if (strlen($arrClientes[0]["cpf_cnpj_cliente"]) == "14") {
         $inscricao_municipal_tomador = $arrClientes[0]["insc_municipal_cliente"];
@@ -75,12 +85,16 @@ function geraLoteRPS($cod_rotatividade) {
         $inscricao_estadual_tomador = "";        
     }
     
-    $nome_tomador = $arrClientes[0]["nom_cliente"];
     $nome_tomador = str_pad($nome_tomador,115," ",STR_PAD_RIGHT);
-    $nome_tomador = str_replace(" "," ",$nome_tomador);
+    $nome_tomador = str_replace(" "," ",$nome_tomador);     
+    
+    $cnpj_cpf_tomador_rps = str_pad($cnpj_cpf_tomador_rps,14,0, STR_PAD_LEFT);
+    $inscricao_municipal_tomador = str_pad($inscricao_municipal_tomador,15,0, STR_PAD_LEFT);
+    $inscricao_estadual_tomador = str_pad($inscricao_estadual_tomador,15,0, STR_PAD_LEFT);
     
     $tipo_endereco = $arrClientes[0]["tip_rua_cliente"];
-    $tipo_endereco = str_pad($tipo_endereco,15," ",STR_PAD_RIGHT);
+    $tipo_endereco = substr($tipo_endereco,0,2);
+    $tipo_endereco = str_pad($tipo_endereco,3," ",STR_PAD_RIGHT);
     $tipo_endereco = str_replace(" "," ",$tipo_endereco);
     
     $endereco_tomador = $arrClientes[0]["des_end_cliente"];
