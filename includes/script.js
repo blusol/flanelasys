@@ -272,22 +272,25 @@ function processReqChange() {
 /*
  * Busca endereço o site dos correios
  */
-function getEndereco(cep) {
+function getEndereco(cep,url) {
     // Se o campo CEP não estiver vazio
-    if(cep != ""){
-        $.getScript("http://cep.republicavirtual.com.br/web_cep.php?formato=javascript&cep="+cep, function(){
-            // o getScript dá um eval no script, então é só ler!
-            //Se o resultado for igual a 1
-            if(resultadoCEP["resultado"]){
-                // troca o valor dos elementos
-                $("#tip_rua_cliente").val(unescape(resultadoCEP["tipo_logradouro"]));
-                $("#des_end_cliente").val(unescape(resultadoCEP["logradouro"]));
-                $("#bairro_end_cliente").val(unescape(resultadoCEP["bairro"]));
-                $("#cidade_cliente").val(unescape(resultadoCEP["cidade"]));
-                $("#estado_cliente").val(unescape(resultadoCEP["uf"]));
-            }else{
-                alert("Endereço não encontrado");
-            }
+    cep = cep.replace("-","");
+    if(cep != "" && url != "" ){
+        jQuery.ajax({
+             type: "GET",
+             url: url+"includes/buscacep.php",
+             data: {cep:cep},
+             dataType: "json",
+             success: function(json){ //Se ocorrer tudo certo
+                 if (json.erro) {
+                    alert(json.erro);
+                 } else {
+                    $("#des_end_cliente").val(json.logradouro);
+                    $("#bairro_end_cliente").val(json.bairro);
+                    $("#cidade_cliente").val(json.cidade);
+                    $("#estado_cliente").val(json.uf);
+                 }
+             }
         });
     }
 }

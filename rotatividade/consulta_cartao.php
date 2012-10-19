@@ -30,10 +30,7 @@
 			   join fla_clientes cli ON (cli.des_placa = rot.des_placa)
 			   join fla_precos pre ON (pre.cod_preco = rot.cod_preco)
 			where 
-			   rot.cod_cartao = ' . $cod_cartao 
-			   . ' AND rot.des_situacao = "P"';
-			   
-	//echo "<p>$SQL</p>";
+			   rot.cod_cartao = ' . $cod_cartao;
 	$rsCartao = $objConexao->prepare($SQL);
 	$rsCartao->execute();
 	

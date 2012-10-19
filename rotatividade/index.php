@@ -229,7 +229,7 @@ $arrRotatividade = $objRotatividade->buscaCarrosEstacionados();
                             <fieldset>
                                 <legend> Dados do veiculo </legend>
                                 <label for="cod_cartao">Cartão:</label>
-                                <input type="text" class="text numeric" onChange="consultaCartao(this.value);" onBlur="consultaCartao(this.value)"; name="cod_cartao" id="cod_cartao" maxlength="10" size="10">
+                                <input type="text" class="text numeric" onChange="consultaCartao(this.value);" onBlur="consultaCartao(this.value);" name="cod_cartao" id="cod_cartao" maxlength="20" size="20">
                                        <label for="des_placa">Placa:</label>
                                 <input style="text-transform: uppercase;"  class="text"  value="" onChange="consultaPlaca(this.value);" onBlur="consultaPlaca(this.value)"; type="text" name="des_placa" id="des_placa" maxlength="8" size="10">
                                        <br>

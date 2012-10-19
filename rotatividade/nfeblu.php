@@ -4,6 +4,8 @@ include_once($path_includes.'funcao.php');
 include_once($path_classes.'fla_conexao.class.php');
 include_once($path_classes.'fla_rotatividade.class.php');
 include_once($path_classes.'fla_clientes.class.php');
+include_once($path_classes.'fla_nfes.class.php');
+include_once($path_classes.'fla_notablu.class.php');
 
 $cod_rotatividade = "";
 $valor = 0;
@@ -16,10 +18,23 @@ if (isset($_GET['cod_rotatividade']) && !empty($_GET['cod_rotatividade'])) {
     Header("Location:".$url."index.php");
 }
 
-geraLoteRPS($cod_rotatividade);
+//geraLoteRPS($cod_rotatividade);
+geraRPS($cod_rotatividade);
 
-function geraRPS() {
+function imprimeRPS($cod_rps) {
+    $objNotablu = new fla_notablu();    
+    $objNotablu->geraImpressao($cod_rps);
+}
+
+function geraRPS($cod_rotatividade) {
+    $objNotablu = new fla_notablu();    
+    $objNFE = new FLA_NFES();
     
+    $objNFE->set_cod_rotatividade($cod_rotatividade);
+    $cod_rps = $objNFE->insereNFE($objNFE);
+    imprimeRPS($cod_rps);
+    exit;
+    Header("Location:".$url."rotatividade/index.php");
 }
 
 function geraLoteRPS($cod_rotatividade) {
@@ -34,7 +49,7 @@ function geraLoteRPS($cod_rotatividade) {
     $nome_arquivo = date("d").".txt";
     
     existeDiretorio("A",$path_notablu);
-    existeDiretorio("M",$path_notablu.$ano_atual.DS);    
+    existeDiretorio("M",$path_notablu.$ano_atual.DS);
     
     $objRotatividade->set_cod_rotatividade($cod_rotatividade);
     $objRotatividade->set_des_situacao("L");

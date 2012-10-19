@@ -264,7 +264,7 @@ include_once("../../menu.php");
                         </tr>
                         <tr>
                             <td> Cep </td>
-                            <td> <input type="text" value="<?php echo $arrCliente[0]['cep_cliente'];?>" id="cep_cliente" name="cep_cliente" onblur="getEndereco(this.value)"></td>
+                            <td> <input type="text" value="<?php echo $arrCliente[0]['cep_cliente'];?>" id="cep_cliente" name="cep_cliente" onblur="getEndereco(this.value,'<?php echo $url;?>')"></td>
                         </tr>
                         <tr>
                             <td> Endereço </td>

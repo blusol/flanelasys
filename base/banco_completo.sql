@@ -2,10 +2,10 @@
 -- version 3.3.7deb7
 -- http://www.phpmyadmin.net
 --
--- Host: localhost
--- Generation Time: Oct 09, 2012 at 10:51 PM
--- Server version: 5.1.63
--- PHP Version: 5.3.3-7+squeeze13
+-- Servidor: localhost
+-- Tempo de Geração: Out 19, 2012 as 09:04 AM
+-- Versão do Servidor: 5.1.63
+-- Versão do PHP: 5.3.3-7+squeeze14
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
@@ -16,13 +16,13 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Database: `flanelasys`
+-- Banco de Dados: `flanelasys`
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `fla_clientes`
+-- Estrutura da tabela `fla_clientes`
 --
 
 CREATE TABLE IF NOT EXISTS `fla_clientes` (
@@ -46,10 +46,10 @@ CREATE TABLE IF NOT EXISTS `fla_clientes` (
   `cod_modelo` int(6) DEFAULT NULL,
   `cod_marca` int(6) DEFAULT NULL,
   PRIMARY KEY (`cod_cliente`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=20 ;
 
 --
--- Dumping data for table `fla_clientes`
+-- Extraindo dados da tabela `fla_clientes`
 --
 
 INSERT INTO `fla_clientes` (`cod_cliente`, `nom_cliente`, `cpf_cnpj_cliente`, `insc_municipal_cliente`, `insc_estadual_cliente`, `email_cliente`, `cep_cliente`, `tip_rua_cliente`, `des_end_cliente`, `num_end_cliente`, `com_end_cliente`, `bairro_end_cliente`, `estado_cliente`, `cidade_cliente`, `tipo_cliente`, `des_cor`, `des_placa`, `cod_modelo`, `cod_marca`) VALUES
@@ -57,12 +57,26 @@ INSERT INTO `fla_clientes` (`cod_cliente`, `nom_cliente`, `cpf_cnpj_cliente`, `i
 (2, 'Fabiola C. Zoboli', '08999666000133', '444555666', '111222333', 'fabyzobli@yahoo.com.br', '89020-540', 'Rua', 'Custódio Seberino Cardoso', 17, 'Casa', 'Garcia', 'SC', 'Blumenau', 'R', 4, 'mmk-0017', 430, 25),
 (3, '', '0', '0', '0', '', '00000-000', 'Rua', '', 0, '', '', 'SC', 'Blumenau', 'R', 0, 'XXX-9661', 0, 0),
 (4, '', '0', '0', '0', '', '00000-000', 'Rua', '', 0, '', '', 'SC', 'Blumenau', 'R', 0, 'XXX-9670', 0, 0),
-(5, '', '0', '0', '0', '', '00000-000', 'Rua', '', 0, '', '', 'SC', 'Blumenau', 'R', 0, 'XXX-9681', 0, 0);
+(5, '', '0', '0', '0', '', '00000-000', 'Rua', '', 0, '', '', 'SC', 'Blumenau', 'R', 0, 'XXX-9681', 0, 0),
+(6, '', '0', '0', '0', '', '00000-000', 'Rua', '', 0, '', '', 'SC', 'Blumenau', 'R', 0, 'XXX-6857', 0, 0),
+(7, '', '0', '0', '0', '', '00000-000', 'Rua', '', 0, '', '', 'SC', 'Blumenau', 'R', 0, 'XXX-6919', 0, 0),
+(8, '', '0', '0', '0', '', '00000-000', 'Rua', '', 0, '', '', 'SC', 'Blumenau', 'R', 0, 'XXX-6922', 0, 0),
+(9, '', '0', '0', '0', '', '00000-000', 'Rua', '', 0, '', '', 'SC', 'Blumenau', 'R', 0, 'XXX-6924', 0, 0),
+(10, '', '0', '0', '0', '', '00000-000', 'Rua', '', 0, '', '', 'SC', 'Blumenau', 'R', 0, 'XXX-6982', 0, 0),
+(11, '', '0', '0', '0', '', '00000-000', 'Rua', '', 0, '', '', 'SC', 'Blumenau', 'R', 0, 'XXX-6997', 0, 0),
+(12, '', '0', '0', '0', '', '00000-000', 'Rua', '', 0, '', '', 'SC', 'Blumenau', 'R', 0, 'XXX-7002', 0, 0),
+(13, '', '0', '0', '0', '', '00000-000', 'Rua', '', 0, '', '', 'SC', 'Blumenau', 'R', 0, 'XXX-7005', 0, 0),
+(14, '', '0', '0', '0', '', '00000-000', 'Rua', '', 0, '', '', 'SC', 'Blumenau', 'R', 0, 'XXX-7124', 0, 0),
+(15, '', '0', '0', '0', '', '00000-000', 'Rua', '', 0, '', '', 'SC', 'Blumenau', 'R', 0, 'XXX-7132', 0, 0),
+(16, '', '0', '0', '0', '', '00000-000', 'Rua', '', 0, '', '', 'SC', 'Blumenau', 'R', 0, 'XXX-7152', 0, 0),
+(17, '', '0', '0', '0', '', '00000-000', 'Rua', '', 0, '', '', 'SC', 'Blumenau', 'R', 0, 'XXX-8512', 0, 0),
+(18, '', '0', '0', '0', '', '00000-000', 'Rua', '', 0, '', '', 'SC', 'Blumenau', 'R', 0, 'XXX-4091', 0, 0),
+(19, '', '0', '0', '0', '', '00000-000', 'Rua', '', 0, '', '', 'SC', 'Blumenau', 'R', 0, 'XXX-5847', 0, 0);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `fla_cores`
+-- Estrutura da tabela `fla_cores`
 --
 
 CREATE TABLE IF NOT EXISTS `fla_cores` (
@@ -72,7 +86,7 @@ CREATE TABLE IF NOT EXISTS `fla_cores` (
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `fla_cores`
+-- Extraindo dados da tabela `fla_cores`
 --
 
 INSERT INTO `fla_cores` (`cod_cor`, `des_cor`) VALUES
@@ -99,7 +113,7 @@ INSERT INTO `fla_cores` (`cod_cor`, `des_cor`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `fla_descontos`
+-- Estrutura da tabela `fla_descontos`
 --
 
 CREATE TABLE IF NOT EXISTS `fla_descontos` (
@@ -110,7 +124,7 @@ CREATE TABLE IF NOT EXISTS `fla_descontos` (
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
 
 --
--- Dumping data for table `fla_descontos`
+-- Extraindo dados da tabela `fla_descontos`
 --
 
 INSERT INTO `fla_descontos` (`cod_desconto`, `des_desconto`, `val_desconto`) VALUES
@@ -121,7 +135,7 @@ INSERT INTO `fla_descontos` (`cod_desconto`, `des_desconto`, `val_desconto`) VAL
 -- --------------------------------------------------------
 
 --
--- Table structure for table `fla_empresas`
+-- Estrutura da tabela `fla_empresas`
 --
 
 CREATE TABLE IF NOT EXISTS `fla_empresas` (
@@ -143,14 +157,14 @@ CREATE TABLE IF NOT EXISTS `fla_empresas` (
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 --
--- Dumping data for table `fla_empresas`
+-- Extraindo dados da tabela `fla_empresas`
 --
 
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `fla_marcas`
+-- Estrutura da tabela `fla_marcas`
 --
 
 CREATE TABLE IF NOT EXISTS `fla_marcas` (
@@ -162,7 +176,7 @@ CREATE TABLE IF NOT EXISTS `fla_marcas` (
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=157 ;
 
 --
--- Dumping data for table `fla_marcas`
+-- Extraindo dados da tabela `fla_marcas`
 --
 
 INSERT INTO `fla_marcas` (`cod_marca`, `des_marca`, `ind_disponivel`, `ind_popular`) VALUES
@@ -308,7 +322,7 @@ INSERT INTO `fla_marcas` (`cod_marca`, `des_marca`, `ind_disponivel`, `ind_popul
 -- --------------------------------------------------------
 
 --
--- Table structure for table `fla_modelos`
+-- Estrutura da tabela `fla_modelos`
 --
 
 CREATE TABLE IF NOT EXISTS `fla_modelos` (
@@ -321,7 +335,7 @@ CREATE TABLE IF NOT EXISTS `fla_modelos` (
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1331 ;
 
 --
--- Dumping data for table `fla_modelos`
+-- Extraindo dados da tabela `fla_modelos`
 --
 
 INSERT INTO `fla_modelos` (`cod_modelo`, `des_modelo`, `cod_marca`, `ind_disponivel`, `ind_popular`) VALUES
@@ -1657,7 +1671,34 @@ INSERT INTO `fla_modelos` (`cod_modelo`, `des_modelo`, `cod_marca`, `ind_disponi
 -- --------------------------------------------------------
 
 --
--- Table structure for table `fla_precos`
+-- Estrutura da tabela `fla_nfes`
+--
+
+CREATE TABLE IF NOT EXISTS `fla_nfes` (
+  `cod_nfe` int(11) NOT NULL AUTO_INCREMENT,
+  `cod_rotatividade` int(11) NOT NULL,
+  `dat_criacao` datetime DEFAULT NULL,
+  `dat_enviado` datetime DEFAULT NULL,
+  `ind_enviado` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`cod_nfe`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7 ;
+
+--
+-- Extraindo dados da tabela `fla_nfes`
+--
+
+INSERT INTO `fla_nfes` (`cod_nfe`, `cod_rotatividade`, `dat_criacao`, `dat_enviado`, `ind_enviado`) VALUES
+(1, 1, '2012-10-19 07:38:51', NULL, 0),
+(2, 1, '2012-10-19 07:40:40', NULL, 0),
+(3, 1, '2012-10-19 07:42:10', NULL, 0),
+(4, 1, '2012-10-19 08:11:06', NULL, 0),
+(5, 1, '2012-10-19 08:13:37', NULL, 0),
+(6, 1, '2012-10-19 08:13:40', NULL, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura da tabela `fla_precos`
 --
 
 CREATE TABLE IF NOT EXISTS `fla_precos` (
@@ -1675,7 +1716,7 @@ CREATE TABLE IF NOT EXISTS `fla_precos` (
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC AUTO_INCREMENT=5 ;
 
 --
--- Dumping data for table `fla_precos`
+-- Extraindo dados da tabela `fla_precos`
 --
 
 INSERT INTO `fla_precos` (`cod_preco`, `des_preco`, `val_minimo`, `tip_cobranca`, `val_hora`, `val_fracao`, `tem_tolerancia`, `val_diaria`, `tem_diaria`, `tem_minimo`) VALUES
@@ -1686,7 +1727,7 @@ INSERT INTO `fla_precos` (`cod_preco`, `des_preco`, `val_minimo`, `tip_cobranca`
 -- --------------------------------------------------------
 
 --
--- Table structure for table `fla_rotatividade`
+-- Estrutura da tabela `fla_rotatividade`
 --
 
 CREATE TABLE IF NOT EXISTS `fla_rotatividade` (
@@ -1706,22 +1747,20 @@ CREATE TABLE IF NOT EXISTS `fla_rotatividade` (
   `val_desconto` decimal(5,2) DEFAULT '0.00',
   `cod_desconto` int(6) DEFAULT NULL,
   PRIMARY KEY (`cod_rotatividade`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=8 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
 
 --
--- Dumping data for table `fla_rotatividade`
+-- Extraindo dados da tabela `fla_rotatividade`
 --
 
 INSERT INTO `fla_rotatividade` (`cod_rotatividade`, `des_placa`, `hor_entrada`, `hor_saida`, `dat_cadastro`, `dat_saida`, `cod_preco`, `val_total`, `val_cobrado`, `des_justificativa`, `des_situacao`, `cod_cartao`, `tem_permanencia`, `val_desconto`, `cod_desconto`) VALUES
-(1, 'mbe-3431', '20:01:07', '16:41:53', '2012-09-12', '2012-09-30', 1, '10.00', '10.00', 'Cobrado diaria', 'L', 1, '428:4', '0.00', 0),
-(2, 'mmk-0017', '22:57:34', '23:07:37', '2012-09-30', '2012-09-30', 1, '2.50', '2.50', '', 'L', 2, '00:10', '0.00', 0),
-(3, 'mmk-0017', '22:33:28', '23:33:46', '2012-10-04', '2012-10-04', 1, '3.00', '3.00', '', 'L', 3, '01:00', '0.00', 0),
-(7, 'mbe-3431', '19:29:35', '21:31:33', '2012-10-08', '2012-10-08', 1, '5.50', '5.00', 'Desconto', 'L', 3431, '02:02', '0.00', 0);
+(1, 'mbe-3431', '06:17:22', '07:36:34', '2012-10-19', '2012-10-19', 1, '5.50', '5.50', '', 'L', 33, '01:19', '0.00', 0),
+(2, 'XXX-5847', '12:12:27', '16:33:14', '2012-10-13', '2012-10-13', 1, '13.00', '13.00', '', 'L', 3, '04:21', '0.00', 0);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `fla_usuarios`
+-- Estrutura da tabela `fla_usuarios`
 --
 
 CREATE TABLE IF NOT EXISTS `fla_usuarios` (
@@ -1735,7 +1774,7 @@ CREATE TABLE IF NOT EXISTS `fla_usuarios` (
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
 
 --
--- Dumping data for table `fla_usuarios`
+-- Extraindo dados da tabela `fla_usuarios`
 --
 
 INSERT INTO `fla_usuarios` (`cod_usuario`, `nom_usuario`, `des_login`, `des_senha`, `cod_tipo`, `ind_ativo`) VALUES
