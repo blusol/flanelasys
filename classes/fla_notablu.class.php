@@ -36,13 +36,13 @@ class fla_notablu {
         $objClientes->set_des_placa($arrRotatividade[0]['des_placa']);
         $arrClientes = $objClientes->buscaClientes($objClientes);
         
-        $pdf = new TCPDF("P", "cm", PDF_PAGE_FORMAT, true, 'UTF-8', false);        
-        $pdf->SetMargins(2,2);
+        $pdf = new TCPDF("P", "cm", 'G7', true, 'IBM850', false);        
+        $pdf->SetMargins(0,0,0,false);
         $pdf->SetFont('times', 'BI', 14);
         $pdf->AddPage();        
         
         $nom_prestador  = "Hermann's Park";
-        $end_prestador  = "Rua Engenheiro Rodolfo Ferraz, 293";
+        $end_prestador  = "Rua Eng. Rodolfo Ferraz, 293";
         $bairro_prestador = "Centro";
         $cep_prestador = "00000-000";
         $cid_prestador  = "Blumenau";
@@ -93,7 +93,7 @@ class fla_notablu {
                                 , "Periodo: ".$periodo_estadia
                                 , "Total do servico: R$ ".$valor
                     );
-        $texto_rodape = "Este RPS sera convertido em NFS-e em ate 10 (DEZ) dias. Para confirmar acesse www.blumenau.sc.gov.br/nfse";
+        $texto_rodape = "Este RPS sera convertido em NFS-e em ate 10dias.\r\nPara confirmar acesse www.blumenau.sc.gov.br/nfse";
         $documento_tomador = $arrClientes[0]['cpf_cnpj_cliente'];
         if (strlen($documento_tomador) == 14)
             $documento_tomador = mascara_string ("##.###.###/####-##", $documento_tomador);
@@ -109,28 +109,28 @@ class fla_notablu {
                           , $texto_rodape_
                         );
         $conteudo_impressao = $cabecalho."\r\n".$conteudo.$rodape;
+        $conteudo_impressao = iconv('UTF-8','IBM850',$conteudo_impressao);
+        //echo "<pre>$conteudo_impressao</pre>";
+        //$pdf->Write($h=0, $conteudo_impressao, $link='', $fill=0, $align='C', $ln=true, $stretch=0, $firstline=false, $firstblock=false, $maxh=0);
+        //$pdf->Output('example_002.pdf', 'I');
+        //echo rawurlencode($conteudo_impressao);
         
-        //echo $conteudo_impressao;
-        //$pdf->Write($h=0, $conteudo_impressao);
-        
-        //$pdf->Output("impressao_rps.pdf","I");
-        $printer = $conteudo_impressao;
-        $printerName = array(array('usb://BEMATECH/MP-2500TH','BEMATECH  MP-2500TH'));
-                $lines = "^XA
-        ^FO020,110^ADB1,1^FD0.980.6820/ 1 ^FS
-        ^FO050,90^BCB,50,Y,N^BY2,,50^FD 6741 ^FS
-        ^FO200,110^ADB1,1^FD0.980.6820/ 2 ^FS
-        ^FO230,90^BCB,50,Y,N^BY2,,50^FD 6742 ^FS
-        ^FO380,110^ADB1,1^FD0.980.6820/ 3 ^FS
-        ^FO410,90^BCB,50,Y,N^BY2,,50^FD 6743 ^FS
-        ^PRA
-        ^PQ1
-        ^XZ";
+// GUID no registro do windos
+ $bema = new COM("{310DBDAC-85FF-4008-82A8-E22A09F9460B}"); 
+// na porta paralela 1
+ $init = $bema->IniciaPorta("COM4"); 
+ if ($init <= 0) {
+    echo "Problemas de Comunicacao com a impressora";
+    exit;
+ }
+ $bema->FormataTX("Teste 01\n", 2, 0 , 0, 0, 0);
 
-        $handle = printer_open($printerName[$printer][0]);
-        printer_write($handle, $lines);
-        printer_close($handle);
-        
+ $bema->FormataTX("Teste 02\n", 2, 1 , 0, 1, 0);
+
+ $bema->FormataTX("Teste 03\n", 3, 0 , 0, 0, 0);
+
+ $bema->AcionaGuilhotina(1);
+ $bema->FechaPorta();        
         
     }
     
