@@ -61,7 +61,7 @@
 	<body>
 		<div class="content">
 <?php
-			include_once("../../menu.php");
+			include_once("../../cabecalho.php");
 ?>
 			<div class="data">		
 				<h1 style="text-align:center;"> Cores </h1>

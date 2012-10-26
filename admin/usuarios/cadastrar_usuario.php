@@ -132,7 +132,7 @@
 	<body>
 		<div class="content">
 <?php
-			include_once("../../menu.php");
+			include_once("../../cabecalho.php");
 ?>
 			<form method="POST" action="">
 			<div class="data">

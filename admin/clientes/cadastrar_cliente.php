@@ -221,7 +221,7 @@ if (strlen($arrCliente[0]["cpf_cnpj_cliente"]) == 14) {
     <body onLoad="exibeModeloSelect(<?php echo $arrCliente[0]['cod_marca']; ?>,<?php echo $arrCliente[0]['cod_modelo']; ?>);setaModelo(<?php echo $arrCliente[0]['cod_modelo']; ?>)">
         <div class="content">
 <?php
-include_once("../../menu.php");
+include_once("../../cabecalho.php");
 ?>
             <div class="data">
                 <h1> Cadastro de clientes </h1>	

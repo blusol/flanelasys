@@ -21,9 +21,6 @@
   $path_nfes = $path_relative . 'nfes' . DS;
   $path_notablu = $path_nfes . 'notablu' . DS;
   
-  // Defiinindo caminho lógicos das bibliotecas externas
-  $path_lib_adodb = $path_libraries_relative . DS .'adodb' . DS;
-  
   
 
   // Definindo a Url para o módulo de administração
@@ -38,5 +35,5 @@
   $url_libs       = $url . 'libs' . DS ;
   
   // Setando o fuso horario manualmente
-  ini_set('date.timezone', 'America/Sao_Paulo');
+  ini_set('date.timezone', 'America/Belem');
 ?>

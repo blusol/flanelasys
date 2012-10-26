@@ -43,49 +43,6 @@ if (isset($_POST['gerarlote'])) {
         <script type="text/javascript" src="<?php echo $url_lib_jquery ?>plugins/jquery-ui/ui/ui.datepicker.js"></script>
         <script type="text/javascript" src="<?php echo $url_lib_jquery ?>plugins/jquery-ui/ui/i18n/ui.datepicker-pt-BR.js"></script>		
         <script type="text/javascript" src="<?php echo $url_includes . 'script.js'; ?>"></script>		
-        <style type="text/css">
-            /* menu styles */
-            #jsddm
-            {	margin: 0;
-              padding: 0}
-
-            #jsddm li
-            {	float: left;
-              list-style: none;
-              font: 12px Tahoma, Arial}
-
-            #jsddm li a
-            {	display: block;
-              background: #324143;
-              padding: 5px 12px;
-              text-decoration: none;
-              border-right: 1px solid white;
-              width: 100px;
-              color: #EAFFED;
-              white-space: nowrap}
-
-            #jsddm li a:hover
-            {	background: #24313C}
-
-            #jsddm li ul
-            {	margin: 0;
-              padding: 0;
-              position: absolute;
-              visibility: hidden;
-              border-top: 1px solid white}
-
-            #jsddm li ul li
-            {	float: none;
-              display: inline}
-
-            #jsddm li ul li a
-            {	width: auto;
-              background: #A9C251;
-              color: #24313C}
-
-            #jsddm li ul li a:hover
-            {	background: #8EA344}
-        </style>		
         <script type="text/javascript">
             $(function() {
                 $("#dat_inicio").datepicker(
@@ -119,7 +76,7 @@ if (isset($_POST['gerarlote'])) {
     <body>
         <div class="content">
             <?php
-            include_once("../menu.php");
+            include_once("../cabecalho.php");
             ?>
 
             <div class="data">		

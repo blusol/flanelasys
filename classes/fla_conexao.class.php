@@ -2,7 +2,7 @@
 class fla_conexao extends PDO {
 	private $dsn = 'mysql:dbname=flanelasys;host=127.0.0.1';
 	private $user = 'root';
-	private $password = '@d3n0r8r@nd1';
+	private $password = '';
         private $handle;
 
 	function __construct () {

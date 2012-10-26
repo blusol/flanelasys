@@ -165,56 +165,12 @@ $arrRotatividade = $objRotatividade->buscaCarrosEstacionados();
 			
         </script>
         <link href="../images/style.css" rel="stylesheet" type="text/css" />
-
-        <style type="text/css">
-            /* menu styles */
-            #jsddm
-            {	margin: 0;
-              padding: 0}
-
-            #jsddm li
-            {	float: left;
-              list-style: none;
-              font: 12px Tahoma, Arial}
-
-            #jsddm li a
-            {	display: block;
-              background: #324143;
-              padding: 5px 12px;
-              text-decoration: none;
-              border-right: 1px solid white;
-              width: 100px;
-              color: #EAFFED;
-              white-space: nowrap}
-
-            #jsddm li a:hover
-            {	background: #24313C}
-
-            #jsddm li ul
-            {	margin: 0;
-              padding: 0;
-              position: absolute;
-              visibility: hidden;
-              border-top: 1px solid white}
-
-            #jsddm li ul li
-            {	float: none;
-              display: inline}
-
-            #jsddm li ul li a
-            {	width: auto;
-              background: #A9C251;
-              color: #24313C}
-
-            #jsddm li ul li a:hover
-            {	background: #8EA344}
-        </style>
     </head>
     <body onload="carrega();">
         <div class="content">
-            <?php
-            include_once("../menu.php");
-            ?>
+            <?php include_once("../cabecalho.php"); ?>                    
+
+            <div style="clear:both;"></div>
             <div class="data">
                 <p> Módulo de rotatividade </p>
                 <div class="success"> <?php echo $msgRetorno; ?> </div>		
@@ -235,7 +191,7 @@ $arrRotatividade = $objRotatividade->buscaCarrosEstacionados();
                                        <br>
                                 <label for="cod_marca">Marca:</label>
                                 <select name="cod_marca" onChange="exibeModeloSelect(this.value,document.form.cod_modelo.value);" onBlur="exibeModeloSelect(this.value,document.form.cod_modelo.value);" id="cod_marca">
-                                    <option value="0">Selecione</option>
+                                    <option value="0">Procurar >></option>
                                     <?php
                                     $marca = get_marcas();
                                     $ind_popular = true;
@@ -254,12 +210,12 @@ $arrRotatividade = $objRotatividade->buscaCarrosEstacionados();
                                 </select>
                                 <label for="cod_modelo">Modelo:</label>
                                 <select name="cod_modelo" onChange="setaModelo(this.value);" onBlur="setaModelo(this.value);" id="cod_modelo">
-                                    <option value="0">Selecione</option>
+                                    <option value="0">Procure >></option>
                                 </select>
                                 <br>
                                 <label for="des_cor">Cor:</label>
                                 <select name="des_cor" id="des_cor">
-                                    <option value="0">Selecione</option>
+                                    <option value="0">Procure >></option>
                                     <option value="1">Amarela</option>
                                     <option value="2">Azul</option>
                                     <option value="3">Bege</option>
@@ -299,7 +255,7 @@ $arrRotatividade = $objRotatividade->buscaCarrosEstacionados();
                                 <label for="val_total">Valor Total</label>: <input class="text" type="text" style="width:50px;" readonly name="val_total" id="val_total" value="<?php echo $val_total; ?>">
                                 <label for="cod_desconto">Desconto</label>: 
                                 <select onChange="consultaDesconto(this.value);" onBlur="consultaDesconto(this.value)"; class="text" id="cod_desconto" name="cod_desconto">	
-                                        <option value=""> Selecione </option>
+                                        <option value=""> Sem desconto </option>
                                             <?php
                                             for ($i = 0; $i < count($arrDescontos); $i++) {
                                                 echo sprintf('<option value="%s">%s</option>', $arrDescontos[$i]['cod_desconto'], $arrDescontos[$i]['des_desconto']) . chr(10);

@@ -11,7 +11,7 @@ div.content {
 }
 div.content h1 {
 	font-size:18pt;
-	border-bottom:5px solid #a00;
+	border-bottom:5px solid #2F3193;
 	padding:0px;
 	margin:10px 0px 20px;
 	width:100%;
@@ -28,7 +28,7 @@ div.content h3 {
 
 p {
 	font-size:12pt;
-	border-bottom:5px solid #a00;
+	border-bottom:5px solid #2F3193;
 	padding:0px;
     text-align: left;
 	margin:10px 0px 20px;
@@ -157,7 +157,7 @@ border-collapse:collapse;
 #fechamento_caixa td, #fechamento_caixa th 
 {
 font-size:1em;
-border:1px solid #AA0000;
+border:1px solid #2F3193;
 padding:3px 7px 2px 7px;
 text-align: center;
 }
@@ -167,7 +167,7 @@ font-size:12px;
 text-align: center;
 padding-top:5px;
 padding-bottom:4px;
-background-color:#AA0000;
+background-color:#2F3193;
 color:#ffffff;
 }
 #fechamento_caixa tr.alt td 
@@ -223,13 +223,63 @@ text-align: left;
 p.rodape {
 	font-size: 8pt;
 	text-align: center;
-	border-top:5px solid #a00;
+	border-top:5px solid #2F3193;
 	padding:0px;
 	margin:10px 0px 20px;
 	width:100%;
 	font-weight: bolder;		
 }
 
+.ajuda {
+    border: none;
+    font-size: 12pt;
+    font-weight: bolder;
+}
+
 legend {
 	font-weight: bolder;
+}
+
+/* menu styles */
+#jsddm
+{	margin: 0;
+  padding: 0}
+
+#jsddm li
+{	float: left;
+  list-style: none;
+  font: 12px Tahoma, Arial}
+
+#jsddm li a
+{	display: block;
+  background: #2F3193;
+  padding: 5px 12px;
+  text-decoration: none;
+  border-right: 1px solid white;
+  width: 100px;
+  color: #EAFFED;
+  white-space: nowrap}
+
+#jsddm li a:hover
+{	background: #C5DFE8}
+
+#jsddm li ul
+{	margin: 0;
+  padding: 0;
+  position: absolute;
+  visibility: hidden;
+  border-top: 1px solid white}
+
+#jsddm li ul li
+{	float: none;
+  display: inline}
+
+#jsddm li ul li a
+{	width: auto;
+  background: #2F3193;
+  color: #FFFFFF}
+
+#jsddm li ul li a:hover
+{	background: #C5DFE8;
+        color: #000000;
 }

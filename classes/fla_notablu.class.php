@@ -36,9 +36,11 @@ class fla_notablu {
         $objClientes->set_des_placa($arrRotatividade[0]['des_placa']);
         $arrClientes = $objClientes->buscaClientes($objClientes);
         
-        $pdf = new TCPDF("P", "cm", 'G7', true, 'IBM850', false);        
-        $pdf->SetMargins(0,0,0,false);
-        $pdf->SetFont('times', 'BI', 14);
+        $pdf = new TCPDF("P", "in", 'ETIQUETA', true, 'IBM850', false);        
+        $pdf->SetMargins(0,0,0,true);
+        $pdf->SetFont('times', 'B', 10);
+        $pdf->setPrintHeader(false);
+        $pdf->setPrintFooter(false);
         $pdf->AddPage();        
         
         $nom_prestador  = "Hermann's Park";
@@ -55,7 +57,7 @@ class fla_notablu {
         else
             $insc_estadual_prestador = "ISENTO";
         
-        $cabecalho = sprintf("%s\r\n%s\r\nBairro: %s - CEP: %s\r\n%s/%s\r\nTelefone: %s\r\n%s\r\n",
+        $cabecalho = sprintf("\r\n%s\r\n%s\r\nBairro: %s - CEP: %s\r\n%s/%s\r\nTelefone: %s\r\n%s\r\n",
                             $nom_prestador
                             , $end_prestador
                             , $bairro_prestador
@@ -67,7 +69,7 @@ class fla_notablu {
                             , "Insc. Municipal: ".$insc_municipal_prestador
                             , "Insc. Estadual:".$insc_estadual_prestador
                     );
-        $titulo = "RECIBO PROVISORIO DE SERVICOS - RPS";
+        $titulo = "RECIBO PROVISORIO DE SERVICOS(RPS)";
         $sub_titulo = "ESTADIA EM ESTACIONAMENTO\r\n";
         $dat_recibo = mostraData($arrRotatividade[0]['dat_cadastro']);
         $numero_rps = $arrNFE[0]['cod_nfe'];
@@ -93,7 +95,7 @@ class fla_notablu {
                                 , "Periodo: ".$periodo_estadia
                                 , "Total do servico: R$ ".$valor
                     );
-        $texto_rodape = "Este RPS sera convertido em NFS-e em ate 10dias.\r\nPara confirmar acesse www.blumenau.sc.gov.br/nfse";
+        $texto_rodape = "Este RPS sera convertido em NFS-e em ate\r\n10 dias.\r\nPara confirmar acesse\r\nwww.blumenau.sc.gov.br/nfse";
         $documento_tomador = $arrClientes[0]['cpf_cnpj_cliente'];
         if (strlen($documento_tomador) == 14)
             $documento_tomador = mascara_string ("##.###.###/####-##", $documento_tomador);
@@ -110,28 +112,8 @@ class fla_notablu {
                         );
         $conteudo_impressao = $cabecalho."\r\n".$conteudo.$rodape;
         $conteudo_impressao = iconv('UTF-8','IBM850',$conteudo_impressao);
-        //echo "<pre>$conteudo_impressao</pre>";
-        //$pdf->Write($h=0, $conteudo_impressao, $link='', $fill=0, $align='C', $ln=true, $stretch=0, $firstline=false, $firstblock=false, $maxh=0);
-        //$pdf->Output('example_002.pdf', 'I');
-        //echo rawurlencode($conteudo_impressao);
-        
-// GUID no registro do windos
- $bema = new COM("{310DBDAC-85FF-4008-82A8-E22A09F9460B}"); 
-// na porta paralela 1
- $init = $bema->IniciaPorta("COM4"); 
- if ($init <= 0) {
-    echo "Problemas de Comunicacao com a impressora";
-    exit;
- }
- $bema->FormataTX("Teste 01\n", 2, 0 , 0, 0, 0);
-
- $bema->FormataTX("Teste 02\n", 2, 1 , 0, 1, 0);
-
- $bema->FormataTX("Teste 03\n", 3, 0 , 0, 0, 0);
-
- $bema->AcionaGuilhotina(1);
- $bema->FechaPorta();        
-        
+        $pdf->Write($h=0, $conteudo_impressao, $link='', $fill=0, $align='J', $ln=true, $stretch=0, $firstline=false, $firstblock=false, $maxh=0);
+        $pdf->Output('example_002.pdf', 'D');
     }
     
     function enviaDados($dados) {

@@ -127,7 +127,7 @@ $arrDescontos = $objDescontos->buscaDescontos($objDescontos);
     <body>
         <div class="content">
             <?php
-            include_once("../../menu.php");
+            include_once("../../cabecalho.php");
             ?>
             <div class="data">		
                 <h1 style="text-align:center;"> Configurações Gerais </h1>

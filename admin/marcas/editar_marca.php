@@ -122,7 +122,7 @@
 	<body>
 		<div class="content">
 <?php
-			include_once("../../menu.php");
+			include_once("../../cabecalho.php");
 ?>
 			<div class="data">
 				<h1> Módulo de marcas </h1>				

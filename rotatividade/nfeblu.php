@@ -11,17 +11,15 @@ $cod_rotatividade = "";
 $valor = 0;
 $arrClientes = array();
 
-/*
+
 if (isset($_GET['cod_rotatividade']) && !empty($_GET['cod_rotatividade'])) {
     $cod_rotatividade = $_GET['cod_rotatividade'];
     $cod_rotatividade = base64_decode(hexToStr($cod_rotatividade));
-} else {
-    Header("Location:".$url."index.php");
 }
 
 //geraLoteRPS($cod_rotatividade);
 geraRPS($cod_rotatividade);
-*/
+
 function imprimeRPS($cod_rps) {
     $objNotablu = new fla_notablu();    
     $objNotablu->geraImpressao($cod_rps);
@@ -33,8 +31,8 @@ function geraRPS($cod_rotatividade) {
     
     $objNFE->set_cod_rotatividade($cod_rotatividade);
     $cod_rps = $objNFE->insereNFE($objNFE);
-   // imprimeRPS($cod_rps);
-   // exit;
+    imprimeRPS($cod_rps);
+    exit;
     Header("Location:".$url."rotatividade/index.php");
 }
 
