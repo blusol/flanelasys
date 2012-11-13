@@ -283,3 +283,7 @@ legend {
 {	background: #C5DFE8;
         color: #000000;
 }
+
+.formCadastraEmpresa input[type=text] {
+    width: 100%;
+}

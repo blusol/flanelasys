@@ -5,7 +5,7 @@ class fla_empresas {
     private $cod_empresa;
     private $nom_fantasia;
     private $raz_social;
-    private $num_cpnj;
+    private $num_cnpj;
     private $num_insc_municipal;
     private $num_ie;
     private $cep_empresa;
@@ -42,12 +42,12 @@ class fla_empresas {
         $this->raz_social = $raz_social;
     }
 
-    public function get_num_cpnj() {
-        return $this->num_cpnj;
+    public function get_num_cnpj() {
+        return $this->num_cnpj;
     }
 
-    public function set_num_cpnj($num_cpnj) {
-        $this->num_cpnj = $num_cpnj;
+    public function set_num_cnpj($num_cnpj) {
+        $this->num_cnpj = $num_cnpj;
     }
 
     public function get_num_insc_municipal() {
@@ -138,8 +138,165 @@ class fla_empresas {
         $this->ind_disponivel = $ind_disponivel;
     }
 
-    public function insereEmpresa() {
-        
+    public function insereEmpresa($objEmpresa) {
+        $objConexao = new fla_conexao();
+        $parametros_insert = get_object_vars($objEmpresa);
+        $parametros_insert = array_filter($parametros_insert,'strlen');
+        $tamanho_parametros = count($parametros_insert);
+        $aux = 1;
+        if (is_array($parametros_insert)) {
+            foreach ($parametros_insert as $atributo => $valor) {
+                if ( (!is_null($valor)) ) {
+                        if ($aux != $tamanho_parametros) {
+                            $and = " , ";
+                        } else {
+                            $and = "";
+                        }
+
+                        if (is_numeric($valor)) {
+                            $insert_values .= sprintf("%s %s ",$valor,$and); 
+                        } else {
+                            $insert_values .= sprintf('"%s" %s ',$valor,$and); 
+                        }
+
+                        $insert_field  .= $atributo . $and;
+                }
+                $aux++;
+            }
+            try {
+                $SQL = "INSERT INTO fla_empresas (".$insert_field.") VALUES (".$insert_values.")";
+                $query = $objConexao->prepare($SQL) or die($objConexao->errorInfo());
+                $query->Execute();
+                return true;
+            } catch (PDOException $e) {
+                print $e->getMessage();
+            }
+        }        
     }
+    
+    public function buscaEmpresas($objEmpresa) {
+        $objConexao = new fla_conexao();
+        $where = "";
+        $separador = "";
+        $colunas_select = "";        
+        $and = "";
+        $arrEmpresas = array();
+        
+        $parametros_where = get_object_vars($objEmpresa);
+        $parametros_where = array_filter($parametros_where,'strlen');
+        $tamanho_parametros = count($parametros_where);
+        
+        $arrAtributos = get_class_vars(get_class($objEmpresa));
+        $countArrAtributos = count($arrAtributos);
+        
+        $aux = 1;
+        if (is_array($parametros_where)) {
+            foreach ($parametros_where as $atributo => $valor) {
+                if (!is_null($valor)) {
+                    if ($aux != $tamanho_parametros) {
+                        $and = " AND ";
+                    } else {
+                        $and = "";
+                    }
+                    if (is_numeric($valor)) {
+                        $where .= $atributo." = ".$valor.$and;
+                    } else {
+                        $where .= $atributo." = \"".$valor."\"".$and;
+                    }
+                }
+                $aux++;
+            }
+                
+        }
+        $aux = 1;
+        if (is_array($arrAtributos)) {
+            foreach ($arrAtributos as $key => $value) {
+                if ($aux != $countArrAtributos)
+                    $separador = ",";
+                else
+                    $separador = "";
+                
+                $colunas_select .= $key.$separador.chr(10);
+                $aux++;                
+            }
+        }
+
+        if (!empty($where)) {
+            $where = " where ".$where;
+        }
+
+        $SQL = sprintf("select %s from fla_empresas rot %s",$colunas_select,$where);
+        try
+        {
+            $rsEmpresas = $objConexao->prepare($SQL);
+            $rsEmpresas->execute();
+            $count = $rsEmpresas->rowCount();
+        }catch(PDOException $err)
+        {
+            echo "<p style='border:none;'>Erro ao executar operação no banco de dados: ".$err->getMessage()."</p>";
+            echo "<p style='border:none;'>SQL: ".$SQL."</p>";
+        }
+        $aux = 0;
+        if ($count > 0) {
+            while ($empresas = $rsEmpresas->fetch(PDO::FETCH_ASSOC)) {
+                foreach ($empresas as $key => $value) {
+                    if (!empty($value))
+                        $arrEmpresas[$aux][$key] = $value;
+                    else
+                        $arrEmpresas[$aux][$key] = 0;
+                }
+                $aux++;
+            }
+            return $arrEmpresas;
+        } else {
+            return false;
+        }
+        return $arrEmpresas;
+    }
+    
+    public function editaEmpresa($objEmpresa) {
+        $objConexao = new fla_conexao();
+        
+        $parametros_where = get_object_vars($objEmpresa);
+        $parametros_where = array_filter($parametros_where,'strlen');
+        $tamanho_parametros = count($parametros_where);
+        $update = "";
+        $aux = 1;
+        if (is_array($parametros_where)) {
+            foreach ($parametros_where as $atributo => $valor) {
+                if (($atributo != "cod_empresa")) {
+                    if ( (!is_null($valor)) ) {
+                        if ($aux != $tamanho_parametros) {
+                            $and = " , ";
+                        } else {
+                            $and = "";
+                        }
+
+                        if ( ($atributo == "cpf_cnpj_cliente") || ($atributo == "insc_municipal_cliente") || ($atributo == "insc_estadual_cliente")) {
+                            $valor = str_replace(array("-","/","."), array(""),$valor);
+                        }
+
+                        if (is_numeric($valor) && (!in_array($atributo,array("cpf_cnpj_cliente","insc_municipal_cliente","insc_estadual_cliente")))) {
+                            $update .= $atributo." = ".$valor.$and;
+                        } else {
+                            $update .= $atributo." = \"".$valor."\"".$and;
+                        }
+                    }
+                }
+                $aux++;
+            }
+                
+        }        
+        $SQL = sprintf('UPDATE fla_empresas SET '.$update . ' WHERE cod_empresa = %s',$objEmpresa->get_cod_empresa());
+        $query = $objConexao->prepare($SQL);
+        $query->Execute();
+    }
+    
+            
+    function ResetObject($objeto) {
+        foreach ($objeto as $key => $value) {
+            unset($this->$key);
+        }
+    }  
 }
 ?>

@@ -7,6 +7,7 @@ include_once($path_classes . 'fla_precos.class.php');
 include_once($path_classes . 'fla_descontos.class.php');
 include_once($path_classes . 'fla_rotatividade.class.php');
 include_once($path_classes . 'fla_clientes.class.php');
+include_once('nfeblu.php');
 include_once('processa.php');
 
 $msgRetorno = "";
@@ -89,9 +90,17 @@ if (isset($_POST['cod_cartao'])) {
         $objRotatividade->set_tem_permanencia($tem_permanencia);
         $objRotatividade->removeRotatividade($objRotatividade);
         $msgRetorno = 'Veiculo liberado com sucesso';
-        $msgRetorno .= '<br> Deseja imprimir RPS? <a href="'.$url.'rotatividade/nfeblu.php?cod_rotatividade='.$cod_rotatividade.'">Sim</a>';
+        $msgRetorno .= '<br> Deseja imprimir RPS? <a href="'.$url.'rotatividade/index.php?imprimir='.  base64_encode(strToHex('imprimeRPS')).'&cod_rotatividade='.$cod_rotatividade.'">Sim</a>';
         $val_total = "";
     }
+}
+
+if (isset($_GET) && !empty($_GET['imprimir'])) {
+    $cod_rotatividade = $_GET['cod_rotatividade'];
+    $cod_rotatividade = base64_decode(hexToStr($cod_rotatividade));
+    
+    geraRPS($cod_rotatividade);
+    Header("Location:" . $url . "rotatividade/index.php");
 }
 
 $hora_entrada = date("H:i:s");

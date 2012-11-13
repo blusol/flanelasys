@@ -5,6 +5,7 @@ include_once($path_libraries.'tcpdf/tcpdf.php');
 include_once($path_classes.'fla_rotatividade.class.php');
 include_once($path_classes.'fla_clientes.class.php');
 include_once($path_classes.'fla_nfes.class.php');
+include_once($path_classes.'fla_empresas.class.php');
 
 class fla_notablu {
     public function geraCabecalho() {
@@ -23,10 +24,12 @@ class fla_notablu {
         $objNFE = new FLA_NFES();
         $objRotatividade = new FLA_ROTATIVIDADE();
         $objClientes = new FLA_CLIENTES();
+        $objEmpresa = new fla_empresas();
         
         $arrNFE = array();
         $arrRotatividade = array();
         $arrClientes = array();
+        $arrEmpresa = array();
         $objNFE->set_cod_nfe($cod_nfe);
         $arrNFE = $objNFE->buscaNFE($objNFE);
 
@@ -36,6 +39,8 @@ class fla_notablu {
         $objClientes->set_des_placa($arrRotatividade[0]['des_placa']);
         $arrClientes = $objClientes->buscaClientes($objClientes);
         
+        $arrEmpresa = $objEmpresa->buscaEmpresas($objEmpresa);
+        
         $pdf = new TCPDF("P", "in", 'ETIQUETA', true, 'IBM850', false);        
         $pdf->SetMargins(0,0,0,true);
         $pdf->SetFont('times', 'B', 10);
@@ -43,15 +48,23 @@ class fla_notablu {
         $pdf->setPrintFooter(false);
         $pdf->AddPage();        
         
-        $nom_prestador  = "Hermann's Park";
-        $end_prestador  = "Rua Eng. Rodolfo Ferraz, 293";
-        $bairro_prestador = "Centro";
-        $cep_prestador = "00000-000";
-        $cid_prestador  = "Blumenau";
-        $est_prestador  = "SC";
-        $tel_prestador  = "(00) 0000-0000";
-        $cnpj_prestador = "00.000.000/0000-00";
-        $insc_municipal_prestador = "000.000.000";
+        $nom_prestador  = $arrEmpresa[0]['nom_fantasia'];
+        $end_prestador  = $arrEmpresa[0]['des_endereco'];
+        $bairro_prestador = $arrEmpresa[0]['des_bairro'];
+        
+        $cep_prestador = $arrEmpresa[0]['cep_empresa'];
+        $cep_prestador  = mascara_string("#####-###",$cep_prestador);
+        
+        $cid_prestador  = $arrEmpresa[0]['des_cidade'];
+        $est_prestador  = $arrEmpresa[0]['des_estado'];
+        
+        $tel_prestador  = $arrEmpresa[0]['num_telefone'];
+        $tel_prestador  = mascara_string("(##) ####-####",$tel_prestador);
+        
+        $cnpj_prestador = $arrEmpresa[0]['num_cnpj'];
+        $cnpj_prestador = mascara_string("##.###.###/####-##",$cnpj_prestador);
+        
+        $insc_municipal_prestador = $arrEmpresa[0]['num_insc_municipal'];
         if ($insc_estadual_prestador != "")
             $insc_estadual_prestador = "000.000.000.000";
         else
@@ -97,10 +110,14 @@ class fla_notablu {
                     );
         $texto_rodape = "Este RPS sera convertido em NFS-e em ate\r\n10 dias.\r\nPara confirmar acesse\r\nwww.blumenau.sc.gov.br/nfse";
         $documento_tomador = $arrClientes[0]['cpf_cnpj_cliente'];
-        if (strlen($documento_tomador) == 14)
-            $documento_tomador = mascara_string ("##.###.###/####-##", $documento_tomador);
-        else
-            $documento_tomador = mascara_string ("###.###.###-##", $documento_tomador);
+        if ($documento_tomador > 0) {
+            if (strlen($documento_tomador) == 14)
+                $documento_tomador = mascara_string ("##.###.###/####-##", $documento_tomador);
+            else
+                $documento_tomador = mascara_string ("###.###.###-##", $documento_tomador);
+        } else {
+            $documento_tomador = "Nao informado";
+        }
         
         $documento_tomador = "CPF/CNPJ: " . $documento_tomador;
         $texto_rodape_ = "VOLTE SEMPRE";
@@ -113,7 +130,8 @@ class fla_notablu {
         $conteudo_impressao = $cabecalho."\r\n".$conteudo.$rodape;
         $conteudo_impressao = iconv('UTF-8','IBM850',$conteudo_impressao);
         $pdf->Write($h=0, $conteudo_impressao, $link='', $fill=0, $align='J', $ln=true, $stretch=0, $firstline=false, $firstblock=false, $maxh=0);
-        $pdf->Output('example_002.pdf', 'D');
+        $pdf->Output('RPS-'.$numero_rps, 'D');
+        Header("Location:" . $url . "rotatividade/index.php");
     }
     
     function enviaDados($dados) {

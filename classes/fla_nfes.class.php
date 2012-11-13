@@ -167,6 +167,21 @@ class fla_nfes {
         return $arrNFEs;
     }    
     
+    public function getDataInicioFim($codigos) {
+        $objConexao = new fla_conexao();
+        $arrDataInicioFim = array();
+        $SQL = "select min(dat_criacao) data_inicio,max(dat_criacao) data_fim from fla_nfes where cod_nfe IN (".$codigos.")";
+        $rsData = $objConexao->prepare($SQL);
+        $rsData->execute();
+        $count = $rsData->rowCount();
+        if ($count > 0) {
+            $resultado = $rsData->fetch(PDO::FETCH_ASSOC);
+            $arrDataInicioFim['data_inicio'] = $resultado['data_inicio'];
+            $arrDataInicioFim['data_final'] = $resultado['data_fim'];
+            return $arrDataInicioFim;
+        }
+    }
+    
 }
 
 ?>
