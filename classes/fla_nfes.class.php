@@ -182,6 +182,14 @@ class fla_nfes {
         }
     }
     
+    public function setGeradoLote($codigo) {
+        $objConexao = new fla_conexao();
+        $dat_enviado = date("Y-m-d H:i:s");
+        $SQL = "UPDATE fla_nfes SET dat_enviado = '".$dat_enviado."', ind_enviado = 1 WHERE cod_nfe = ".$codigo;
+        $rsData = $objConexao->prepare($SQL);
+        $rsData->execute();
+    }
+    
 }
 
 ?>

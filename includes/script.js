@@ -190,7 +190,7 @@ function processReqChange() {
             //alert(acao);
             if (acao == "consulta_cartao") {
                 if (myArray !== undefined) {
-                    if (myArray[0] !== "" || myArray[9] === "P") {
+                    if (myArray[0] !== "" && myArray[9] === "P") {
                         document.getElementById('des_placa').value = myArray[0];
                         document.getElementById('des_placa2').value = myArray[0];
                         document.getElementById('hor_entrada').value = myArray[1]; 

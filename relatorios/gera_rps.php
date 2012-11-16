@@ -109,8 +109,8 @@ if (isset($_POST['gerarlote'])) {
                         <th> Número RPS </th>
                         <th> Rotatividade </th>
                         <th> Data criação </th>                                                
-                        <th> Enviado a prefeitura </th>
-                        <th> Data envio </th>
+                        <th> Gerado arquivo de lote </th>
+                        <th> Data do arquivo </th>
                     </tr>
                     <?php
                     for ($i = 0; $i < count($arrNFES); $i++) {
@@ -121,12 +121,12 @@ if (isset($_POST['gerarlote'])) {
                         echo sprintf('<td>%s</td>', $arrNFES[$i]['cod_rotatividade']) . chr(10);
                         echo sprintf('<td>%s</td>', mostraData($arrNFES[$i]['dat_criacao'])) . chr(10);
                         echo sprintf('<td>%s</td>', $ind_enviado) . chr(10);
-                        echo sprintf('<td>%s</td>', mostraData($arrNFES[$i]['dat_envio'])) . chr(10);
+                        echo sprintf('<td>%s</td>', mostraData($arrNFES[$i]['dat_enviado'])) . chr(10);
                         echo '</tr>' . chr(10);
                     }
                     ?>
                     <tr>
-                        <td colspan="5">
+                        <td colspan="6">
                                 <input type="submit" name="gerarlote" value="Gerar Lote" />
                             </form>    
                         </td>

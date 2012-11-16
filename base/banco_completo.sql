@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: localhost
--- Tempo de Geração: Out 19, 2012 as 09:04 AM
+-- Tempo de Geração: Nov 15, 2012 as 11:14 PM
 -- Versão do Servidor: 5.1.63
 -- Versão do PHP: 5.3.3-7+squeeze14
 
@@ -140,26 +140,29 @@ INSERT INTO `fla_descontos` (`cod_desconto`, `des_desconto`, `val_desconto`) VAL
 
 CREATE TABLE IF NOT EXISTS `fla_empresas` (
   `cod_empresa` int(6) NOT NULL AUTO_INCREMENT,
-  `nom_fantasia` varchar(250) NOT NULL,
-  `raz_social` varchar(250) NOT NULL,
-  `num_cnpj` int(14) NOT NULL,
+  `nom_fantasia` varchar(400) NOT NULL,
+  `raz_social` varchar(400) NOT NULL,
+  `num_cnpj` bigint(14) NOT NULL,
   `num_ie` int(9) NOT NULL,
+  `num_insc_municipal` int(15) DEFAULT NULL,
   `cep_empresa` int(8) NOT NULL,
-  `des_endereco` int(250) NOT NULL,
+  `des_endereco` varchar(250) NOT NULL,
   `des_bairro` varchar(250) NOT NULL,
   `des_estado` varchar(2) NOT NULL,
   `des_cidade` varchar(250) NOT NULL,
-  `num_telefone` int(9) NOT NULL,
-  `num_celular` int(9) NOT NULL,
+  `num_telefone` int(15) NOT NULL,
+  `num_celular` int(15) NOT NULL,
   `tip_empresa` varchar(1) NOT NULL DEFAULT 'M',
   `ind_disponivel` int(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`cod_empresa`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;
 
 --
 -- Extraindo dados da tabela `fla_empresas`
 --
 
+INSERT INTO `fla_empresas` (`cod_empresa`, `nom_fantasia`, `raz_social`, `num_cnpj`, `num_ie`, `num_insc_municipal`, `cep_empresa`, `des_endereco`, `des_bairro`, `des_estado`, `des_cidade`, `num_telefone`, `num_celular`, `tip_empresa`, `ind_disponivel`) VALUES
+(4, 'Hermann''s Park', 'Hermann''s Park Estacionamento Ltda ME', 81606949000131, 0, 74237, 89040400, 'Rua Eng Rodolfo Ferraz, 293', 'Centro', 'SC', 'Blumenau', 2147483647, 2147483647, 'M', 1);
 
 -- --------------------------------------------------------
 
@@ -1681,7 +1684,7 @@ CREATE TABLE IF NOT EXISTS `fla_nfes` (
   `dat_enviado` datetime DEFAULT NULL,
   `ind_enviado` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`cod_nfe`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=27 ;
 
 --
 -- Extraindo dados da tabela `fla_nfes`
@@ -1693,7 +1696,27 @@ INSERT INTO `fla_nfes` (`cod_nfe`, `cod_rotatividade`, `dat_criacao`, `dat_envia
 (3, 1, '2012-10-19 07:42:10', NULL, 0),
 (4, 1, '2012-10-19 08:11:06', NULL, 0),
 (5, 1, '2012-10-19 08:13:37', NULL, 0),
-(6, 1, '2012-10-19 08:13:40', NULL, 0);
+(6, 1, '2012-10-19 08:13:40', NULL, 0),
+(7, 0, '2012-11-09 23:26:45', NULL, 0),
+(8, 0, '2012-11-09 23:31:42', NULL, 0),
+(9, 0, '2012-11-09 23:37:48', NULL, 0),
+(10, 0, '2012-11-09 23:40:15', NULL, 0),
+(11, 0, '2012-11-09 23:40:36', NULL, 0),
+(12, 0, '2012-11-09 23:40:57', NULL, 0),
+(13, 0, '2012-11-09 23:41:56', NULL, 0),
+(14, 0, '2012-11-09 23:42:38', NULL, 0),
+(15, 0, '2012-11-09 23:43:17', NULL, 0),
+(16, 0, '2012-11-12 21:45:41', NULL, 0),
+(17, 0, '2012-11-12 21:46:11', NULL, 0),
+(18, 2, '2012-11-12 21:57:00', NULL, 0),
+(19, 2, '2012-11-12 21:57:23', NULL, 0),
+(20, 2, '2012-11-12 21:59:33', NULL, 0),
+(21, 2, '2012-11-12 22:00:57', NULL, 0),
+(22, 2, '2012-11-12 22:02:28', NULL, 0),
+(23, 2, '2012-11-12 22:02:59', NULL, 0),
+(24, 2, '2012-11-12 22:04:18', NULL, 0),
+(25, 2, '2012-11-12 22:04:38', NULL, 0),
+(26, 3, '2012-11-13 22:45:54', '2012-11-15 22:02:39', 1);
 
 -- --------------------------------------------------------
 
@@ -1747,7 +1770,7 @@ CREATE TABLE IF NOT EXISTS `fla_rotatividade` (
   `val_desconto` decimal(5,2) DEFAULT '0.00',
   `cod_desconto` int(6) DEFAULT NULL,
   PRIMARY KEY (`cod_rotatividade`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
 
 --
 -- Extraindo dados da tabela `fla_rotatividade`
@@ -1755,7 +1778,8 @@ CREATE TABLE IF NOT EXISTS `fla_rotatividade` (
 
 INSERT INTO `fla_rotatividade` (`cod_rotatividade`, `des_placa`, `hor_entrada`, `hor_saida`, `dat_cadastro`, `dat_saida`, `cod_preco`, `val_total`, `val_cobrado`, `des_justificativa`, `des_situacao`, `cod_cartao`, `tem_permanencia`, `val_desconto`, `cod_desconto`) VALUES
 (1, 'mbe-3431', '06:17:22', '07:36:34', '2012-10-19', '2012-10-19', 1, '5.50', '5.50', '', 'L', 33, '01:19', '0.00', 0),
-(2, 'XXX-5847', '12:12:27', '16:33:14', '2012-10-13', '2012-10-13', 1, '13.00', '13.00', '', 'L', 3, '04:21', '0.00', 0);
+(2, 'XXX-5847', '12:12:27', '22:04:13', '2012-10-13', '2012-11-12', 1, '10.00', '10.00', 'Cobrado diaria', 'L', 3, '729:5', '0.00', 0),
+(3, 'mbe-3431', '22:41:18', '22:45:44', '2012-11-13', '2012-11-13', 1, '2.50', '1.00', 'Cliente Vip', 'L', 33, '00:04', '0.00', 2);
 
 -- --------------------------------------------------------
 

@@ -49,8 +49,8 @@ function geraLoteRPS($arrRPS) {
     $mes_atual = date("m");
     $hoje = date("d");
     $caminho_arquivo = $path_notablu . $ano_atual . DS . $mes_atual . DS;
-    $nome_arquivo = date("d") . ".txt";
-
+    $nome_arquivo = date("d-Hi") . ".txt";
+    
     existeDiretorio("A", $path_notablu);
     existeDiretorio("M", $path_notablu . $ano_atual . DS);
 
@@ -76,7 +76,7 @@ function geraLoteRPS($arrRPS) {
     $data_final = strtotime($arrDataInicioFim['data_final']);
     $data_final = date('Ymd', $data_final);    
     
-    $conteudo_cabecalho = sprintf("1002%s%s%s",$insc_municipal_prestador,$data_inicio,$data_final) . chr(13) . chr(10);
+    $conteudo_cabecalho = sprintf("1002%s%s%s%s%s",$insc_municipal_prestador,$data_inicio,$data_final,chr(13),chr(10));
     fwrite($arquivo, $conteudo_cabecalho);
     foreach ($arrRPS as $rps) {
         $objNFE->set_cod_nfe($rps);
@@ -107,26 +107,26 @@ function geraLoteRPS($arrRPS) {
 
         $situacao_rps = "T";
 
-        $codigo_servico_rps = "01.10.1"; // Confirmar contadora
+        $codigo_servico_rps = "01101"; // Confirmar contadora
+        $codigo_servico_rps = str_pad($codigo_servico_rps, 8, "0", STR_PAD_LEFT);
 
         $aliquota_rps = "00000"; // Confirmar contadora
 
         $iss_retido_rps = "0"; // Confirmar contadora
-
+        
         $cnpj_cpf_tomador_rps = $arrClientes[0]["cpf_cnpj_cliente"];
 
         if (strlen($cnpj_cpf_tomador_rps) == 14) {
             $indicador_cnpj_cpf_tomador_rps = "2";
             $nome_tomador = $arrClientes[0]["nom_cliente"];
-        } elseif ($cnpj_cpf_tomador_rps == 11) {
+        } elseif (strlen($cnpj_cpf_tomador_rps) == 11) {
             $indicador_cnpj_cpf_tomador_rps = "1";
-            $nome_tomador = "";
+            $nome_tomador = $arrClientes[0]["nom_cliente"];
         } else {
             $indicador_cnpj_cpf_tomador_rps = "3";
             $cnpj_cpf_tomador_rps = 0;
             $nome_tomador = "";
         }
-
         if (strlen($arrClientes[0]["cpf_cnpj_cliente"]) == "14") {
             $inscricao_municipal_tomador = $arrClientes[0]["insc_municipal_cliente"];
             $inscricao_estadual_tomador = $arrClientes[0]["insc_estadual_cliente"];
@@ -143,9 +143,9 @@ function geraLoteRPS($arrRPS) {
         $inscricao_estadual_tomador = str_pad($inscricao_estadual_tomador, 15, 0, STR_PAD_LEFT);
 
         $tipo_endereco = $arrClientes[0]["tip_rua_cliente"];
-        $tipo_endereco = substr($tipo_endereco, 0, 2);
+        $tipo_endereco = substr($tipo_endereco, 0, 3);
         $tipo_endereco = str_pad($tipo_endereco, 3, " ", STR_PAD_RIGHT);
-        $tipo_endereco = str_replace(" ", " ", $tipo_endereco);
+        //$tipo_endereco = str_replace(" ", " ", $tipo_endereco);
 
         $endereco_tomador = $arrClientes[0]["des_end_cliente"];
         $endereco_tomador = str_pad($endereco_tomador, 100, " ", STR_PAD_RIGHT);
@@ -181,7 +181,6 @@ function geraLoteRPS($arrRPS) {
         $valor_total_servicos = $valor_total_servicos + $valor_rps;
         $valor_rps = str_replace(array(",", "."), array("", ""), $valor_rps);
         $valor_rps = str_pad($valor_rps, 15, "0", STR_PAD_LEFT);
-
         $valor = 0;
         $valor_deducao_rps = $valor; // Confirmar contadora
         $valor_total_deducoes = $valor_total_deducoes + $valor_deducao_rps;
@@ -211,14 +210,15 @@ function geraLoteRPS($arrRPS) {
         $valor_pis = $valor; // Confirmar contadora
         $valor_total_pis = $valor_total_pis + $valor_pis;
         $valor_pis = str_replace(array(",", "."), array("", ""), $valor_pis);
-        $valor_pis = str_pad($$valor_pis, 15, "0", STR_PAD_LEFT);
+        $valor_pis = str_pad($valor_pis, 15, "0", STR_PAD_LEFT);
 
-        $conteudo_detalhes .= sprintf("20%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s", $serie_rps, $numero_rps, $data_rps, $situacao_rps, $valor_rps, $valor_deducao_rps, $codigo_servico_rps, $aliquota_rps, $iss_retido_rps, $indicador_cnpj_cpf_tomador_rps, $cnpj_cpf_tomador_rps, $inscricao_municipal_tomador, $inscricao_estadual_tomador, $nome_tomador, $tipo_endereco, $endereco_tomador, $numero_endereco_tomador, $complemento_endereco_tomador, $bairro_tomador, $cidade_tomador, $estado_tomador, $cep_tomador, $email_tomador, $valor_confins, $valor_csll, $valor_inss, $valor_irpj, $valor_pis, $discriminacao_servico
-                ) . chr(13) . chr(10);
+        $conteudo_detalhes .= sprintf("20%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s\r\n", $serie_rps, $numero_rps, $data_rps, $situacao_rps, $valor_rps, $valor_deducao_rps, $codigo_servico_rps, $aliquota_rps, $iss_retido_rps, $indicador_cnpj_cpf_tomador_rps, $cnpj_cpf_tomador_rps, $inscricao_municipal_tomador, $inscricao_estadual_tomador, $nome_tomador, $tipo_endereco, $endereco_tomador, $numero_endereco_tomador, $complemento_endereco_tomador, $bairro_tomador, $cidade_tomador, $estado_tomador, $cep_tomador, $email_tomador, $valor_confins, $valor_csll, $valor_inss, $valor_irpj, $valor_pis, $discriminacao_servico);
         fwrite($arquivo, $conteudo_detalhes);
         $num_detalhes++;
+        $objNFE->setGeradoLote($rps);
     }
-    $num_detalhes = str_pad($conteudo_detalhes, 7, "0", STR_PAD_LEFT);
+    $num_detalhes = str_pad($num_detalhes, 7, "0", STR_PAD_LEFT);
+    $valor_total_servicos = number_format($valor_total_servicos, 2, "","");
     $valor_total_servicos = str_pad($valor_total_servicos, 15, "0", STR_PAD_LEFT);
     $valor_total_deducoes = str_pad($valor_total_deducoes, 15, "0", STR_PAD_LEFT);
     $valor_total_confis = str_pad($valor_total_confis, 15, "0", STR_PAD_LEFT);
@@ -226,10 +226,10 @@ function geraLoteRPS($arrRPS) {
     $valor_total_inss = str_pad($valor_total_inss, 15, "0", STR_PAD_LEFT);
     $valor_total_irpj = str_pad($valor_total_irpj, 15, "0", STR_PAD_LEFT);
     $valor_total_pis = str_pad($valor_total_pis, 15, "0", STR_PAD_LEFT);
-    $conteudo_rodape = sprintf("9%s%s%s%s%s%s%s%s", $num_detalhes, $valor_total_servicos, $valor_total_deducoes, $valor_total_confis, $valor_total_csll, $valor_total_inss, $valor_total_irpj, $valor_total_pis
-            ) . chr(13) . chr(10);
+    $conteudo_rodape = sprintf("9%s%s%s%s%s%s%s%s\r\n", $num_detalhes, $valor_total_servicos, $valor_total_deducoes, $valor_total_confis, $valor_total_csll, $valor_total_inss, $valor_total_irpj, $valor_total_pis);
     fwrite($arquivo, $conteudo_rodape);
     fclose($arquivo);
+    chmod($caminho_arquivo . $nome_arquivo,0777);
 }
 
 ?>
