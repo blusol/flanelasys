@@ -24,7 +24,11 @@ class fla_clientes {
     private $estado_cliente;
     private $cidade_cliente;
     private $tipo_cliente;
-
+    private $num_telefone;
+    private $num_celular;
+    private $ind_ativo;
+    private $des_observacao;
+    
     public function get_cod_cliente() {
         return $this->cod_cliente;
     }
@@ -181,7 +185,39 @@ class fla_clientes {
         $this->tipo_cliente = $tipo_cliente;
     }
 
+    public function get_num_telefone() {
+        return $this->num_telefone;
+    }
+
+    public function set_num_telefone($num_telefone) {
+        $this->num_telefone = $num_telefone;
+    }
+
+    public function get_num_celular() {
+        return $this->num_celular;
+    }
+
+    public function set_num_celular($num_celular) {
+        $this->num_celular = $num_celular;
+    }
+
+    public function get_ind_ativo() {
+        return $this->ind_ativo;
+    }
+
+    public function set_ind_ativo($ind_ativo) {
+        $this->ind_ativo = $ind_ativo;
+    }
+
+    public function get_des_observacao() {
+        return $this->des_observacao;
+    }
+
+    public function set_des_observacao($des_observacao) {
+        $this->des_observacao = $des_observacao;
+    }    
     
+        
     public function insereCliente($objCliente) {
         $objConexao = new fla_conexao();
 
@@ -233,8 +269,8 @@ class fla_clientes {
                             $and = "";
                         }
 
-                        if ( ($atributo == "cpf_cnpj_cliente") || ($atributo == "insc_municipal_cliente") || ($atributo == "insc_estadual_cliente")) {
-                            $valor = str_replace(array("-","/","."), array(""),$valor);
+                        if ( ($atributo == "cpf_cnpj_cliente") || ($atributo == "insc_municipal_cliente") || ($atributo == "insc_estadual_cliente") || ($atributo == 'num_telefone') || ($atributo == 'num_celular')) {
+                            $valor = str_replace(array("-","/",".",")", "("," "), array(""),$valor);
                         }
 
                         if (is_numeric($valor) && (!in_array($atributo,array("cpf_cnpj_cliente","insc_municipal_cliente","insc_estadual_cliente")))) {
@@ -249,7 +285,7 @@ class fla_clientes {
                 
         }        
         $SQL = sprintf('UPDATE fla_clientes SET '.$update . ' WHERE cod_cliente = %s',$objCliente->get_cod_cliente());
-        //echo $SQL;exit;
+        echo $SQL;exit;
         $query = $objConexao->prepare($SQL);
         $query->Execute();
     }
@@ -320,7 +356,7 @@ class fla_clientes {
                     if (is_numeric($valor)) {
                         $where .= $atributo." = ".$valor.$and;
                     } else {
-                        $where .= $atributo." = '".$valor."'".$and;
+                        $where .= $atributo." LIKE '%".$valor."%'".$and;
                     }
                 }
                 $aux++;
@@ -344,9 +380,6 @@ class fla_clientes {
             $where = " where ".$where;
         }
         
-        /*if ($objCliente->cod_cliente != "") {
-            $where = " WHERE cod_cliente = " . $objCliente->cod_cliente;
-        }*/
         $SQL = sprintf("select %s from fla_clientes rot %s",$colunas_select,$where);
         $rsClientes = $objConexao->prepare($SQL);
         $rsClientes->execute();
@@ -358,7 +391,7 @@ class fla_clientes {
                     if (!empty($value))
                         $arrClientes[$aux][$key] = $value;
                     else
-                        $arrClientes[$aux][$key] = 0;
+                        $arrClientes[$aux][$key] = '';
                 }
                 $aux++;
             }
@@ -366,7 +399,6 @@ class fla_clientes {
         } else {
             return false;
         }
-        return $arrClientes;
     }
     
     function ResetObject() {
