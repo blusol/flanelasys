@@ -28,7 +28,7 @@ class fla_clientes {
     private $num_celular;
     private $ind_ativo;
     private $des_observacao;
-    
+
     public function get_cod_cliente() {
         return $this->cod_cliente;
     }
@@ -80,7 +80,7 @@ class fla_clientes {
     public function set_cod_marca($cod_marca) {
         $this->cod_marca = $cod_marca;
     }
-    
+
     public function get_cpf_cnpj_cliente() {
         return $this->cpf_cnpj_cliente;
     }
@@ -215,9 +215,8 @@ class fla_clientes {
 
     public function set_des_observacao($des_observacao) {
         $this->des_observacao = $des_observacao;
-    }    
-    
-        
+    }
+
     public function insereCliente($objCliente) {
         $objConexao = new fla_conexao();
 
@@ -231,73 +230,92 @@ class fla_clientes {
         $cliente = $objConexao->prepare($SQL);
         $cliente->Execute();
         if ($cliente->rowCount() == 0) {
-            $SQL = sprintf('INSERT INTO fla_clientes
-                            (cod_cliente
-                             ,nom_cliente
-                             ,des_cor
-                             ,des_placa
-                             ,cod_modelo
-                             ,cod_marca)
-                             VALUES
-                             (0,"%s","%s","%s",%s,%s)'
-                    , $objCliente->get_nom_cliente()
-                    , $objCliente->get_des_cor()
-                    , $objCliente->get_des_placa()
-                    , $objCliente->get_cod_modelo()
-                    , $objCliente->get_cod_marca()
-            );
-            $query = $objConexao->prepare($SQL);
-            $query->Execute();
-        }
-    }
 
-    public function editaCliente($objCliente) {
-        $objConexao = new fla_conexao();
-        
-        $parametros_where = get_object_vars($objCliente);
-        $parametros_where = array_filter($parametros_where,'strlen');
-        $tamanho_parametros = count($parametros_where);
-        $update = "";
-        $aux = 1;
-        if (is_array($parametros_where)) {
-            foreach ($parametros_where as $atributo => $valor) {
-                if (($atributo != "cod_cliente")) {
-                    if ( (!is_null($valor)) ) {
+            $parametros_insert = get_object_vars($objCliente);
+            $parametros_insert = array_filter($parametros_insert, 'strlen');
+            $tamanho_parametros = count($parametros_insert);
+            $aux = 1;
+            if (is_array($parametros_insert)) {
+                foreach ($parametros_insert as $atributo => $valor) {
+                    if ((!is_null($valor))) {
                         if ($aux != $tamanho_parametros) {
                             $and = " , ";
                         } else {
                             $and = "";
                         }
 
-                        if ( ($atributo == "cpf_cnpj_cliente") || ($atributo == "insc_municipal_cliente") || ($atributo == "insc_estadual_cliente") || ($atributo == 'num_telefone') || ($atributo == 'num_celular')) {
-                            $valor = str_replace(array("-","/",".",")", "("," "), array(""),$valor);
+                        if (($atributo == "cpf_cnpj_cliente") || ($atributo == "insc_municipal_cliente") || ($atributo == "insc_estadual_cliente") || ($atributo == 'num_telefone') || ($atributo == 'num_celular')) {
+                            $valor = str_replace(array("-", "/", ".", ")", "(", " "), array(""), $valor);
                         }
 
-                        if (is_numeric($valor) && (!in_array($atributo,array("cpf_cnpj_cliente","insc_municipal_cliente","insc_estadual_cliente")))) {
-                            $update .= $atributo." = ".$valor.$and;
+                        if (is_numeric($valor)) {
+                            $insert_values .= sprintf("%s %s ", $valor, $and);
                         } else {
-                            $update .= $atributo." = '".$valor."'".$and;
+                            $insert_values .= sprintf("'%s' %s ", $valor, $and);
+                        }
+                        $insert_field .= $atributo . $and;
+                        $aux++;
+                    }
+                }
+                try {
+                    $SQL = "INSERT INTO fla_clientes (" . $insert_field . ") VALUES (" . $insert_values . ")";
+                    $query = $objConexao->prepare($SQL) or die($objConexao->errorInfo());
+                    $query->Execute();
+                } catch (PDOException $e) {
+                    print $e->getMessage();
+                }
+                return $objConexao->lastInsertId();
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public function editaCliente($objCliente) {
+        $objConexao = new fla_conexao();
+
+        $parametros_where = get_object_vars($objCliente);
+        $parametros_where = array_filter($parametros_where, 'strlen');
+        $tamanho_parametros = count($parametros_where);
+        $update = "";
+        $aux = 1;
+        if (is_array($parametros_where)) {
+            foreach ($parametros_where as $atributo => $valor) {
+                if (($atributo != "cod_cliente")) {
+                    if ((!is_null($valor))) {
+                        if ($aux != $tamanho_parametros) {
+                            $and = " , ";
+                        } else {
+                            $and = "";
+                        }
+
+                        if (($atributo == "cpf_cnpj_cliente") || ($atributo == "insc_municipal_cliente") || ($atributo == "insc_estadual_cliente") || ($atributo == 'num_telefone') || ($atributo == 'num_celular')) {
+                            $valor = str_replace(array("-", "/", ".", ")", "(", " "), array(""), $valor);
+                        }
+
+                        if (is_numeric($valor) && (!in_array($atributo, array("cpf_cnpj_cliente", "insc_municipal_cliente", "insc_estadual_cliente")))) {
+                            $update .= $atributo . " = " . $valor . $and;
+                        } else {
+                            $update .= $atributo . " = '" . $valor . "'" . $and;
                         }
                     }
                 }
                 $aux++;
             }
-                
-        }        
-        $SQL = sprintf('UPDATE fla_clientes SET '.$update . ' WHERE cod_cliente = %s',$objCliente->get_cod_cliente());
-        echo $SQL;exit;
+        }
+        $SQL = sprintf('UPDATE fla_clientes SET ' . $update . ' WHERE cod_cliente = %s', $objCliente->get_cod_cliente());
         $query = $objConexao->prepare($SQL);
         $query->Execute();
     }
-    
-    public function consultahistorico($des_placa,$limite = null) {
+
+    public function consultahistorico($des_placa, $limite = null) {
         $objConexao = new fla_conexao();
         $arrHistorico = array();
         if (!is_null($limite))
-            $limite = " LIMIT ".$limite;
+            $limite = " LIMIT " . $limite;
         else
             $limite = "";
-        
+
         $SQL = 'SELECT 
                     dat_cadastro
                     , hor_entrada
@@ -305,10 +323,10 @@ class fla_clientes {
                  FROM 
                     fla_rotatividade
                  WHERE 
-                    des_placa = "'.$des_placa.'"
+                    des_placa = "' . $des_placa . '"
                  ORDER BY 
-                    dat_cadastro DESC'.$limite;
-        
+                    dat_cadastro DESC' . $limite;
+
         $rsHistorico = $objConexao->prepare($SQL);
         $rsHistorico->execute();
         $count = $rsHistorico->rowCount();
@@ -326,24 +344,24 @@ class fla_clientes {
             return $arrHistorico;
         } else {
             return false;
-        }        
+        }
     }
 
     public function buscaClientes($objCliente) {
         $objConexao = new fla_conexao();
         $where = "";
         $separador = "";
-        $colunas_select = "";        
+        $colunas_select = "";
         $and = "";
         $arrClientes = array();
-        
+
         $parametros_where = get_object_vars($objCliente);
-        $parametros_where = array_filter($parametros_where,'strlen');
+        $parametros_where = array_filter($parametros_where, 'strlen');
         $tamanho_parametros = count($parametros_where);
-        
+
         $arrAtributos = get_class_vars(get_class($objCliente));
         $countArrAtributos = count($arrAtributos);
-        
+
         $aux = 1;
         if (is_array($parametros_where)) {
             foreach ($parametros_where as $atributo => $valor) {
@@ -354,14 +372,13 @@ class fla_clientes {
                         $and = "";
                     }
                     if (is_numeric($valor)) {
-                        $where .= $atributo." = ".$valor.$and;
+                        $where .= $atributo . " = " . $valor . $and;
                     } else {
-                        $where .= $atributo." LIKE '%".$valor."%'".$and;
+                        $where .= $atributo . " LIKE '%" . $valor . "%'" . $and;
                     }
                 }
                 $aux++;
             }
-                
         }
         $aux = 1;
         if (is_array($arrAtributos)) {
@@ -370,17 +387,17 @@ class fla_clientes {
                     $separador = ",";
                 else
                     $separador = "";
-                
-                $colunas_select .= $key.$separador.chr(10);
-                $aux++;                
+
+                $colunas_select .= $key . $separador . chr(10);
+                $aux++;
             }
         }
 
         if (!empty($where)) {
-            $where = " where ".$where;
+            $where = " where " . $where;
         }
-        
-        $SQL = sprintf("select %s from fla_clientes rot %s",$colunas_select,$where);
+
+        $SQL = sprintf("select %s from fla_clientes rot %s", $colunas_select, $where);
         $rsClientes = $objConexao->prepare($SQL);
         $rsClientes->execute();
         $count = $rsClientes->rowCount();
@@ -400,7 +417,7 @@ class fla_clientes {
             return false;
         }
     }
-    
+
     function ResetObject() {
         foreach ($this as $key => $value) {
             unset($this->$key);

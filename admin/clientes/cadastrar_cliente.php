@@ -4,21 +4,16 @@ include_once('../../includes/funcao.php');
 require_once($path_relative . 'verifica.php');
 include_once($path_classes . 'fla_clientes.class.php');
 include_once($path_classes . 'fla_cores.class.php');
+include_once($path_classes . 'fla_mensalidade.class.php');
 include_once($path_relative . 'admin/clientes/processa.php');
 $objClientes = new fla_clientes();
 $objCores = new fla_cores();
+$objMensalidade = new fla_mensalidade();
 
-if ( (isset($_GET)) && (!empty($_GET['cod_cliente'])) || isset($_POST))
-    $cod_cliente = $_GET["cod_cliente"];
-else
-    Header("Location:".$url);
+if (isset($_GET) && !empty($_GET['cod_cliente'])) 
+    $cod_cliente = $_GET['cod_cliente'];
 
 if (!empty($_POST)) {
-    
-    if (is_array($_POST)) {
-        $cod_cliente = $_POST["cod_cliente"];
-        $objClientes->set_cod_cliente($_POST["cod_cliente"]);
-
         $objClientes->set_nom_cliente($_POST["nom_cliente"]);
 
         $objClientes->set_des_cor($_POST["des_cor"]);
@@ -54,35 +49,63 @@ if (!empty($_POST)) {
         $objClientes->set_cidade_cliente($_POST["cidade_cliente"]);
 
         $objClientes->set_tipo_cliente($_POST["tipo_cliente"]);
-    }
+        
+        $objClientes->set_num_telefone($_POST["num_telefone"]);
+        
+        $objClientes->set_num_celular($_POST["num_celular"]);
+        
+        $objClientes->set_des_observacao($_POST["des_observacao"]);
+        
+        if (!empty($_POST['ind_ativo']))
+            $objClientes->set_ind_ativo(1);
+        else
+            $objClientes->set_ind_ativo(0);
+        
+        if (!empty($_POST["cod_cliente"])) {
+            $cod_cliente = $_POST["cod_cliente"];
+            $objClientes->set_cod_cliente($_POST["cod_cliente"]);
+            $objClientes->editaCliente($objClientes);                
+            $msgRetorno = 'Dados atualizados com sucesso!';
+        } else {
+            $cod_cliente = $objClientes->insereCliente($objClientes);
+            if (is_numeric($cod_cliente)) {
+                $msgRetorno = 'Cliente cadastrado com sucesso!';
+            } else {
+                $msgRetorno = 'O cliente informado já está cadastrado';
+            }
+        }
 
-    $objClientes->editaCliente($objClientes);
-
-    $msgRetorno = 'Dados atualizados com sucesso!';
-}
-
-$objClientes->ResetObject();
-$objClientes->set_cod_cliente($cod_cliente);
-if (is_array($objClientes->buscaClientes($objClientes))) {
-    $arrCliente = $objClientes->buscaClientes($objClientes);
-    $arrHistoricoUltimo = $objClientes->consultahistorico($arrCliente[0]["des_placa"],1);
-    $arrHistoricoCompleto = $objClientes->consultahistorico($arrCliente[0]["des_placa"]);
-} else {
-    Header("Location:".$url);
-}
-
-$arrCores = $objCores->buscaCores($objCores);
-$select_tipo_doc = "cpf";
-if (strlen($arrCliente[0]["cpf_cnpj_cliente"]) == 14) {
-    $select_tipo_doc = "cnpj";
-    $arrCliente[0]["cpf_cnpj_cliente"] = mascara_string("##.###.###/####-##",$arrCliente[0]["cpf_cnpj_cliente"]);
-    $arrCliente[0]["insc_municipal_cliente"] = mascara_string("###.###.###",$arrCliente[0]["insc_municipal_cliente"]);
-    $arrCliente[0]["insc_estadual_cliente"] = mascara_string("###.###.###",$arrCliente[0]["insc_estadual_cliente"]);
-} else {
-    $select_tipo_doc = "cpf";
-    $arrCliente[0]["cpf_cnpj_cliente"] = mascara_string("###.###.###-##",$arrCliente[0]["cpf_cnpj_cliente"]);
-}
     
+}
+
+if (isset($cod_cliente) && !empty($cod_cliente) && is_numeric($cod_cliente)) {
+    $objClientes->ResetObject();
+    $objClientes->set_cod_cliente($cod_cliente);
+    $arrCliente = $objClientes->buscaClientes($objClientes);
+    
+    if (is_array($arrCliente)) {
+        $arrHistoricoUltimo = $objClientes->consultahistorico($arrCliente[0]["des_placa"],1);
+        $arrHistoricoCompleto = $objClientes->consultahistorico($arrCliente[0]["des_placa"]);
+        
+        $select_tipo_doc = "cpf";
+        if (strlen($arrCliente[0]["cpf_cnpj_cliente"]) == 14) {
+            $select_tipo_doc = "cnpj";
+            $arrCliente[0]["cpf_cnpj_cliente"] = mascara_string("##.###.###/####-##",$arrCliente[0]["cpf_cnpj_cliente"]);
+            $arrCliente[0]["insc_municipal_cliente"] = mascara_string("###.###.###",$arrCliente[0]["insc_municipal_cliente"]);
+            $arrCliente[0]["insc_estadual_cliente"] = mascara_string("###.###.###",$arrCliente[0]["insc_estadual_cliente"]);
+        } else {
+            $select_tipo_doc = "cpf";
+            $arrCliente[0]["cpf_cnpj_cliente"] = mascara_string("###.###.###-##",$arrCliente[0]["cpf_cnpj_cliente"]);
+        }        
+        
+        $carrega_dados_veiculo = "exibeModeloSelect(".$arrCliente[0]['cod_marca'].",".$arrCliente[0]['cod_modelo'].");setaModelo(".$arrCliente[0]['cod_modelo'].");";        
+    } 
+} else {
+    $arrCliente = array();
+    $carrega_dados_veiculo = "";
+}
+$arrCores = $objCores->buscaCores($objCores);
+$arrMensalidade = $objMensalidade->buscarMensalidades();
 ?>
 <html>
     <head>
@@ -110,6 +133,17 @@ if (strlen($arrCliente[0]["cpf_cnpj_cliente"]) == 14) {
                         $(".tr_cnpj").hide();                        
                     }
                 }
+                
+                $("#frm").submit(function() {
+                    if($("#des_placa").val() == "") {
+                        alert('Por favor informe a placa');
+                        $("#des_placa").focus();
+                        return false;
+                    } else {
+                        return true;
+                    }
+                });
+                
                 
                 $("#select_tipo_doc").change(function() {
                     var opcao = ($(this).val());
@@ -150,7 +184,7 @@ if (strlen($arrCliente[0]["cpf_cnpj_cliente"]) == 14) {
             });
         </script>		
     </head>
-    <body onLoad="exibeModeloSelect(<?php echo $arrCliente[0]['cod_marca']; ?>,<?php echo $arrCliente[0]['cod_modelo']; ?>);setaModelo(<?php echo $arrCliente[0]['cod_modelo']; ?>)">
+    <body onLoad="<?php echo $carrega_dados_veiculo; ?>">
         <div class="content">
 <?php
 include_once("../../cabecalho.php");
@@ -159,7 +193,7 @@ include_once("../../cabecalho.php");
                 <h1> Cadastro de clientes </h1>	
                 <p style="border:none;"> <a href="index.php">Voltar a lista de clientes</a></p>
                 <div class="success"> <?php echo $msgRetorno; ?> </div>
-                <form method="POST" action="cadastrar_cliente.php">
+                <form method="POST" action="cadastrar_cliente.php" id="frm">
                     <table>
                         <tr>
                             <td> Nome </td>
@@ -204,7 +238,7 @@ include_once("../../cabecalho.php");
                                 <select name="tip_rua_cliente" id="tip_rua_cliente">
                                 <?php
                                     foreach($arrTiposRuas as $value) {
-                                        if ($arrCliente[0]['tip_rua_cliente'] == $value)
+                                        if ($arrCliente[0]['tip_rua_cliente'] == $value || (empty($arrCliente[0]["tip_rua_cliente"]) && $value == "Rua"))
                                             echo sprintf('<option selected="selected" value="%s">%1$s</option>',$value).chr(10);
                                         else
                                             echo sprintf('<option value="%s">%1$s</option>',$value).chr(10);
@@ -312,11 +346,24 @@ for ($i = 0; $i < count($arrCores); $i++) {
                                 </select>
                             </td>
                         </tr>
+                        
+                        <tr>
+                            <td> Plano de mensalidade </td>
+                            <td>
+                                <select name="tip_mensalidade" id="tip_mensalidade">
+                                    <option value=""></option>
+                                </select>
+                            </td>
+                        </tr>
 
                         <tr>
                             <td> Observações </td>
-                            <td> <textarea name="des_observacao"><?php echo $arrHistoricoUltimo[0]["des_observacao"];?></textarea></td>
+                            <td> <textarea name="des_observacao"><?php echo $arrCliente[0]["des_observacao"];?></textarea></td>
                         </tr>
+                        <tr>
+                            <td> Ativo </td>
+                            <td> <input type="checkbox" name="ind_ativo" id="ind_ativo" value="1" <?php echo $arrCliente[0]['ind_ativo'] == 1 ? 'checked' : '';?>  /></td>
+                        </tr>                        
                         <tr>
                             <td> Ultima vez que estacionou </td>
                             <td> <?php echo mostraData($arrHistoricoUltimo[0]["dat_cadastro"]);?></td>
@@ -338,12 +385,13 @@ for ($i = 0; $i < count($arrCores); $i++) {
                         <td>Entrada</td>
                         <td>Saída</td>
                     </tr>
-                    <tr>
                         <?php
                             for ($i = 0; $i < count($arrHistoricoCompleto); $i++) {
+                                echo '<tr>'.chr(10);
                                 echo sprintf("<td>%s</td>",  mostraData($arrHistoricoCompleto[$i]['dat_cadastro'])).chr(10);
                                 echo sprintf("<td>%s</td>",  $arrHistoricoCompleto[$i]['hor_entrada']).chr(10);
                                 echo sprintf("<td>%s</td>",  $arrHistoricoCompleto[$i]['hor_saida']).chr(10);
+                                echo '</tr>'.chr(10);
                             }
                         ?>
                     </tr>

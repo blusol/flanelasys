@@ -263,8 +263,6 @@ function processReqChange() {
                 }
             }
 			
-        } else { 
-            alert("Houve um problema ao obter os dados:n" + req.statusText); 
         } 
     } 
 } 
