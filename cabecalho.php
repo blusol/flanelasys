@@ -22,6 +22,7 @@
                         <li><a href="<?php echo $url; ?>admin/cores/index.php">:: Módulo Cores</a></li>
                         <li><a href="<?php echo $url; ?>admin/descontos/index.php">:: Módulo Descontos</a></li>				
                         <li><a href="<?php echo $url; ?>admin/marcas/listar_marca.php">:: Módulo Marcas</a></li>
+                        <li><a href="<?php echo $url; ?>admin/mensalidades/index.php">:: Módulo Mensalidades</a></li>
                         <li><a href="<?php echo $url; ?>admin/precos/index.php">:: Módulo Preços</a></li>				
                         <li><a href="<?php echo $url; ?>admin/usuarios/index.php">:: Módulo Usuários</a></li>
                         <li><a href="<?php echo $url; ?>admin/modelos/listar_modelo.php">:: Módulo Veiculos</a></li>			

@@ -72,6 +72,9 @@ if ($arrClientes == false)
                 </form>
                 <table style="width:100%;" border="1" align="center">
                     <tr>
+                        <td><a href="cadastrar_cliente.php">Cadastrar cliente</a></td>
+                    </tr>                    
+                    <tr>
                         <th> Nome </th>
                         <th> Placa </th>
                         <th> Modelo </th>
@@ -107,6 +110,3 @@ if ($arrClientes == false)
         </div>
     </body>
 </html>	
-
-
-

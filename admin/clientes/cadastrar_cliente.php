@@ -56,6 +56,12 @@ if (!empty($_POST)) {
         
         $objClientes->set_des_observacao($_POST["des_observacao"]);
         
+        if ($_POST["tipo_cliente"] == "M") {
+            $objClientes->set_tip_mensalidade($_POST["tip_mensalidade"]);
+            $objClientes->set_dat_contratacao(gravaData($_POST["dat_contratacao"]));
+            $objClientes->set_dia_vencimento($_POST["dia_vencimento"]);
+        }
+        
         if (!empty($_POST['ind_ativo']))
             $objClientes->set_ind_ativo(1);
         else
@@ -105,7 +111,7 @@ if (isset($cod_cliente) && !empty($cod_cliente) && is_numeric($cod_cliente)) {
     $carrega_dados_veiculo = "";
 }
 $arrCores = $objCores->buscaCores($objCores);
-$arrMensalidade = $objMensalidade->buscarMensalidades();
+$arrMensalidade = $objMensalidade->buscaMensalidade();
 ?>
 <html>
     <head>
@@ -114,13 +120,30 @@ $arrMensalidade = $objMensalidade->buscarMensalidades();
         <script src="<?php echo $url_lib_jquery; ?>jquery.js" type="text/javascript"></script>
         <script type="text/javascript" src="<?php echo $url_includes . 'script.js'; ?>"></script>
         <script type="text/javascript" src="<?php echo $url_lib_jquery . 'jquery.numeric.js'; ?>"></script>
-        <script type="text/javascript" src="<?php echo $url_lib_jquery . 'jquery.maskedinput.js'; ?>"></script>				
+        <script type="text/javascript" src="<?php echo $url_lib_jquery . 'jquery.maskedinput.js'; ?>"></script>			
+        <script type="text/javascript" src="<?php echo $url_lib_jquery ?>plugins/jquery-ui/ui/ui.core.js"></script>
+        <script type="text/javascript" src="<?php echo $url_lib_jquery ?>plugins/jquery-ui/ui/ui.datepicker.js"></script>
+        <script type="text/javascript" src="<?php echo $url_lib_jquery ?>plugins/jquery-ui/ui/i18n/ui.datepicker-pt-BR.js"></script>
+        <link type="text/css" href="<?php echo $url_lib_jquery; ?>plugins/jquery-ui/themes/smoothness/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
         <script type="text/javascript">
             jQuery(function($){   
                 $("#des_placa").mask("aaa-9999");
                 $("#cep_cliente").mask("99999-999");
                 $("#num_telefone").mask("(99) 9999-9999");
                 $("#num_celular").mask("(99) 9999-9999");
+                
+                $("#dat_contratacao").datepicker(
+                {
+                    showOn: 'button', 
+                    buttonImage: '<?php echo $url_images ?>ico_calendario.gif',
+                    buttonImageOnly: true,
+                    buttonText: 'Calendário',
+                    changeMonth: true,
+                    changeYear: true,
+                    showButtonPanel: true
+                }		
+            );
+                $("#dat_contratacao").datepicker($.datepicker.regional['pt-BR']);                
                 
                 $.fn.selecionaTipoDocumento = function(tipo_documento) {
                     if (tipo_documento == "cnpj") {
@@ -190,8 +213,28 @@ $arrMensalidade = $objMensalidade->buscarMensalidades();
 include_once("../../cabecalho.php");
 ?>
             <div class="data">
-                <h1> Cadastro de clientes </h1>	
-                <p style="border:none;"> <a href="index.php">Voltar a lista de clientes</a></p>
+                <?php 
+                    if (!empty($arrCliente[0]['nom_cliente']))
+                        echo sprintf('<h1> Cadastro do cliente: %s </h1>',$arrCliente[0]['nom_cliente']);
+                    else
+                        echo '<h1> Cadastro de cliente </h1>';
+                ?>
+                <p style="border:none;"> 
+                    <a href="index.php">Lista de clientes</a> | 
+                    
+                    <?php
+                        if (!empty($cod_cliente)) {
+                            echo '<a href="cadastrar_cliente.php">Novo Cadastro</a> | ';
+                            echo sprintf('<a href="cadastrar_cliente.php?cod_cliente=%s">Dados Gerais</a> | ',$cod_cliente);
+                            echo sprintf('<a href="historico.php?cod_cliente=%s">Histórico</a> | ',$cod_cliente);
+                        } else {
+                            echo '<a href="cadastrar_cliente.php">Cadastrar novo</a> |';
+                        }
+                        if (!empty($cod_cliente) && (!empty($arrCliente[0]['tipo_cliente']) && $arrCliente[0]['tipo_cliente'] =='M')) {
+                            echo sprintf('<a href="mensalidade.php?cod_cliente=%s">Mensalidades</a> |',$cod_cliente);
+                        }
+                    ?>
+                </p>
                 <div class="success"> <?php echo $msgRetorno; ?> </div>
                 <form method="POST" action="cadastrar_cliente.php" id="frm">
                     <table>
@@ -352,10 +395,36 @@ for ($i = 0; $i < count($arrCores); $i++) {
                             <td>
                                 <select name="tip_mensalidade" id="tip_mensalidade">
                                     <option value=""></option>
+                                    <?php 
+                                        for ($i =0;$i < count($arrMensalidade);$i++) {
+                                            if ($arrMensalidade[$i]['cod_mensalidade'] == $arrCliente[0]['tip_mensalidade'])
+                                                echo sprintf("<option value='%s' selected='selected'>%s - R$ %s</option>",$arrMensalidade[$i]['cod_mensalidade'],$arrMensalidade[$i]['des_mensalidade'],$arrMensalidade[$i]['val_mensalidade']).chr(10);
+                                            else
+                                                echo sprintf("<option value='%s'>%s - R$ %s</option>",$arrMensalidade[$i]['cod_mensalidade'],$arrMensalidade[$i]['des_mensalidade'],$arrMensalidade[$i]['val_mensalidade']).chr(10);
+                                        }
+                                    ?>
                                 </select>
                             </td>
                         </tr>
-
+                        <tr>
+                            <td> Inicio contratação </td>
+                            <td><input type="text" name="dat_contratacao" id="dat_contratacao" value="<?php echo $arrCliente[0]['dat_contratacao'] != '' ? mostraData($arrCliente[0]['dat_contratacao']) : date("d/m/Y");?>" /></td>
+                        </tr>
+                        <tr>
+                            <td>Dia de vencimento</td>
+                            <td>
+                                <select name="dia_vencimento" id="dia_vencimento">
+                                    <?php
+                                        for($i=1;$i<=31;$i++) {
+                                            if ($i == $arrCliente[0]['dia_vencimento'])
+                                                echo sprintf('<option value="%s" selected="selected">%1$s</option>',str_pad($i,2,0,STR_PAD_LEFT)).chr(10);
+                                            else
+                                                echo sprintf('<option value="%s">%1$s</option>',str_pad($i,2,0,STR_PAD_LEFT)).chr(10);
+                                        }
+                                    ?>
+                                </select>
+                            </td>
+                        </tr>
                         <tr>
                             <td> Observações </td>
                             <td> <textarea name="des_observacao"><?php echo $arrCliente[0]["des_observacao"];?></textarea></td>
@@ -378,7 +447,7 @@ for ($i = 0; $i < count($arrCores); $i++) {
                         </tr>
                     </table>
                 </form>	
-                <h1> Histórico </h1>
+                <h1> Histórico de estacionamentos </h1>
                 <table>
                     <tr>
                         <td>Data</td>
@@ -396,6 +465,13 @@ for ($i = 0; $i < count($arrCores); $i++) {
                         ?>
                     </tr>
                 </table>
+                <h1> Histórico de pagamentos de mensalidades </h1>
+                <table>
+                    <tr>
+                        <td>Mês</td>
+                        <td>Situação</td>
+                    </tr>
+                </table>                
             </div>
         </div>
     </body>

@@ -6,19 +6,32 @@ include_once($path_classes . 'fla_mensalidade.class.php');
 
 $objMensalidade = new fla_mensalidade();
 
-if (isset($_POST)) {
+if (isset($_GET['cod_mensalidade']))
+    $cod_mensalidade = $_GET['cod_mensalidade'];
+
+if (isset($_POST) && ($_POST['_submit'] == "Salvar")) {
     $objMensalidade->set_des_mensalidade($_POST["des_mensalidade"]);
-    $objMensalidade->set_val_mensalidade($_POST["val_mensalidade"]);
+    $objMensalidade->set_val_mensalidade(str_replace(",",".",$_POST["val_mensalidade"]));
+    $objMensalidade->set_ind_ativo($_POST["ind_ativo"]);
     if (isset($_POST['ind_ativo']))
         $objMensalidade->set_ind_ativo(1);
     else
         $objMensalidade->set_ind_ativo(0);
-    
-    $objMensalidade->set_dat_criacao(date("Y-m-d H:i"));
-    
-    $objMensalidade->cadastraMensalidade($objMensalidade);
-}
 
+    if (isset($_POST['cod_mensalidade']) && !empty($_POST['cod_mensalidade'])) {
+        $cod_mensalidade = $_POST['cod_mensalidade'];
+        $objMensalidade->set_cod_mensalidade($cod_mensalidade);   
+        $objMensalidade->editaMensalidade($objMensalidade);
+    } else {
+        $objMensalidade->set_dat_criacao(date("Y-m-d H:i"));     
+        $objMensalidade->cadastraMensalidade($objMensalidade);
+    }
+}
+$objMensalidade->ResetObject();
+if (isset($cod_mensalidade)) {
+    $objMensalidade->set_cod_mensalidade($cod_mensalidade);
+    $arrMensalidade = $objMensalidade->buscaMensalidade();
+}
 ?>
 <html>
     <head>
@@ -55,7 +68,7 @@ include_once("../../cabecalho.php");
                         <tr>
                             <td>
                                 <input type="hidden" name="cod_mensalidade" id="cod_mensalidade" value="<?php echo $cod_mensalidade; ?>">
-                                <input type="submit" name="_submit" value="Cadastrar">
+                                <input type="submit" name="_submit" value="Salvar">
                             </td>
                         </tr>                        
                     </table>

@@ -28,6 +28,9 @@ class fla_clientes {
     private $num_celular;
     private $ind_ativo;
     private $des_observacao;
+    private $tip_mensalidade;
+    private $dat_contratacao;
+    private $dia_vencimento;
 
     public function get_cod_cliente() {
         return $this->cod_cliente;
@@ -217,6 +220,30 @@ class fla_clientes {
         $this->des_observacao = $des_observacao;
     }
 
+    public function get_tip_mensalidade() {
+        return $this->tip_mensalidade;
+    }
+
+    public function set_tip_mensalidade($tip_mensalidade) {
+        $this->tip_mensalidade = $tip_mensalidade;
+    }
+
+    public function get_dat_contratacao() {
+        return $this->dat_contratacao;
+    }
+
+    public function set_dat_contratacao($dat_contratacao) {
+        $this->dat_contratacao = $dat_contratacao;
+    }
+
+    public function get_dia_vencimento() {
+        return $this->dia_vencimento;
+    }
+
+    public function set_dia_vencimento($dia_vencimento) {
+        $this->dia_vencimento = $dia_vencimento;
+    }    
+    
     public function insereCliente($objCliente) {
         $objConexao = new fla_conexao();
 

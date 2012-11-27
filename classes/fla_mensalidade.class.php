@@ -9,7 +9,6 @@ class fla_mensalidade {
     private $val_mensalidade;
     private $ind_ativo;
     private $dat_criacao;
-    private $dat_reajuste;
 
     public function get_cod_mensalidade() {
         return $this->cod_mensalidade;
@@ -51,13 +50,6 @@ class fla_mensalidade {
         $this->dat_criacao = $dat_criacao;
     }
 
-    public function get_dat_reajuste() {
-        return $this->dat_reajuste;
-    }
-
-    public function set_dat_reajuste($dat_reajuste) {
-        $this->dat_reajuste = $dat_reajuste;
-    }
 
     public function cadastraMensalidade($objMensalidade) {
         $objConexao = new fla_conexao();
@@ -96,6 +88,117 @@ class fla_mensalidade {
             return false;
         }
     }
+    
+    public function editaMensalidade($objMensalidade) {
+        $objConexao = new fla_conexao();
+
+        $parametros_where = get_object_vars($objMensalidade);
+        $parametros_where = array_filter($parametros_where, 'strlen');
+        $tamanho_parametros = count($parametros_where);
+        $update = "";
+        $aux = 1;
+        if (is_array($parametros_where)) {
+            foreach ($parametros_where as $atributo => $valor) {
+                if (($atributo != "cod_mensalidade")) {
+                    if ((!is_null($valor))) {
+                        if ($aux != $tamanho_parametros) {
+                            $and = " , ";
+                        } else {
+                            $and = "";
+                        }
+                        
+                        if (is_numeric($valor)) {
+                            $update .= $atributo . " = " . $valor . $and;
+                        } else {
+                            $update .= $atributo . " = '" . $valor . "'" . $and;
+                        }
+                    }
+                }
+                $aux++;
+            }
+        }
+        $SQL = sprintf('UPDATE fla_mensalidade SET ' . $update . ' WHERE cod_mensalidade = %s', $objMensalidade->get_cod_mensalidade());
+        //echo $SQL;
+        $query = $objConexao->prepare($SQL);
+        $query->Execute();
+    }    
+    
+    public function buscaMensalidade() {
+        $objConexao = new fla_conexao();
+        $where = "";
+        $separador = "";
+        $colunas_select = "";
+        $and = "";
+        $arrClientes = array();
+
+        $parametros_where = get_object_vars($this);
+        $parametros_where = array_filter($parametros_where, 'strlen');
+        $tamanho_parametros = count($parametros_where);
+
+        $arrAtributos = get_class_vars(get_class($this));
+        $countArrAtributos = count($arrAtributos);
+        $aux = 1;
+        if (is_array($parametros_where)) {
+            foreach ($parametros_where as $atributo => $valor) {
+                if (!is_null($valor)) {
+                    if ($aux != $tamanho_parametros) {
+                        $and = " AND ";
+                    } else {
+                        $and = "";
+                    }
+                    if (is_numeric($valor)) {
+                        $where .= $atributo . " = " . $valor . $and;
+                    } else {
+                        $where .= $atributo . " LIKE '%" . $valor . "%'" . $and;
+                    }
+                }
+                $aux++;
+            }
+        }
+        $aux = 1;
+        if (is_array($arrAtributos)) {
+            foreach ($arrAtributos as $key => $value) {
+                if ($aux != $countArrAtributos)
+                    $separador = ",";
+                else
+                    $separador = "";
+
+                $colunas_select .= $key . $separador . chr(10);
+                $aux++;
+            }
+        }
+
+        if (!empty($where)) {
+            $where = " where " . $where;
+        }
+
+        $SQL = sprintf("select %s from fla_mensalidade rot %s", $colunas_select, $where);
+        //echo $SQL;
+        $rsClientes = $objConexao->prepare($SQL);
+        $rsClientes->execute();
+        $count = $rsClientes->rowCount();
+        $aux = 0;
+        if ($count > 0) {
+            while ($clientes = $rsClientes->fetch(PDO::FETCH_ASSOC)) {
+                foreach ($clientes as $key => $value) {
+                    if (!empty($value))
+                        $arrClientes[$aux][$key] = $value;
+                    else
+                        $arrClientes[$aux][$key] = '';
+                }
+                $aux++;
+            }
+            return $arrClientes;
+        } else {
+            return false;
+        }        
+    }
+    
+    function ResetObject() {
+        foreach ($this as $key => $value) {
+            unset($this->$key);
+        }
+    }    
 
 }
 
