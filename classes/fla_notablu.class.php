@@ -1,11 +1,12 @@
 <?php
-include_once('../includes/config.php');
+//include_once('../includes/config.php');
 include_once($path_libraries.'tcpdf/config/lang/eng.php');
 include_once($path_libraries.'tcpdf/tcpdf.php');
 include_once($path_classes.'fla_rotatividade.class.php');
 include_once($path_classes.'fla_clientes.class.php');
 include_once($path_classes.'fla_nfes.class.php');
 include_once($path_classes.'fla_empresas.class.php');
+include_once($path_classes.'fla_mensalidade_usuario.class.php');
 
 class fla_notablu {
     public function geraCabecalho() {
@@ -20,11 +21,12 @@ class fla_notablu {
         
     }
     
-    public function geraImpressao($cod_nfe) {
+    public function geraImpressao($cod_nfe,$tipo = 1) {
         $objNFE = new FLA_NFES();
         $objRotatividade = new FLA_ROTATIVIDADE();
         $objClientes = new FLA_CLIENTES();
         $objEmpresa = new fla_empresas();
+        $objMensalidadeUsuario = new fla_mensalidade_usuario();
         
         $arrNFE = array();
         $arrRotatividade = array();
@@ -33,10 +35,17 @@ class fla_notablu {
         $objNFE->set_cod_nfe($cod_nfe);
         $arrNFE = $objNFE->buscaNFE($objNFE);
 
-        $objRotatividade->set_cod_rotatividade($arrNFE[0]['cod_rotatividade']);
-        $arrRotatividade = $objRotatividade->buscaCarro($objRotatividade);
+        if ($tipo ==1) {
+            $objRotatividade->set_cod_rotatividade($arrNFE[0]['cod_rotatividade']);
+            $arrRotatividade = $objRotatividade->buscaCarro($objRotatividade);
+            $objClientes->set_des_placa($arrRotatividade[0]['des_placa']);
+        } elseif ($tipo == 2) {
+            $objMensalidadeUsuario->set_cod_mensalidade_usuario($arrNFE[0]['cod_mensalidade_usuario']);
+            $arrMensalidadeUsuario = $objMensalidadeUsuario->buscaPagamentos();
+            //exit;
+            $objClientes->set_cod_cliente($arrMensalidadeUsuario[0]['cod_cliente']);
+        }
         
-        $objClientes->set_des_placa($arrRotatividade[0]['des_placa']);
         $arrClientes = $objClientes->buscaClientes($objClientes);
         
         $arrEmpresa = $objEmpresa->buscaEmpresas($objEmpresa);
@@ -91,23 +100,39 @@ class fla_notablu {
         $horario_entrada = $arrRotatividade[0]['hor_entrada'];
         $horario_saida = $arrRotatividade[0]['hor_saida'];
         $periodo_estadia = $arrRotatividade[0]['tem_permanencia'];
-        $val_total = number_format($val_total, 2, ',', ' ');
         $valor = $arrRotatividade[0]['val_cobrado'];
-        $des_placa = strtoupper($arrRotatividade[0]['des_placa']);
         
-        $conteudo = sprintf("%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n%s",
-                                $titulo
-                                , $sub_titulo
-                                , "Data: ".$dat_recibo
-                                , "No do RPS: ".$numero_rps
-                                , "Serie: ".$serie_rps
-                                , "Cartao: ".$num_cartao
-                                , "Placa: ".$des_placa
-                                , "Horario de entrada: ".$horario_entrada
-                                , "Horario de saida: ".$horario_saida
-                                , "Periodo: ".$periodo_estadia
-                                , "Total do servico: R$ ".$valor
-                    );
+        $periodo_inicial = mostraData($arrMensalidadeUsuario[0]['periodo_inicial']);
+        $periodo_final = mostraData($arrMensalidadeUsuario[0]['periodo_final']);
+        $valor_pago = $arrMensalidadeUsuario[0]['valor_pago'];
+        $data_pagamento = mostraData($arrMensalidadeUsuario[0]['data_pagamento']);
+        
+        if ($tipo == 1) {
+            $conteudo = sprintf("%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n%s",
+                                    $titulo
+                                    , $sub_titulo
+                                    , "Data: ".$dat_recibo
+                                    , "No do RPS: ".$numero_rps
+                                    , "Serie: ".$serie_rps
+                                    , "Cartao: ".$num_cartao
+                                    , "Placa: ".strtoupper($arrRotatividade[0]['des_placa'])
+                                    , "Horario de entrada: ".$horario_entrada
+                                    , "Horario de saida: ".$horario_saida
+                                    , "Periodo: ".$periodo_estadia
+                                    , "Total do servico: R$ ".$valor
+                        );
+        } elseif ($tipo == 2) {
+            $conteudo = sprintf("%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n%s",
+                                    $titulo
+                                    , $sub_titulo
+                                    , "Data: ".$data_pagamento
+                                    , "No do RPS: ".$numero_rps
+                                    , "Serie: ".$serie_rps
+                                    , "Placa: ".strtoupper($arrClientes[0]['des_placa'])
+                                    , "Referente a: ".$periodo_inicial
+                                    , "ate a data: ".$periodo_final
+                                    , "Total do servico: R$ ".$valor_pago);
+        }
         $texto_rodape = "Este RPS sera convertido em NFS-e em ate\r\n10 dias.\r\nPara confirmar acesse\r\nwww.blumenau.sc.gov.br/nfse";
         $documento_tomador = $arrClientes[0]['cpf_cnpj_cliente'];
         if ($documento_tomador > 0) {
@@ -131,7 +156,10 @@ class fla_notablu {
         $conteudo_impressao = iconv('UTF-8','IBM850',$conteudo_impressao);
         $pdf->Write($h=0, $conteudo_impressao, $link='', $fill=0, $align='J', $ln=true, $stretch=0, $firstline=false, $firstblock=false, $maxh=0);
         $pdf->Output('RPS-'.$numero_rps, 'D');
-        Header("Location:" . $url . "rotatividade/index.php");
+        if ($tipo == 1)
+            Header("Location:" . $url . "rotatividade/index.php");
+        else
+            Header("Location:" . $url . "admin/clientes/index.php");
     }
     
     function enviaDados($dados) {

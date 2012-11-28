@@ -1,6 +1,6 @@
 <?php
 
-include_once('../includes/config.php');
+//include_once('../includes/config.php');
 include_once($path_classes . 'fla_conexao.class.php');
 
 class fla_rotatividade {

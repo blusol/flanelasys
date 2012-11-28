@@ -447,31 +447,6 @@ for ($i = 0; $i < count($arrCores); $i++) {
                         </tr>
                     </table>
                 </form>	
-                <h1> Histórico de estacionamentos </h1>
-                <table>
-                    <tr>
-                        <td>Data</td>
-                        <td>Entrada</td>
-                        <td>Saída</td>
-                    </tr>
-                        <?php
-                            for ($i = 0; $i < count($arrHistoricoCompleto); $i++) {
-                                echo '<tr>'.chr(10);
-                                echo sprintf("<td>%s</td>",  mostraData($arrHistoricoCompleto[$i]['dat_cadastro'])).chr(10);
-                                echo sprintf("<td>%s</td>",  $arrHistoricoCompleto[$i]['hor_entrada']).chr(10);
-                                echo sprintf("<td>%s</td>",  $arrHistoricoCompleto[$i]['hor_saida']).chr(10);
-                                echo '</tr>'.chr(10);
-                            }
-                        ?>
-                    </tr>
-                </table>
-                <h1> Histórico de pagamentos de mensalidades </h1>
-                <table>
-                    <tr>
-                        <td>Mês</td>
-                        <td>Situação</td>
-                    </tr>
-                </table>                
             </div>
         </div>
     </body>

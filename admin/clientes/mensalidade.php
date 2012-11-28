@@ -4,19 +4,52 @@ include_once('../../includes/funcao.php');
 require_once($path_relative . 'verifica.php');
 include_once($path_classes . 'fla_clientes.class.php');
 include_once($path_classes . 'fla_mensalidade.class.php');
+include_once($path_classes . 'fla_mensalidade_usuario.class.php');
+include_once($path_relative . 'rotatividade/nfeblu.php');
 
 $objClientes = new fla_clientes();
 $objMensalidade = new fla_mensalidade();
+$objMensalidadeUsuario = new fla_mensalidade_usuario();
 
 if (isset($_GET) && !empty($_GET['cod_cliente'])) 
     $cod_cliente = $_GET['cod_cliente'];
-else
-    Header("index.php");
+
+if (isset($_POST) && !empty($_POST)) {
+    $valor_pago = str_replace(",",".",$_POST['valor_pago']);
+    $periodo_inicial = gravaData($_POST['periodo_inicial']);
+    $periodo_final = gravaData($_POST['periodo_final']);
+    $data_pagamento = gravaData($_POST['data_pagamento']);
+    $cod_cliente = $_POST['cod_cliente'];
+    $cod_mensalidade = $_POST['cod_mensalidade'];
+    
+    $objMensalidadeUsuario->set_valor_pago($valor_pago);
+    $objMensalidadeUsuario->set_periodo_inicial($periodo_inicial);
+    $objMensalidadeUsuario->set_periodo_final($periodo_final);
+    $objMensalidadeUsuario->set_data_pagamento($data_pagamento);
+    $objMensalidadeUsuario->set_cod_cliente($cod_cliente);
+    $objMensalidadeUsuario->set_cod_mensalidade($cod_mensalidade);
+    $cod_pagamento = $objMensalidadeUsuario->cadastraPagamento();
+    
+    $msgRetorno = "Pagamento registrado com sucesso";
+    $msgRetorno .= '<br> Deseja imprimir RPS? <a href="'.$url.'admin/clientes/mensalidade.php?imprimir='.  base64_encode(strToHex('imprimeRPS')).'&cod_pagamento='.$cod_pagamento.'">Sim</a>';
+    $objMensalidadeUsuario->ResetObject();
+}
+
+if (isset($_GET) && !empty($_GET['imprimir'])) {
+    $cod_pagamento = $_GET['cod_pagamento'];
+    
+    geraRPS($cod_pagamento,2);
+    Header("Location:" . $url . "admin/clientes/index.php");
+}
 
 $objClientes->set_cod_cliente($cod_cliente);
 $arrCliente = $objClientes->buscaClientes($objClientes);
 
 $arrMensalidade = $objMensalidade->buscaMensalidade($arrCliente[0]['tip_mensalidade']);
+$cod_cliente = $arrCliente[0]['cod_cliente'];
+
+$objMensalidadeUsuario->set_cod_cliente($cod_cliente);
+$arrMensalidadeUsuario = $objMensalidadeUsuario->buscaPagamentos();
 ?>
 <html>
     <head>
@@ -99,7 +132,8 @@ include_once("../../cabecalho.php");
                         }
                     ?>
                 </p>
-                <form action="mensalidade" method="POST">
+                <div class="success"> <?php echo $msgRetorno; ?> </div>
+                <form action="mensalidade.php" method="POST">
                     <table>
                         <tr>
                             <td colspan="2">Tipo de mensalidade: <?php echo $arrMensalidade[0]['des_mensalidade'];?> </td>
@@ -112,7 +146,7 @@ include_once("../../cabecalho.php");
                             <td> Valor pago: </td>
                             <td> <input type="text" name="valor_pago" id="valor_pago" value="<?php echo number_format($arrMensalidade[0]['val_mensalidade'],2,",",".");?>" /> </td>
                         </tr>                        
-                        <tr>
+                        <tr id="trJustificativa" style="display: none;">
                             <td> Justificativa: </td>
                             <td> <input type="text" name="des_justificativa" id="des_justificativa" value="" /> </td>
                         </tr>                        
@@ -128,7 +162,12 @@ include_once("../../cabecalho.php");
                             <td> <input type="text" name="data_pagamento" id="data_pagamento" value="<?php echo date("d/m/Y");?>" /> </td>
                         </tr>
                         <tr>
-                            <td> <input type="submit" name="envia" value="Cadastrar" /> </td>
+                            <td> 
+                                <input type="hidden" id="cod_cliente" name="cod_cliente" value="<?php echo $cod_cliente;?>" />
+                                <input type="hidden" id="cod_mensalidade" name="cod_mensalidade" value="<?php echo $arrMensalidade[0]['cod_mensalidade'];?>" />
+                                <input type="submit" name="envia" value="Cadastrar" /> 
+                            </td>
+                            <td>
                         </tr>
                     </table>
                 </form>
@@ -142,11 +181,11 @@ include_once("../../cabecalho.php");
                         <td>Período</td>
                     </tr>
                         <?php
-                            for ($i = 0; $i < count($arrHistoricoCompleto); $i++) {
+                            for ($i = 0; $i < count($arrMensalidadeUsuario); $i++) {
                                 echo '<tr>'.chr(10);
-                                echo sprintf("<td>%s</td>",  mostraData(date("Y-m-d"))).chr(10);
-                                echo sprintf("<td>R$ %s</td>", number_format(100.50,2,",",".")).chr(10);
-                                echo sprintf("<td>%s á %s</td>", mostraData(date("Y-m-d")),mostraData(date("Y-m-d"))).chr(10);
+                                echo sprintf("<td>%s</td>",  mostraData($arrMensalidadeUsuario[$i]['data_pagamento'])).chr(10);
+                                echo sprintf("<td>R$ %s</td>", number_format($arrMensalidadeUsuario[$i]['valor_pago'],2,",",".")).chr(10);
+                                echo sprintf("<td>%s á %s</td>", mostraData($arrMensalidadeUsuario[$i]['periodo_inicial']),mostraData($arrMensalidadeUsuario[$i]['periodo_final'])).chr(10);
                                 echo '</tr>'.chr(10);
                             }
                         ?>

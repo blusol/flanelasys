@@ -6,6 +6,7 @@ class fla_nfes {
 
     private $cod_nfe;
     private $cod_rotatividade;
+    private $cod_mensalidade_usuario;
     private $dat_criacao;
     private $ind_enviado;
     private $dat_enviado;
@@ -49,7 +50,15 @@ class fla_nfes {
     public function set_dat_enviado($dat_enviado) {
         $this->dat_enviado = $dat_enviado;
     }
-    
+    public function get_cod_mensalidade_usuario() {
+        return $this->cod_mensalidade_usuario;
+    }
+
+    public function set_cod_mensalidade_usuario($cod_mensalidade_usuario) {
+        $this->cod_mensalidade_usuario = $cod_mensalidade_usuario;
+    }
+
+        
     public function insereNFE($objNFE) {
         $objConexao = new fla_conexao();
         $objRotatividade = new fla_rotatividade();
@@ -146,6 +155,7 @@ class fla_nfes {
         }
         
         $SQL = sprintf("select %s from fla_nfes nfe %s",$colunas_select,$where);
+        //echo $SQL;
         $rsNFEs = $objConexao->prepare($SQL);
         $rsNFEs->execute();
         $count = $rsNFEs->rowCount();

@@ -25,6 +25,8 @@ $arrDescontos = $objDescontos->buscaDescontos($objDescontos);
 $objRotatividade = new fla_rotatividade();
 
 $objClientes = new fla_clientes();
+$objPlacas = new fla_clientes();
+
 if (isset($_POST['cod_cartao'])) {
     $cod_cartao = $_POST['cod_cartao'];
     $des_placa = $_POST['des_placa'];
@@ -106,6 +108,8 @@ if (isset($_GET) && !empty($_GET['imprimir'])) {
 $hora_entrada = date("H:i:s");
 $hora_saida = "";
 $arrRotatividade = $objRotatividade->buscaCarrosEstacionados();
+
+$arrPlacas = $objPlacas->buscaClientes($objPlacas);
 ?>
 <html>
     <head>
@@ -171,6 +175,35 @@ $arrRotatividade = $objRotatividade->buscaCarrosEstacionados();
 	
         );
 
+        $(function() {
+            var availableTags = [
+                "ActionScript",
+                "AppleScript",
+                "Asp",
+                "BASIC",
+                "C",
+                "C++",
+                "Clojure",
+                "COBOL",
+                "ColdFusion",
+                "Erlang",
+                "Fortran",
+                "Groovy",
+                "Haskell",
+                "Java",
+                "JavaScript",
+                "Lisp",
+                "Perl",
+                "PHP",
+                "Python",
+                "Ruby",
+                "Scala",
+                "Scheme"
+            ];
+            $( "#tags" ).autocomplete({
+                source: availableTags
+            });
+        });
 			
         </script>
         <link href="../images/style.css" rel="stylesheet" type="text/css" />

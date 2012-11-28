@@ -1,6 +1,6 @@
 <?php
 
-include_once('../includes/config.php');
+//include_once('../includes/config.php');
 include_once($path_includes . 'funcao.php');
 include_once($path_classes . 'fla_conexao.class.php');
 include_once($path_classes . 'fla_rotatividade.class.php');
@@ -9,33 +9,22 @@ include_once($path_classes . 'fla_nfes.class.php');
 include_once($path_classes . 'fla_notablu.class.php');
 include_once($path_classes . 'fla_empresas.class.php');
 
-/*
-$cod_rotatividade = "";
-$valor = 0;
-$arrClientes = array();
-*/
 
-/*if (isset($_GET['cod_rotatividade']) && !empty($_GET['cod_rotatividade'])) {
-    $cod_rotatividade = $_GET['cod_rotatividade'];
-    $cod_rotatividade = base64_decode(hexToStr($cod_rotatividade));
-}*/
-
-//geraLoteRPS($cod_rotatividade);
-//geraRPS($cod_rotatividade);
-
-function imprimeRPS($cod_rps) {
+function imprimeRPS($cod_rps,$tipo = 1) {
     $objNotablu = new fla_notablu();
-    $objNotablu->geraImpressao($cod_rps);
+    $objNotablu->geraImpressao($cod_rps,$tipo);
 }
 
-function geraRPS($cod_rotatividade) {
+function geraRPS($cod_servico,$tipo = 1) {
     $objNotablu = new fla_notablu();
     $objNFE = new FLA_NFES();
-
-    $objNFE->set_cod_rotatividade($cod_rotatividade);
+    if ($tipo == 1)
+        $objNFE->set_cod_rotatividade($cod_servico);
+    else
+        $objNFE->set_cod_mensalidade_usuario ($cod_servico);
+    
     $cod_rps = $objNFE->insereNFE($objNFE);
-    imprimeRPS($cod_rps);
-    Header("Location:" . $url . "rotatividade/index.php");
+    imprimeRPS($cod_rps,$tipo);
 }
 
 function geraLoteRPS($arrRPS) {
