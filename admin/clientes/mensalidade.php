@@ -38,7 +38,7 @@ if (isset($_POST) && !empty($_POST)) {
 if (isset($_GET) && !empty($_GET['imprimir'])) {
     $cod_pagamento = $_GET['cod_pagamento'];
     
-    geraRPS($cod_pagamento,2);
+    geraRPS($cod_pagamento,2,$cod_cliente);
     Header("Location:" . $url . "admin/clientes/index.php");
 }
 

@@ -15,7 +15,7 @@ function imprimeRPS($cod_rps,$tipo = 1) {
     $objNotablu->geraImpressao($cod_rps,$tipo);
 }
 
-function geraRPS($cod_servico,$tipo = 1) {
+function geraRPS($cod_servico,$tipo = 1,$cod_cliente = 0) {
     $objNotablu = new fla_notablu();
     $objNFE = new FLA_NFES();
     if ($tipo == 1)
@@ -23,6 +23,7 @@ function geraRPS($cod_servico,$tipo = 1) {
     else
         $objNFE->set_cod_mensalidade_usuario ($cod_servico);
     
+    $objNFE->set_cod_cliente($cod_cliente);
     $cod_rps = $objNFE->insereNFE($objNFE);
     imprimeRPS($cod_rps,$tipo);
 }
@@ -201,10 +202,10 @@ function geraLoteRPS($arrRPS) {
         $valor_pis = str_replace(array(",", "."), array("", ""), $valor_pis);
         $valor_pis = str_pad($valor_pis, 15, "0", STR_PAD_LEFT);
 
-        $conteudo_detalhes .= sprintf("20%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s\r\n", $serie_rps, $numero_rps, $data_rps, $situacao_rps, $valor_rps, $valor_deducao_rps, $codigo_servico_rps, $aliquota_rps, $iss_retido_rps, $indicador_cnpj_cpf_tomador_rps, $cnpj_cpf_tomador_rps, $inscricao_municipal_tomador, $inscricao_estadual_tomador, $nome_tomador, $tipo_endereco, $endereco_tomador, $numero_endereco_tomador, $complemento_endereco_tomador, $bairro_tomador, $cidade_tomador, $estado_tomador, $cep_tomador, $email_tomador, $valor_confins, $valor_csll, $valor_inss, $valor_irpj, $valor_pis, $discriminacao_servico);
+        $conteudo_detalhes = sprintf("20%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s\r\n", $serie_rps, $numero_rps, $data_rps, $situacao_rps, $valor_rps, $valor_deducao_rps, $codigo_servico_rps, $aliquota_rps, $iss_retido_rps, $indicador_cnpj_cpf_tomador_rps, $cnpj_cpf_tomador_rps, $inscricao_municipal_tomador, $inscricao_estadual_tomador, $nome_tomador, $tipo_endereco, $endereco_tomador, $numero_endereco_tomador, $complemento_endereco_tomador, $bairro_tomador, $cidade_tomador, $estado_tomador, $cep_tomador, $email_tomador, $valor_confins, $valor_csll, $valor_inss, $valor_irpj, $valor_pis, $discriminacao_servico);
         fwrite($arquivo, $conteudo_detalhes);
         $num_detalhes++;
-        $objNFE->setGeradoLote($rps);
+        $objNFE->setGeradoLote($rps,$ano_atual . '_' . $mes_atual . '_'.$nome_arquivo);
     }
     $num_detalhes = str_pad($num_detalhes, 7, "0", STR_PAD_LEFT);
     $valor_total_servicos = number_format($valor_total_servicos, 2, "","");
@@ -219,6 +220,7 @@ function geraLoteRPS($arrRPS) {
     fwrite($arquivo, $conteudo_rodape);
     fclose($arquivo);
     chmod($caminho_arquivo . $nome_arquivo,0777);
+    return true;
 }
 
 ?>

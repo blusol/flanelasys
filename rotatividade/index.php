@@ -58,7 +58,6 @@ if (isset($_POST['cod_cartao'])) {
         $cod_desconto = 0;
     }
 
-    $objRotatividade->set_cod_cartao($cod_cartao);
     $objRotatividade->set_des_placa($des_placa);
     $objRotatividade->set_cod_preco($cod_preco);
     $objRotatividade->set_des_situacao("P");
@@ -71,6 +70,7 @@ if (isset($_POST['cod_cartao'])) {
         $objClientes->insereCliente($objClientes);
 
         $verifica = $objRotatividade->buscaCarro($objRotatividade,"P");
+        $objRotatividade->set_cod_cartao($cod_cartao);
         if ($verifica == false) {
             $objRotatividade->set_hor_entrada($hor_entrada);
             $objRotatividade->set_dat_cadastro($dat_cadastro);            
@@ -80,6 +80,7 @@ if (isset($_POST['cod_cartao'])) {
             $msgRetorno = 'Este veiculo já se encontra estacionado';
         }
     } else {
+        $objRotatividade->set_cod_cartao($cod_cartao);
         $objRotatividade->set_hor_entrada($hor_entrada);
         $objRotatividade->set_dat_cadastro($dat_cadastro);        
         $objRotatividade->set_cod_rotatividade($cod_rotatividade);
@@ -91,8 +92,12 @@ if (isset($_POST['cod_cartao'])) {
         $objRotatividade->set_des_justificativa($des_justificativa);
         $objRotatividade->set_tem_permanencia($tem_permanencia);
         $objRotatividade->removeRotatividade($objRotatividade);
+        
+        $objClientes->set_des_placa($des_placa);
+        $arrCliente = $objClientes->buscaClientes($objClientes);
+        $cod_cliente = $arrCliente[0]['cod_cliente'];
         $msgRetorno = 'Veiculo liberado com sucesso';
-        $msgRetorno .= '<br> Deseja imprimir RPS? <a href="'.$url.'rotatividade/index.php?imprimir='.  base64_encode(strToHex('imprimeRPS')).'&cod_rotatividade='.$cod_rotatividade.'">Sim</a>';
+        $msgRetorno .= '<br> Deseja imprimir RPS? <a href="'.$url.'rotatividade/index.php?imprimir='.  base64_encode(strToHex('imprimeRPS')).'&cod_rotatividade='.$cod_rotatividade.'&cod_cliente='.$cod_cliente.'">Sim</a>';
         $val_total = "";
     }
 }
@@ -100,8 +105,8 @@ if (isset($_POST['cod_cartao'])) {
 if (isset($_GET) && !empty($_GET['imprimir'])) {
     $cod_rotatividade = $_GET['cod_rotatividade'];
     $cod_rotatividade = base64_decode(hexToStr($cod_rotatividade));
-    
-    geraRPS($cod_rotatividade);
+    $cod_cliente = $_GET['cod_cliente'];
+    geraRPS($cod_rotatividade,1,$cod_cliente);
     Header("Location:" . $url . "rotatividade/index.php");
 }
 
@@ -116,8 +121,10 @@ $arrPlacas = $objPlacas->buscaClientes($objPlacas);
         <title><?php echo $titulo_pagina; ?> </title>
         <script type="text/javascript" src="<?php echo $url_lib_jquery . 'jquery.js'; ?>"></script>
         <script type="text/javascript" src="<?php echo $url_lib_jquery . 'jquery.maskedinput.js'; ?>"></script>
-        <script type="text/javascript" src="<?php echo $url_lib_jquery . 'jquery.numeric.js'; ?>"></script>		
+        <script type="text/javascript" src="<?php echo $url_lib_jquery . 'jquery.numeric.js'; ?>"></script>
+        <script src="<?php echo $url_lib_jquery . 'plugins/jquery-ui/js/jquery-ui-1.9.2.custom.js'; ?>"></script>
         <script type="text/javascript" src="<?php echo $url_includes . 'script.js'; ?>"></script>
+        <link rel="stylesheet" type="text/css" href="<?php echo $url_lib_jquery . 'plugins/jquery-ui/css/smoothness/jquery-ui-1.9.2.custom.css'; ?>">
 
         <script language="javascript">
 
@@ -148,17 +155,21 @@ $arrPlacas = $objPlacas->buscaClientes($objPlacas);
                 }             
             }
             
-            function consultaCartao(numero) {                
-                url="consulta_cartao.php?cod_cartao="+numero; 								
-                ajax(url); 
-                document.getElementById('cod_cartao').value = numero;
+            function consultaCartao(numero) {    
+                if (numero != "") {
+                    url="consulta_cartao.php?cod_cartao="+numero; 								
+                    ajax(url); 
+                    document.getElementById('cod_cartao').value = numero;
+                }
             }
 			
             function consultaPlaca(placa) {
-                var val_total = document.getElementById('val_total').value;
-                if (val_total === "") {
-                    url="consulta_placa.php?des_placa="+placa;
-                    ajax(url);
+                if (placa != "") {
+                    var val_total = document.getElementById('val_total').value;
+                    if (val_total === "") {
+                        url="consulta_placa.php?des_placa="+placa;
+                        ajax(url);
+                    }
                 }
             }
 			 
@@ -171,39 +182,14 @@ $arrPlacas = $objPlacas->buscaClientes($objPlacas);
             function()
             {
                 $("input.numeric").numeric();
+                
+                $("#des_placa").autocomplete({
+                    source: "consulta_placa.php",
+                    minLength: 1
+                });                
             }
 	
         );
-
-        $(function() {
-            var availableTags = [
-                "ActionScript",
-                "AppleScript",
-                "Asp",
-                "BASIC",
-                "C",
-                "C++",
-                "Clojure",
-                "COBOL",
-                "ColdFusion",
-                "Erlang",
-                "Fortran",
-                "Groovy",
-                "Haskell",
-                "Java",
-                "JavaScript",
-                "Lisp",
-                "Perl",
-                "PHP",
-                "Python",
-                "Ruby",
-                "Scala",
-                "Scheme"
-            ];
-            $( "#tags" ).autocomplete({
-                source: availableTags
-            });
-        });
 			
         </script>
         <link href="../images/style.css" rel="stylesheet" type="text/css" />

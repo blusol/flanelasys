@@ -22,13 +22,16 @@ if (isset($_POST['_submit'])) {
     elseif ($exibir == "naoenviados")
         $objNFE->set_ind_enviado(0);
 
-    $arrNFES = $objNFE->buscaNFE($objNFE);
+    $arrNFES = $objNFE->consultaRPS($objNFE,$dat_inicio,$dat_final);
 }
 
 if (isset($_POST['gerarlote'])) {
     $arrRPS = $_POST['envia_prefeitura'];
     if (is_array($arrRPS)) {
-        geraLoteRPS($arrRPS);
+        $resultado = geraLoteRPS($arrRPS);
+        if ($resultado == true) {
+            $msgRetorno = "Arquivo de lote gerado com sucesso!";
+        }
     }
 }
 ?>
@@ -81,15 +84,16 @@ if (isset($_POST['gerarlote'])) {
 
             <div class="data">		
                 <h1 style="text-align:center;"> Gera RPS - Recibo Provisório de Serviço </h1>
+                <div class="success"> <?php echo $msgRetorno; ?> </div>
                 <form method="POST" name="form_fechamento" action="">
                     <p> <strong> Filtros </strong> </p>
-                    Data Inicial <input type="text" value="<?php echo mostraData($dat_inicio); ?>" name="dat_inicio" id="dat_inicio">
-                    Data Final <input type="text" value="<?php echo mostraData($dat_final); ?>" name="dat_final" id="dat_final">				
+                    Data de criação <input type="text" value="<?php echo mostraData($dat_inicio); ?>" name="dat_inicio" id="dat_inicio">
+                    á <input type="text" value="<?php echo mostraData($dat_final); ?>" name="dat_final" id="dat_final">				
                     Exibir 
                     <select name="exibir" id="exibir">
-                        <option value="naoenviados">Não enviados</option>
-                        <option value="enviados">Somente enviados</option>
-                        <option value="todos">Todos</option>
+                        <option value="naoenviados" <?php echo $exibir == "naoenviados" ? 'selected="selected"' : "";?> >Não enviados</option>
+                        <option value="enviados" <?php echo $exibir == "enviados" ? 'selected="selected"' : "";?>>Somente enviados</option>
+                        <option value="todos" <?php echo $exibir == "todos" ? 'selected="selected"' : "";?>>Todos</option>
                     </select>
                     <input type="submit" name="_submit" value="Buscar">
                 </form>					
@@ -105,28 +109,56 @@ if (isset($_POST['gerarlote'])) {
                         <td colspan="14"> <strong> Periodo </strong> <?php echo $periodo; ?> </td>
                     </tr>
                     <tr>
-                        <th> &nbsp; </th>
+                        <th> Selecione </th>
                         <th> Número RPS </th>
-                        <th> Rotatividade </th>
-                        <th> Data criação </th>                                                
+                        <th> Data criação </th>
+                        <th> Cliente </th>
+                        <th> Placa </th>
+                        <th> Valor </th>
+                        <th> Referente á </th>
                         <th> Gerado arquivo de lote </th>
                         <th> Data do arquivo </th>
+                        <th> Visualizar arquivo </th>
                     </tr>
                     <?php
                     for ($i = 0; $i < count($arrNFES); $i++) {
                         $ind_enviado = $arrNFES[$i]['ind_enviado'] == 1 ? 'Sim' : 'Não';
                         echo '<tr>' . chr(10);
-                        echo sprintf('<td><input type="checkbox" name="envia_prefeitura[]" value="%s" /></td>', $arrNFES[$i]['cod_nfe']) . chr(10);
+                        if ($ind_enviado == "Não") {
+                            echo sprintf('<td><input type="checkbox" name="envia_prefeitura[]" value="%s" /></td>', $arrNFES[$i]['cod_nfe']) . chr(10);
+                        } else {
+                            echo '<td></td>' . chr(10);
+                        }
                         echo sprintf('<td>%s</td>', $arrNFES[$i]['cod_nfe']) . chr(10);
-                        echo sprintf('<td>%s</td>', $arrNFES[$i]['cod_rotatividade']) . chr(10);
                         echo sprintf('<td>%s</td>', mostraData($arrNFES[$i]['dat_criacao'])) . chr(10);
+                        if ($arrNFES[$i]['nom_cliente'] != "")
+                            echo sprintf('<td>%s</td>', $arrNFES[$i]['nom_cliente']) . chr(10);
+                        else
+                            echo sprintf('<td>%s</td>', 'Não cadastrado') . chr(10);
+                        echo sprintf('<td>%s</td>', $arrNFES[$i]['des_placa']) . chr(10);
+                        if (!empty($arrNFES[$i]['cod_rotatividade'])) {
+                            echo sprintf('<td>R$ %s</td>', number_format($arrNFES[$i]['val_cobrado'],2,",","")) . chr(10);
+                            echo sprintf('<td>%s</td>', 'Estacionamento Rotativo') . chr(10);
+                        } else if (!empty($arrNFES[$i]['cod_mensalidade_usuario'])) {
+                            echo sprintf('<td>R$ %s</td>', number_format($arrNFES[$i]['valor_pago'],2,",","")) . chr(10);
+                            echo sprintf('<td nowrap>%s %s </td>', 'Pagamento da mensalidade',$arrNFES[$i]['des_mensalidade']) . chr(10);
+                        }
                         echo sprintf('<td>%s</td>', $ind_enviado) . chr(10);
                         echo sprintf('<td>%s</td>', mostraData($arrNFES[$i]['dat_enviado'])) . chr(10);
+                        if ($ind_enviado == "Sim") {
+                            $arrArquivo = explode("_",$arrNFES[$i]['nom_arquivo']);
+                            $caminho_arquivo = $url_notablu . $arrArquivo[0] . DS . $arrArquivo[1] . DS;
+                            $nome_arquivo = $arrArquivo[2];
+                            $arquivo = $caminho_arquivo . $nome_arquivo;
+                            echo sprintf('<td><a href="%s" target="_blank"><img src="'.$url_images.'documento.jpg" /></a></td>',$arquivo);
+                        } else {
+                            echo '<td></td>';
+                        }
                         echo '</tr>' . chr(10);
                     }
                     ?>
                     <tr>
-                        <td colspan="6">
+                        <td colspan="9">
                                 <input type="submit" name="gerarlote" value="Gerar Lote" />
                             </form>    
                         </td>

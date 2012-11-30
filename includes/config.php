@@ -34,6 +34,8 @@
   $url_includes   = $url . 'includes' . DS;
   $url_libs       = $url . 'libs' . DS ;
   
+  $url_notablu = $url.  'nfes'. DS . 'notablu' . DS;
+  
   // Setando o fuso horario manualmente
   ini_set('date.timezone', 'America/Belem');
 ?>

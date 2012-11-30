@@ -5,11 +5,13 @@ include_once($path_classes . 'fla_conexao.class.php');
 class fla_nfes {
 
     private $cod_nfe;
+    private $cod_cliente;
     private $cod_rotatividade;
     private $cod_mensalidade_usuario;
     private $dat_criacao;
     private $ind_enviado;
     private $dat_enviado;
+    private $nom_arquivo;
 
     public function get_cod_nfe() {
         return $this->cod_nfe;
@@ -58,8 +60,24 @@ class fla_nfes {
         $this->cod_mensalidade_usuario = $cod_mensalidade_usuario;
     }
 
-        
-    public function insereNFE($objNFE) {
+    public function get_cod_cliente() {
+        return $this->cod_cliente;
+    }
+
+    public function set_cod_cliente($cod_cliente) {
+        $this->cod_cliente = $cod_cliente;
+    }
+    
+    public function get_nom_arquivo() {
+        return $this->nom_arquivo;
+    }
+
+    public function set_nom_arquivo($nom_arquivo) {
+        $this->nom_arquivo = $nom_arquivo;
+    }
+
+    
+        public function insereNFE($objNFE) {
         $objConexao = new fla_conexao();
         $objRotatividade = new fla_rotatividade();
         
@@ -177,6 +195,89 @@ class fla_nfes {
         return $arrNFEs;
     }    
     
+    
+    public function consultaRPS($objNFE,$dat_inicio,$dat_final) {
+        $objConexao = new fla_conexao();
+        $where = "";
+        
+        $parametros_where = get_object_vars($objNFE);
+        $parametros_where = array_filter($parametros_where,'strlen');
+        $tamanho_parametros = count($parametros_where);
+        
+        $arrAtributos = get_class_vars(get_class($objNFE));
+        $countArrAtributos = count($arrAtributos);
+        
+        $aux = 1;
+        
+        if (count($parametros_where) > 0) {
+            foreach ($parametros_where as $atributo => $valor) {
+                if (!is_null($valor)) {
+                    if ($aux != $tamanho_parametros) {
+                        $and = " AND ";
+                    } else {
+                        $and = "";
+                    }
+                    if (is_numeric($valor)) {
+                        $where .= "nf.".$atributo." = ".$valor.$and;
+                    } else {
+                        $where .= "nf.".$atributo." = '".$valor."'".$and;
+                    }
+                }
+                $aux++;
+            }
+            $where .= ' AND nf.dat_criacao BETWEEN "'.$dat_inicio.' 00:00:00" AND "'.$dat_final.' 23:59:00"';
+        } else {
+            $where .= '  nf.dat_criacao BETWEEN "'.$dat_inicio.' 00:00:00" AND "'.$dat_final.' 23:59:00"';
+        }        
+        
+        if (!empty($where)) {
+            $where = " where ".$where;
+        }        
+        
+        $SQL = "select
+                    nf.cod_nfe
+                    , nf.dat_criacao
+                    , nf.ind_enviado
+                    , nf.dat_enviado
+                    , rot.cod_rotatividade
+                    , menusu.cod_mensalidade_usuario
+                    , cli.nom_cliente
+                    , UPPER(cli.des_placa) as des_placa
+                    , menusu.valor_pago
+                    , rot.val_cobrado
+                    , men.des_mensalidade
+                    , nf.nom_arquivo
+                from
+                    fla_nfes nf
+                        LEFT JOIN fla_rotatividade rot  ON (rot.cod_rotatividade = nf.cod_rotatividade)
+                        LEFT JOIN fla_mensalidade_usuario menusu ON (menusu.cod_mensalidade_usuario = nf.cod_mensalidade_usuario)
+                        LEFT JOIN fla_clientes cli ON (cli.cod_cliente = nf.cod_cliente)
+                        LEFT JOIN fla_mensalidade men ON (men.cod_mensalidade = menusu.cod_mensalidade) ".$where.' ORDER BY ind_enviado DESC, nom_arquivo, dat_criacao';
+        $rsData = $objConexao->prepare($SQL);
+        //echo "<pre>$SQL</pre>";
+        $rsData->execute();
+        $count = $rsData->rowCount();
+        $aux = 0;
+        if ($count > 0) {
+            while ($resultado = $rsData->fetch(PDO::FETCH_ASSOC)) {
+                $arrRPS[$aux]['cod_nfe']            = $resultado['cod_nfe'];
+                $arrRPS[$aux]['dat_criacao']        = $resultado['dat_criacao'];
+                $arrRPS[$aux]['ind_enviado']        = $resultado['ind_enviado'];
+                $arrRPS[$aux]['dat_enviado']        = $resultado['dat_enviado'];
+                $arrRPS[$aux]['cod_rotatividade']   = $resultado['cod_rotatividade'];
+                $arrRPS[$aux]['cod_mensalidade_usuario'] = $resultado['cod_mensalidade_usuario'];
+                $arrRPS[$aux]['nom_cliente']             = $resultado['nom_cliente'];
+                $arrRPS[$aux]['des_placa']               = $resultado['des_placa'];
+                $arrRPS[$aux]['valor_pago']              = $resultado['valor_pago'];
+                $arrRPS[$aux]['val_cobrado']             = $resultado['val_cobrado'];
+                $arrRPS[$aux]['des_mensalidade']         = $resultado['des_mensalidade'];
+                $arrRPS[$aux]['nom_arquivo']         = $resultado['nom_arquivo'];
+                $aux++;
+            }
+            return $arrRPS;
+        }        
+    }
+    
     public function getDataInicioFim($codigos) {
         $objConexao = new fla_conexao();
         $arrDataInicioFim = array();
@@ -192,10 +293,11 @@ class fla_nfes {
         }
     }
     
-    public function setGeradoLote($codigo) {
+    public function setGeradoLote($codigo,$nome_arquivo) {
         $objConexao = new fla_conexao();
         $dat_enviado = date("Y-m-d H:i:s");
-        $SQL = "UPDATE fla_nfes SET dat_enviado = '".$dat_enviado."', ind_enviado = 1 WHERE cod_nfe = ".$codigo;
+        $SQL = "UPDATE fla_nfes SET dat_enviado = '".$dat_enviado."', ind_enviado = 1, nom_arquivo = '".$nome_arquivo."' WHERE cod_nfe = ".$codigo;
+        //echo $SQL;
         $rsData = $objConexao->prepare($SQL);
         $rsData->execute();
     }
