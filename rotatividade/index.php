@@ -125,7 +125,8 @@ $arrPlacas = $objPlacas->buscaClientes($objPlacas);
         <script src="<?php echo $url_lib_jquery . 'plugins/jquery-ui/js/jquery-ui-1.9.2.custom.js'; ?>"></script>
         <script type="text/javascript" src="<?php echo $url_includes . 'script.js'; ?>"></script>
         <link rel="stylesheet" type="text/css" href="<?php echo $url_lib_jquery . 'plugins/jquery-ui/css/smoothness/jquery-ui-1.9.2.custom.css'; ?>">
-
+        <script src="<?php echo $url_lib_jquery . 'plugins/chosen/chosen.jquery.js';?>" type="text/javascript"></script>
+        <link rel="stylesheet" href="<?php echo $url_lib_jquery . 'plugins/chosen/chosen.css';?>" />
         <script language="javascript">
 
             function carrega() {
@@ -176,6 +177,14 @@ $arrPlacas = $objPlacas->buscaClientes($objPlacas);
             jQuery(function($){   
                 $("#des_placa").mask("aaa-9999");
                 $("#val_cobrado").mask("99,99");
+                
+                $('#cod_marca').chosen({allow_single_deselect: true});
+                $('#cod_modelo').chosen({allow_single_deselect: true});
+                $('#des_cor').chosen({allow_single_deselect: true});
+                $('#cod_desconto').chosen({allow_single_deselect: true});
+                $('#cod_preco').chosen({allow_single_deselect: true});
+                
+                
             });
             
             $(
@@ -282,7 +291,7 @@ $arrPlacas = $objPlacas->buscaClientes($objPlacas);
                                 <legend> Cobrança </legend>
                                 <label for="val_total">Valor Total</label>: <input class="text" type="text" style="width:50px;" readonly name="val_total" id="val_total" value="<?php echo $val_total; ?>">
                                 <label for="cod_desconto">Desconto</label>: 
-                                <select onChange="consultaDesconto(this.value);" onBlur="consultaDesconto(this.value)"; class="text" id="cod_desconto" name="cod_desconto">	
+                                <select onChange="consultaDesconto(this.value);" onBlur="consultaDesconto(this.value);" class="text" id="cod_desconto" name="cod_desconto">	
                                         <option value=""> Sem desconto </option>
                                             <?php
                                             for ($i = 0; $i < count($arrDescontos); $i++) {

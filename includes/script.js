@@ -106,7 +106,9 @@ function exibeModeloSelect(id_marca,id_modelo) {
             data: "acao=exibeModeloSelect&id_marca=" + id_marca + "&id_modelo="+id_modelo,
             success: function(msg){
                 if (msg != ''){
-                    $("#cod_modelo").html(msg).show();
+                    //alert(msg);
+                    $("#cod_modelo").html(msg);
+                    $("#cod_modelo").trigger("liszt:updated");
                     $("#result").html('');
                 }
                 else{

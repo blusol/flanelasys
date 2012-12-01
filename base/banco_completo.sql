@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: localhost
--- Tempo de Geração: Nov 15, 2012 as 11:14 PM
+-- Tempo de Geração: Dez 01, 2012 as 03:17 PM
 -- Versão do Servidor: 5.1.63
 -- Versão do PHP: 5.3.3-7+squeeze14
 
@@ -45,33 +45,20 @@ CREATE TABLE IF NOT EXISTS `fla_clientes` (
   `des_placa` varchar(8) NOT NULL,
   `cod_modelo` int(6) DEFAULT NULL,
   `cod_marca` int(6) DEFAULT NULL,
+  `num_telefone` bigint(15) NOT NULL,
+  `num_celular` bigint(15) NOT NULL,
+  `ind_ativo` int(1) NOT NULL DEFAULT '1',
+  `des_observacao` text NOT NULL,
+  `tip_mensalidade` int(6) NOT NULL DEFAULT '0',
+  `dat_contratacao` date NOT NULL,
+  `dia_vencimento` int(2) NOT NULL,
   PRIMARY KEY (`cod_cliente`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=20 ;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 --
 -- Extraindo dados da tabela `fla_clientes`
 --
 
-INSERT INTO `fla_clientes` (`cod_cliente`, `nom_cliente`, `cpf_cnpj_cliente`, `insc_municipal_cliente`, `insc_estadual_cliente`, `email_cliente`, `cep_cliente`, `tip_rua_cliente`, `des_end_cliente`, `num_end_cliente`, `com_end_cliente`, `bairro_end_cliente`, `estado_cliente`, `cidade_cliente`, `tipo_cliente`, `des_cor`, `des_placa`, `cod_modelo`, `cod_marca`) VALUES
-(1, 'Denis Brandl', '03366544996', '0', '0', 'denisbr@gmail.com', '89040-400', 'Rua', 'Divinópolis', 866, 'Apartamento 421', 'Velha', 'SC', 'Blumenau', 'M', 13, 'mbe-3431', 442, 48),
-(2, 'Fabiola C. Zoboli', '08999666000133', '444555666', '111222333', 'fabyzobli@yahoo.com.br', '89020-540', 'Rua', 'Custódio Seberino Cardoso', 17, 'Casa', 'Garcia', 'SC', 'Blumenau', 'R', 4, 'mmk-0017', 430, 25),
-(3, '', '0', '0', '0', '', '00000-000', 'Rua', '', 0, '', '', 'SC', 'Blumenau', 'R', 0, 'XXX-9661', 0, 0),
-(4, '', '0', '0', '0', '', '00000-000', 'Rua', '', 0, '', '', 'SC', 'Blumenau', 'R', 0, 'XXX-9670', 0, 0),
-(5, '', '0', '0', '0', '', '00000-000', 'Rua', '', 0, '', '', 'SC', 'Blumenau', 'R', 0, 'XXX-9681', 0, 0),
-(6, '', '0', '0', '0', '', '00000-000', 'Rua', '', 0, '', '', 'SC', 'Blumenau', 'R', 0, 'XXX-6857', 0, 0),
-(7, '', '0', '0', '0', '', '00000-000', 'Rua', '', 0, '', '', 'SC', 'Blumenau', 'R', 0, 'XXX-6919', 0, 0),
-(8, '', '0', '0', '0', '', '00000-000', 'Rua', '', 0, '', '', 'SC', 'Blumenau', 'R', 0, 'XXX-6922', 0, 0),
-(9, '', '0', '0', '0', '', '00000-000', 'Rua', '', 0, '', '', 'SC', 'Blumenau', 'R', 0, 'XXX-6924', 0, 0),
-(10, '', '0', '0', '0', '', '00000-000', 'Rua', '', 0, '', '', 'SC', 'Blumenau', 'R', 0, 'XXX-6982', 0, 0),
-(11, '', '0', '0', '0', '', '00000-000', 'Rua', '', 0, '', '', 'SC', 'Blumenau', 'R', 0, 'XXX-6997', 0, 0),
-(12, '', '0', '0', '0', '', '00000-000', 'Rua', '', 0, '', '', 'SC', 'Blumenau', 'R', 0, 'XXX-7002', 0, 0),
-(13, '', '0', '0', '0', '', '00000-000', 'Rua', '', 0, '', '', 'SC', 'Blumenau', 'R', 0, 'XXX-7005', 0, 0),
-(14, '', '0', '0', '0', '', '00000-000', 'Rua', '', 0, '', '', 'SC', 'Blumenau', 'R', 0, 'XXX-7124', 0, 0),
-(15, '', '0', '0', '0', '', '00000-000', 'Rua', '', 0, '', '', 'SC', 'Blumenau', 'R', 0, 'XXX-7132', 0, 0),
-(16, '', '0', '0', '0', '', '00000-000', 'Rua', '', 0, '', '', 'SC', 'Blumenau', 'R', 0, 'XXX-7152', 0, 0),
-(17, '', '0', '0', '0', '', '00000-000', 'Rua', '', 0, '', '', 'SC', 'Blumenau', 'R', 0, 'XXX-8512', 0, 0),
-(18, '', '0', '0', '0', '', '00000-000', 'Rua', '', 0, '', '', 'SC', 'Blumenau', 'R', 0, 'XXX-4091', 0, 0),
-(19, '', '0', '0', '0', '', '00000-000', 'Rua', '', 0, '', '', 'SC', 'Blumenau', 'R', 0, 'XXX-5847', 0, 0);
 
 -- --------------------------------------------------------
 
@@ -321,6 +308,49 @@ INSERT INTO `fla_marcas` (`cod_marca`, `des_marca`, `ind_disponivel`, `ind_popul
 (144, 'WALKBUS', 0, 0),
 (0, 'Não informado', 0, 0),
 (156, 'Sundown', 1, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura da tabela `fla_mensalidade`
+--
+
+CREATE TABLE IF NOT EXISTS `fla_mensalidade` (
+  `cod_mensalidade` int(6) NOT NULL AUTO_INCREMENT,
+  `des_mensalidade` varchar(200) NOT NULL,
+  `val_mensalidade` float(5,2) NOT NULL,
+  `ind_ativo` int(1) NOT NULL DEFAULT '1',
+  `dat_criacao` date NOT NULL,
+  PRIMARY KEY (`cod_mensalidade`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+--
+-- Extraindo dados da tabela `fla_mensalidade`
+--
+
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura da tabela `fla_mensalidade_usuario`
+--
+
+CREATE TABLE IF NOT EXISTS `fla_mensalidade_usuario` (
+  `cod_mensalidade_usuario` int(6) NOT NULL AUTO_INCREMENT,
+  `valor_pago` float(5,2) NOT NULL,
+  `periodo_inicial` date NOT NULL,
+  `periodo_final` date NOT NULL,
+  `data_pagamento` date NOT NULL,
+  `des_justificativa` varchar(200) NOT NULL,
+  `cod_cliente` int(6) NOT NULL,
+  `cod_mensalidade` int(6) NOT NULL,
+  PRIMARY KEY (`cod_mensalidade_usuario`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+--
+-- Extraindo dados da tabela `fla_mensalidade_usuario`
+--
+
 
 -- --------------------------------------------------------
 
@@ -1679,44 +1709,20 @@ INSERT INTO `fla_modelos` (`cod_modelo`, `des_modelo`, `cod_marca`, `ind_disponi
 
 CREATE TABLE IF NOT EXISTS `fla_nfes` (
   `cod_nfe` int(11) NOT NULL AUTO_INCREMENT,
+  `cod_cliente` int(6) NOT NULL,
   `cod_rotatividade` int(11) NOT NULL,
+  `cod_mensalidade_usuario` int(6) NOT NULL,
   `dat_criacao` datetime DEFAULT NULL,
   `dat_enviado` datetime DEFAULT NULL,
   `ind_enviado` int(11) NOT NULL DEFAULT '0',
+  `nom_arquivo` varchar(100) NOT NULL,
   PRIMARY KEY (`cod_nfe`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=27 ;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 --
 -- Extraindo dados da tabela `fla_nfes`
 --
 
-INSERT INTO `fla_nfes` (`cod_nfe`, `cod_rotatividade`, `dat_criacao`, `dat_enviado`, `ind_enviado`) VALUES
-(1, 1, '2012-10-19 07:38:51', NULL, 0),
-(2, 1, '2012-10-19 07:40:40', NULL, 0),
-(3, 1, '2012-10-19 07:42:10', NULL, 0),
-(4, 1, '2012-10-19 08:11:06', NULL, 0),
-(5, 1, '2012-10-19 08:13:37', NULL, 0),
-(6, 1, '2012-10-19 08:13:40', NULL, 0),
-(7, 0, '2012-11-09 23:26:45', NULL, 0),
-(8, 0, '2012-11-09 23:31:42', NULL, 0),
-(9, 0, '2012-11-09 23:37:48', NULL, 0),
-(10, 0, '2012-11-09 23:40:15', NULL, 0),
-(11, 0, '2012-11-09 23:40:36', NULL, 0),
-(12, 0, '2012-11-09 23:40:57', NULL, 0),
-(13, 0, '2012-11-09 23:41:56', NULL, 0),
-(14, 0, '2012-11-09 23:42:38', NULL, 0),
-(15, 0, '2012-11-09 23:43:17', NULL, 0),
-(16, 0, '2012-11-12 21:45:41', NULL, 0),
-(17, 0, '2012-11-12 21:46:11', NULL, 0),
-(18, 2, '2012-11-12 21:57:00', NULL, 0),
-(19, 2, '2012-11-12 21:57:23', NULL, 0),
-(20, 2, '2012-11-12 21:59:33', NULL, 0),
-(21, 2, '2012-11-12 22:00:57', NULL, 0),
-(22, 2, '2012-11-12 22:02:28', NULL, 0),
-(23, 2, '2012-11-12 22:02:59', NULL, 0),
-(24, 2, '2012-11-12 22:04:18', NULL, 0),
-(25, 2, '2012-11-12 22:04:38', NULL, 0),
-(26, 3, '2012-11-13 22:45:54', '2012-11-15 22:02:39', 1);
 
 -- --------------------------------------------------------
 
@@ -1770,16 +1776,12 @@ CREATE TABLE IF NOT EXISTS `fla_rotatividade` (
   `val_desconto` decimal(5,2) DEFAULT '0.00',
   `cod_desconto` int(6) DEFAULT NULL,
   PRIMARY KEY (`cod_rotatividade`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 --
 -- Extraindo dados da tabela `fla_rotatividade`
 --
 
-INSERT INTO `fla_rotatividade` (`cod_rotatividade`, `des_placa`, `hor_entrada`, `hor_saida`, `dat_cadastro`, `dat_saida`, `cod_preco`, `val_total`, `val_cobrado`, `des_justificativa`, `des_situacao`, `cod_cartao`, `tem_permanencia`, `val_desconto`, `cod_desconto`) VALUES
-(1, 'mbe-3431', '06:17:22', '07:36:34', '2012-10-19', '2012-10-19', 1, '5.50', '5.50', '', 'L', 33, '01:19', '0.00', 0),
-(2, 'XXX-5847', '12:12:27', '22:04:13', '2012-10-13', '2012-11-12', 1, '10.00', '10.00', 'Cobrado diaria', 'L', 3, '729:5', '0.00', 0),
-(3, 'mbe-3431', '22:41:18', '22:45:44', '2012-11-13', '2012-11-13', 1, '2.50', '1.00', 'Cliente Vip', 'L', 33, '00:04', '0.00', 2);
 
 -- --------------------------------------------------------
 
