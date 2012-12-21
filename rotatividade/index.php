@@ -7,6 +7,7 @@ include_once($path_classes . 'fla_precos.class.php');
 include_once($path_classes . 'fla_descontos.class.php');
 include_once($path_classes . 'fla_rotatividade.class.php');
 include_once($path_classes . 'fla_clientes.class.php');
+include_once($path_classes . 'fla_mensalidade.class.php');
 include_once('nfeblu.php');
 include_once('processa.php');
 
@@ -24,11 +25,17 @@ $arrDescontos = $objDescontos->buscaDescontos($objDescontos);
 
 $objRotatividade = new fla_rotatividade();
 
+$objMensalidade = new fla_mensalidade();
+
 $objClientes = new fla_clientes();
 $objPlacas = new fla_clientes();
 
 if (isset($_POST['cod_cartao'])) {
-    $cod_cartao = $_POST['cod_cartao'];
+    if (!empty($_POST['cod_cartao']))
+        $cod_cartao = $_POST['cod_cartao'];
+    else
+        $cod_cartao = $objRotatividade->geraProximaNumeroCartao();
+    
     $des_placa = $_POST['des_placa'];
     $hor_entrada = date("H:i:s");
     $dat_saida = gravaData(date("d/m/Y"));
@@ -74,8 +81,10 @@ if (isset($_POST['cod_cartao'])) {
         if ($verifica == false) {
             $objRotatividade->set_hor_entrada($hor_entrada);
             $objRotatividade->set_dat_cadastro($dat_cadastro);            
-            $objRotatividade->insereRotatividade($objRotatividade);
+            $cod_rotatividade = $objRotatividade->insereRotatividade($objRotatividade);
             $msgRetorno = 'Entrada de veiculo feito com sucesso';
+            $imprime_cupom = true;
+            //$objRotatividade->imprimeCupomEntrada();
         } else {
             $msgRetorno = 'Este veiculo já se encontra estacionado';
         }
@@ -113,7 +122,7 @@ if (isset($_GET) && !empty($_GET['imprimir'])) {
 $hora_entrada = date("H:i:s");
 $hora_saida = "";
 $arrRotatividade = $objRotatividade->buscaCarrosEstacionados();
-
+$arrMensalidadesAtrasadas = $objMensalidade->buscaMensalidadesAtrasadas();
 $arrPlacas = $objPlacas->buscaClientes($objPlacas);
 ?>
 <html>
@@ -195,11 +204,16 @@ $arrPlacas = $objPlacas->buscaClientes($objPlacas);
                 $("#des_placa").autocomplete({
                     source: "consulta_placa.php",
                     minLength: 1
-                });                
+                });
             }
-	
         );
-			
+        
+        function exibeMensalistasAtrasados() {
+            if (document.getElementById('tabelaAtrasados').style.display == 'none')
+                document.getElementById('tabelaAtrasados').style.display='';
+            else
+                document.getElementById('tabelaAtrasados').style.display='none';
+        }
         </script>
         <link href="../images/style.css" rel="stylesheet" type="text/css" />
     </head>
@@ -339,6 +353,30 @@ $arrPlacas = $objPlacas->buscaClientes($objPlacas);
                             ?>			
                         </table>
                     </div>
+                    <br/>
+                    <p style="text-align:center;border:none;"> <strong> Mensalistas A Vencer/Vencidos <a href="#" onClick="exibeMensalistasAtrasados();">Exibir</a> <br></p>
+                    <div id="tabelaAtrasados" style="display:none;">
+                    <div id="direito">                            
+                        Total: <?php echo count($arrMensalidadesAtrasadas); ?> </strong><br/>
+                        <table class="noclass" border="0">
+                            <tr>
+                                <td style="font-size:12pt;"><strong>Vencto Dia</strong></td>
+                                <td style="font-size:12pt;"><strong>Cliente</strong></td>
+                            </tr>
+                            <?php
+                                $aux = 0;
+                                foreach($arrMensalidadesAtrasadas as $key => $value) {
+                                    echo "<tr>".chr(10);
+                                    echo sprintf('<td style="font-size:12pt;"><a href="%s">%s</a></td>',$url."admin/clientes/mensalidade.php?cod_cliente=".$arrMensalidadesAtrasadas[$aux]['cod_cliente'],$arrMensalidadesAtrasadas[$aux]['dia_vencimento']).chr(10);
+                                    echo sprintf('<td style="font-size:12pt;"><a href="%s">%s</a></td>',$url."admin/clientes/mensalidade.php?cod_cliente=".$arrMensalidadesAtrasadas[$aux]['cod_cliente'],$arrMensalidadesAtrasadas[$aux]['nom_cliente']).chr(10);
+                                    echo "</tr>".chr(10);
+                                    $aux++;
+                                }
+                            ?>			
+                        </table>                        
+                        
+                    </div>
+                    </div>
                 </div>
                 <div style="clear:both;"></div>
             </div>
@@ -346,5 +384,17 @@ $arrPlacas = $objPlacas->buscaClientes($objPlacas);
             include_once($path_relative . 'rodape.php');
             ?>        
         </div>
+<?php
+        if ($imprime_cupom) {
+?>
+            <script>
+                jQuery(function($){   
+                    window.open('<?php echo $url;?>rotatividade/imprimeCupomEntrada.php?cod_rotatividade='+<?php echo $cod_rotatividade; ?>, 'imprimeCupom', 'window settings');
+                    return false;
+                });
+            </script>        
+<?php
+        }
+?>
     </body>
 </html>

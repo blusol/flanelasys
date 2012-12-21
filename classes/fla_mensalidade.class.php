@@ -50,7 +50,6 @@ class fla_mensalidade {
         $this->dat_criacao = $dat_criacao;
     }
 
-
     public function cadastraMensalidade($objMensalidade) {
         $objConexao = new fla_conexao();
 
@@ -88,7 +87,7 @@ class fla_mensalidade {
             return false;
         }
     }
-    
+
     public function editaMensalidade($objMensalidade) {
         $objConexao = new fla_conexao();
 
@@ -106,7 +105,7 @@ class fla_mensalidade {
                         } else {
                             $and = "";
                         }
-                        
+
                         if (is_numeric($valor)) {
                             $update .= $atributo . " = " . $valor . $and;
                         } else {
@@ -121,8 +120,8 @@ class fla_mensalidade {
         //echo $SQL;
         $query = $objConexao->prepare($SQL);
         $query->Execute();
-    }    
-    
+    }
+
     public function buscaMensalidade() {
         $objConexao = new fla_conexao();
         $where = "";
@@ -191,14 +190,56 @@ class fla_mensalidade {
             return $arrClientes;
         } else {
             return false;
-        }        
+        }
     }
-    
+
     function ResetObject() {
         foreach ($this as $key => $value) {
             unset($this->$key);
         }
-    }    
+    }
+
+    function buscaMensalidadesAtrasadas() {
+        $objConexao = new fla_conexao();
+        $arrMensalidadeAtrasada = array();
+        $sql = "select
+                        cli.dia_vencimento
+                        , cli.cod_cliente
+                        , cli.nom_cliente
+                from
+                        fla_clientes cli
+                        LEFT JOIN fla_mensalidade_usuario menusu ON (menusu.cod_cliente = cli.cod_cliente)
+                where
+                        cli.dia_vencimento > 0
+                        and
+                        cli.cod_cliente not in 
+                        (
+                                select 
+                                    cod_cliente 
+                                from 
+                                    fla_mensalidade_usuario
+                                where 
+                                    '" . date("Y-m-d") . "' between menusu.periodo_inicial and menusu.periodo_final
+                        )
+                order by
+                        cli.dia_vencimento asc , cli.nom_cliente asc";
+        $rsMensalidadeAtrasada = $objConexao->prepare($sql);
+        $rsMensalidadeAtrasada->execute();
+        $count = $rsMensalidadeAtrasada->rowCount();
+        $aux = 0;
+        if ($count > 0) {
+            while ($mensalidade_atrasada = $rsMensalidadeAtrasada->fetch(PDO::FETCH_ASSOC)) {
+                foreach ($mensalidade_atrasada as $key => $value) {
+                    if (!empty($value))
+                        $arrMensalidadeAtrasada[$aux][$key] = $value;
+                    else
+                        $arrMensalidadeAtrasada[$aux][$key] = '';
+                }
+                $aux++;
+            }
+            return $arrMensalidadeAtrasada;
+        }
+    }
 
 }
 

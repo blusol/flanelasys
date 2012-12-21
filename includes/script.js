@@ -43,11 +43,12 @@ function validaEntradaVeiculos() {
     }
 	
     // Verificando se foi inserido o código do cartão
+    /*
     if (cod_cartao == "") {
         alert('Por favor insira o número do cartão');
         document.form.cod_cartao.focus();
         return false;
-    }
+    }*/
 }				
 
 
@@ -203,6 +204,7 @@ function processReqChange() {
                             }
 								 
                         }
+                        $("#cod_marca").trigger("liszt:updated");
                         exibeModeloSelect(myArray[2],myArray[3]);
                         var arrDesCor = document.getElementById('des_cor');				
                         for (i=0;i<arrDesCor.length;i++) {
@@ -210,7 +212,7 @@ function processReqChange() {
                                 arrDesCor.options[i].selected = true;
                             }					 
                         }	
-
+                        $("#des_cor").trigger("liszt:updated");
                         var arrTipPreco = document.getElementById('cod_preco');
                         for (i=0;i<arrTipPreco.length;i++) {
                             if (arrTipPreco.options[i].value == myArray[5]) {
@@ -247,21 +249,27 @@ function processReqChange() {
             }
 				
             if (acao == "consulta_placa") {
-                if (myArray !== undefined) {										
-                    var arrCodMarca  = document.getElementById('cod_marca');
-                    for (i=0;i<arrCodMarca.length;i++) {
-                        if (arrCodMarca.options[i].value == myArray[0]) {
-                            arrCodMarca.options[i].selected = true;
+                if (myArray !== undefined) {
+                    if (myArray[0] !== "") {
+                        var arrCodMarca  = document.getElementById('cod_marca');
+                        for (i=0;i<arrCodMarca.length;i++) {
+                            if (arrCodMarca.options[i].value == myArray[0]) {
+                                arrCodMarca.options[i].selected = true;
+                            }
+
                         }
-							 
+                        exibeModeloSelect(myArray[0],myArray[1]);
+                        var arrDesCor = document.getElementById('des_cor');				
+                        for (i=0;i<arrDesCor.length;i++) {
+                            if (arrDesCor.options[i].value == myArray[2]) {
+                                arrDesCor.options[i].selected = true;
+                            }					 
+                        }
+                    $("#des_cor").trigger("liszt:updated");
+                    $("#cod_marca").trigger("liszt:updated");                    
+                    } else {
+                        alert(myArray[3]);
                     }
-                    exibeModeloSelect(myArray[0],myArray[1]);
-                    var arrDesCor = document.getElementById('des_cor');				
-                    for (i=0;i<arrDesCor.length;i++) {
-                        if (arrDesCor.options[i].value == myArray[2]) {
-                            arrDesCor.options[i].selected = true;
-                        }					 
-                    }							
                 }
             }
 			

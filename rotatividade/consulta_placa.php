@@ -20,6 +20,7 @@ function buscaPlaca($des_placa) {
                                     , cod_modelo
                                     , cod_marca
                                     , des_cor
+                                    , tipo_cliente
                             FROM
                                     fla_clientes
                             WHERE
@@ -30,10 +31,14 @@ function buscaPlaca($des_placa) {
     if ($rsPlaca != false) {
         if ($rsPlaca->rowCount() > 0) {
             while ($placa = $rsPlaca->fetch(PDO::FETCH_ASSOC)) {
-                $cod_marca = $placa['cod_marca'];
-                $cod_modelo = $placa['cod_modelo'];
-                $des_cor = $placa['des_cor'];
-                echo sprintf('new Array("%s","%s","%s")', $cod_marca, $cod_modelo, $des_cor);
+                if ($placa['tipo_cliente'] == 'R') {
+                    $cod_marca = $placa['cod_marca'];
+                    $cod_modelo = $placa['cod_modelo'];
+                    $des_cor = $placa['des_cor'];
+                    echo sprintf('new Array("%s","%s","%s")', $cod_marca, $cod_modelo, $des_cor);
+                } else {
+                    echo 'new Array("","","","Este veiculo é mensalista!")';
+                }
             }
         }
     }
