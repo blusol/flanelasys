@@ -5,6 +5,8 @@ include_once($path_classes . 'fla_conexao.class.php');
 include_once($path_libraries.'tcpdf/config/lang/eng.php');
 include_once($path_libraries.'tcpdf/tcpdf.php');
 include_once($path_classes.'fla_empresas.class.php');
+include_once($path_classes.'fla_modelos.class.php');
+include_once($path_classes.'fla_clientes.class.php');
 
 class fla_rotatividade {
 
@@ -283,6 +285,8 @@ class fla_rotatividade {
         global $path_relative;
         $arrEmpresa = array();
         $arrRotatividade = array();
+		$objModelo = new fla_modelos();
+		$objCliente = new fla_clientes();
         
         $arrEmpresa = $objEmpresa->buscaEmpresas($objEmpresa);
         
@@ -290,11 +294,11 @@ class fla_rotatividade {
         //$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);        
         $pdf->SetMargins(0,0,0,true);
         //$pdf->SetMargins(PDF_MARGIN_LEFT,PDF_MARGIN_TOP,PDF_MARGIN_RIGHT);
-        //$pdf->SetFont('times', 'B', 10);
         $pdf->setPrintHeader(false);
         $pdf->setPrintFooter(false);
         $pdf->AddPage();
         
+       // $nom_prestador  = limitar($arrEmpresa[0]['nom_fantasia'],25);
         $nom_prestador  = $arrEmpresa[0]['nom_fantasia'];
         $end_prestador  = $arrEmpresa[0]['des_endereco'];   
         $tel_prestador  = $arrEmpresa[0]['num_telefone'];
@@ -305,21 +309,31 @@ class fla_rotatividade {
         
         $arrRotatividade = $this->buscaCarro($this);
         $cod_cartao = $arrRotatividade[0]['cod_cartao'];
-        
+	$hora_entrada =	$arrRotatividade[0]['hor_entrada'];
         $des_placa = strtoupper($arrRotatividade[0]['des_placa']);
-        
-        $conteudo_cabecalho = sprintf("%s\r\n%s \r\nTelefone:%s\r\n\r\n",$nom_prestador,$end_prestador,$tel_prestador);
-        
-        $conteudo_rodape =    sprintf("Placa: %s\r\n%s\r\n%s",$des_placa,$horario_atendimento,$multa);
+		
+		$objCliente->set_des_placa($des_placa);
+		$arrCliente = $objCliente->buscaClientes($objCliente);
+		
+		$objModelo->set_cod_modelo($arrCliente[0]['cod_modelo']);		
+        $arrModelo = $objModelo->buscaModelos($objModelo);
+		$des_modelo = $arrModelo[0]['des_modelo'];
+		
+		$pdf->SetFont('times', 'B', 8);		
+        $pdf->Write($h=0, $nom_prestador, $link='', $fill=0, $align='L', $ln=true, $stretch=0, $firstline=false, $firstblock=false, $maxh=0);
+		
+		$pdf->SetFont('times', 'B', 10);				
+        $conteudo_cabecalho = sprintf("%s \r\nTelefone:%s\r\n\r\n",$end_prestador,$tel_prestador);		
+        $conteudo_rodape =    sprintf("Hora Entrada:%s\r\nVeiculo:%s\r\nPlaca: %s\r\n%s\r\n%s",$hora_entrada,$des_modelo,$des_placa,$horario_atendimento,$multa);
         
         
         $conteudo_cabecalho = iconv('UTF-8','IBM850',$conteudo_cabecalho);
         $pdf->Write($h=0, $conteudo_cabecalho, $link='', $fill=0, $align='L', $ln=true, $stretch=0, $firstline=false, $firstblock=false, $maxh=0);
         
         $style= array(
-            'position'=>'C',
+            'position'=>'L',
             'border'=>false,
-            'padding'=>0,
+            'padding'=>5,
             'fgcolor'=>array(0,0,0),
             'bgcolor'=>false,
             'text'=> false,
@@ -328,12 +342,15 @@ class fla_rotatividade {
             'stretchtext' => 2
         );
         
-        $pdf->write1DBarcode($cod_cartao, 'C128A','','',80,30,0.8,$style,'N');
+        $pdf->write1DBarcode($cod_cartao, 'C128','','',60,18,0.4,$style,'N');
+		//$pdf->write1DBarcode($cod_cartao, 'C128A','','',60,18,0.4,$style,'N');
+		//$pdf->write1DBarcode($cod_cartao, 'C128B','','',60,18,0.4,$style,'N');
+		//$pdf->write1DBarcode($cod_cartao, 'C128C','','',60,18,0.4,$style,'N');
         
         //$pdf->write1DBarcode($cod_cartao, 'C128B', '', '', 5, 5, 0.4, $style, 'N');
 
         $cod_cartao = iconv('UTF-8','IBM850',$cod_cartao);
-        $pdf->Write($h=0, $cod_cartao, $link='', $fill=0, $align='C', $ln=true, $stretch=0, $firstline=false, $firstblock=false, $maxh=0);        
+        $pdf->Write($h=0, 'Cartao: '.$cod_cartao, $link='', $fill=0, $align='L', $ln=true, $stretch=0, $firstline=false, $firstblock=false, $maxh=0);        
         
         $conteudo_rodape = iconv('UTF-8','IBM850',$conteudo_rodape);
         $pdf->Write($h=0, $conteudo_rodape, $link='', $fill=0, $align='L', $ln=true, $stretch=0, $firstline=false, $firstblock=false, $maxh=0);        

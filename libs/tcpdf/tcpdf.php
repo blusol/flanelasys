@@ -2490,7 +2490,7 @@ class TCPDF {
 		// Paper cordinates are calculated in this way: (inches * 72) where (1 inch = 25.4 mm)
 		switch (strtoupper($format)) {
 			// ISO 216 A Series + 2 SIS 014711 extensions
-                        case 'ETIQUETA': {$pf = array( 350, 420 ); break;}
+            case 'ETIQUETA': {$pf = array( 350, 720 ); break;}
 			case 'A0' : {$pf = array( 2383.937, 3370.394); break;}
 			case 'A1' : {$pf = array( 1683.780, 2383.937); break;}
 			case 'A2' : {$pf = array( 1190.551, 1683.780); break;}

@@ -330,9 +330,20 @@ class fla_clientes {
                 $aux++;
             }
         }
+		
+		$SQL = sprintf('SELECT des_placa FROM fla_clientes WHERE cod_cliente = %s',$objCliente->get_cod_cliente());
+		$rsClientes = $objConexao->query($SQL)->fetchObject();
+		$placa_anterior = $rsClientes->des_placa;
+		
         $SQL = sprintf('UPDATE fla_clientes SET ' . $update . ' WHERE cod_cliente = %s', $objCliente->get_cod_cliente());
         $query = $objConexao->prepare($SQL);
         $query->Execute();
+		
+		if ($placa_anterior != $objCliente->get_des_placa()) {
+			$SQL = sprintf('UPDATE fla_rotatividade SET des_placa = "'.$objCliente->get_des_placa().'" WHERE des_placa = "%s"', $placa_anterior);
+			$query = $objConexao->prepare($SQL);
+			$query->Execute();		
+		}
     }
 
     public function consultahistorico($des_placa, $limite = null) {

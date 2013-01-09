@@ -103,7 +103,9 @@ if (isset($cod_cliente) && !empty($cod_cliente) && is_numeric($cod_cliente)) {
             $select_tipo_doc = "cpf";
             $arrCliente[0]["cpf_cnpj_cliente"] = mascara_string("###.###.###-##",$arrCliente[0]["cpf_cnpj_cliente"]);
         }        
-        
+        if (empty($arrCliente[0]['cod_modelo']))
+			$arrCliente[0]['cod_modelo'] = 0;
+			
         $carrega_dados_veiculo = "exibeModeloSelect(".$arrCliente[0]['cod_marca'].",".$arrCliente[0]['cod_modelo'].");setaModelo(".$arrCliente[0]['cod_modelo'].");";        
     } 
 } else {
