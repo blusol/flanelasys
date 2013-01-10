@@ -14,7 +14,7 @@ $objMensalidadeUsuario = new fla_mensalidade_usuario();
 if (isset($_GET) && !empty($_GET['cod_cliente'])) 
     $cod_cliente = $_GET['cod_cliente'];
 
-if (isset($_POST) && !empty($_POST)) {
+if (isset($_POST) && !empty($_POST['envia'])) {
     $valor_pago = str_replace(",",".",$_POST['valor_pago']);
     $periodo_inicial = gravaData($_POST['periodo_inicial']);
     $periodo_final = gravaData($_POST['periodo_final']);
@@ -35,9 +35,16 @@ if (isset($_POST) && !empty($_POST)) {
     $objMensalidadeUsuario->ResetObject();
 }
 
+if (isset($_POST) && !empty($_POST['ImprimirComprovante'])) {
+	$cod_mensalidade_usuario = $_POST['cod_mensalidade_usuario'];
+	$objMensalidadeUsuario->set_cod_mensalidade_usuario($cod_mensalidade_usuario);
+	$objMensalidadeUsuario->geraComprovante();
+}
+
 if (isset($_GET) && !empty($_GET['imprimir'])) {
     $cod_pagamento = $_GET['cod_pagamento'];
-    
+    $cod_cliente = $_POST['cod_cliente'];
+	
     geraRPS($cod_pagamento,2,$cod_cliente);
     Header("Location:" . $url . "admin/clientes/index.php");
 }
@@ -179,6 +186,7 @@ include_once("../../cabecalho.php");
                         <td>Data de pagamento</td>
                         <td>Valor</td>
                         <td>Período</td>
+                        <td>Comprovante</td>
                     </tr>
                         <?php
                             for ($i = 0; $i < count($arrMensalidadeUsuario); $i++) {
@@ -186,6 +194,7 @@ include_once("../../cabecalho.php");
                                 echo sprintf("<td>%s</td>",  mostraData($arrMensalidadeUsuario[$i]['data_pagamento'])).chr(10);
                                 echo sprintf("<td>R$ %s</td>", number_format($arrMensalidadeUsuario[$i]['valor_pago'],2,",",".")).chr(10);
                                 echo sprintf("<td>%s á %s</td>", mostraData($arrMensalidadeUsuario[$i]['periodo_inicial']),mostraData($arrMensalidadeUsuario[$i]['periodo_final'])).chr(10);
+								echo sprintf("<td><form action=\"mensalidade.php\" method=\"POST\"><input type=\"hidden\" id=\"cod_cliente\" name=\"cod_cliente\" value=\"%s\" /><input type='submit' name='ImprimirComprovante' value='Imprimir'/><input type='hidden' name='cod_mensalidade_usuario' value='%s'></form></td>",$cod_cliente, $arrMensalidadeUsuario[$i]['cod_mensalidade_usuario']).chr(10);
                                 echo '</tr>'.chr(10);
                             }
                         ?>

@@ -1,5 +1,10 @@
 <?php
 include_once($path_classes . 'fla_conexao.class.php');
+include_once($path_classes . 'fla_clientes.class.php');
+include_once($path_classes.'fla_empresas.class.php');
+include_once($path_classes.'fla_modelos.class.php');
+include_once($path_libraries.'tcpdf/config/lang/eng.php');
+include_once($path_libraries.'tcpdf/tcpdf.php');
 class fla_mensalidade_usuario {
     private $cod_mensalidade_usuario;
     private $valor_pago;
@@ -180,6 +185,93 @@ class fla_mensalidade_usuario {
             return false;
         }        
     }
+	
+	public function geraComprovante() {
+		$objCliente = new fla_clientes();
+		$objEmpresa = new fla_empresas();
+		$objModelo = new fla_modelos();
+		
+		$arrMensalidadeUsuario = $this->buscaPagamentos();
+		$arrEmpresa = $objEmpresa->buscaEmpresas($objEmpresa);
+		
+		$objCliente->set_cod_cliente($arrMensalidadeUsuario[0]['cod_cliente']);
+		$arrCliente = $objCliente->buscaClientes($objCliente);
+		
+		$objModelo->set_cod_modelo($arrCliente[0]['cod_modelo']);		
+        $arrModelo = $objModelo->buscaModelos($objModelo);
+		$des_modelo = $arrModelo[0]['des_modelo'];		
+		
+        $pdf = new TCPDF("P", "in", 'ETIQUETA', true, 'IBM850', false);        
+        $pdf->SetMargins(0,0,0,true);
+        $pdf->SetFont('times', 'B', 10);
+        $pdf->setPrintHeader(false);
+        $pdf->setPrintFooter(false);
+        $pdf->AddPage();        
+
+        $nom_prestador  = $arrEmpresa[0]['nom_fantasia'];
+        $end_prestador  = $arrEmpresa[0]['des_endereco'];
+        $bairro_prestador = $arrEmpresa[0]['des_bairro'];
+        
+        $cep_prestador = $arrEmpresa[0]['cep_empresa'];
+        $cep_prestador  = mascara_string("#####-###",$cep_prestador);
+        
+        $cid_prestador  = $arrEmpresa[0]['des_cidade'];
+        $est_prestador  = $arrEmpresa[0]['des_estado'];
+        
+        $tel_prestador  = $arrEmpresa[0]['num_telefone'];
+        $tel_prestador  = mascara_string("(##) ####-####",$tel_prestador);
+        
+        $cnpj_prestador = $arrEmpresa[0]['num_cnpj'];
+        $cnpj_prestador = mascara_string("##.###.###/####-##",$cnpj_prestador);
+        
+        $insc_municipal_prestador = $arrEmpresa[0]['num_insc_municipal'];
+        if ($insc_estadual_prestador != "")
+            $insc_estadual_prestador = "000.000.000.000";
+        else
+            $insc_estadual_prestador = "ISENTO";
+        
+        $cabecalho = sprintf("\r\n%s\r\n%s\r\nBairro: %s - CEP: %s\r\n%s/%s\r\nTelefone: %s\r\n%s\r\n\r\n",
+                            $nom_prestador
+                            , $end_prestador
+                            , $bairro_prestador
+                            , $cep_prestador                
+                            , $cid_prestador
+                            , $est_prestador
+                            , $tel_prestador
+                            , "CNPJ: ".$cnpj_prestador
+                            , "Insc. Municipal: ".$insc_municipal_prestador
+                            , "Insc. Estadual:".$insc_estadual_prestador
+                    );
+					
+		$pdf->SetFont('times', '', 8);		
+        $pdf->Write($h=0, $cabecalho, $link='', $fill=0, $align='L', $ln=true, $stretch=0, $firstline=false, $firstblock=false, $maxh=0);					
+		
+        $titulo = "Recibo de pagamento de mensalista";		
+		$pdf->SetFont('times', 'B', 10);		
+        $pdf->Write($h=0, $titulo, $link='', $fill=0, $align='L', $ln=true, $stretch=0, $firstline=false, $firstblock=false, $maxh=0);					
+		
+		$descricao = "Recebemos de: ".limitar($arrCliente[0]['nom_cliente'],16)."\r\n";
+		//$descricao .= $arrCliente[0]['nom_cliente']."\r\n";
+		$descricao .= "CPF/CNPJ: ". $arrCliente[0]['cpf_cnpj_cliente']."\r\n";
+		$descricao .= "A importancia de R$ ".$arrMensalidadeUsuario[0]['valor_pago']."\r\n";
+		$descricao .= "Referente ao pagamento de mensalidade do veiculo: \r\n";
+		$descricao .= "Modelo: ".$des_modelo." Placa: ".strtoupper($arrCliente[0]['des_placa'])."\r\n";
+		$descricao .= "Para uso do estacionamento no periodo entre: \r\n";
+		$descricao .= mostraData($arrMensalidadeUsuario[0]['periodo_inicial'])." a ".mostraData($arrMensalidadeUsuario[0]['periodo_final']);
+		
+		$conteudo = sprintf("%s\r\n%s",$sub_titulo, $descricao);		
+        $conteudo_impressao = $conteudo.$rodape;
+        $conteudo_impressao = iconv('UTF-8','IBM850',$conteudo_impressao);
+		$pdf->SetFont('times', '', 10);				
+        $pdf->Write($h=0, $conteudo_impressao, $link='', $fill=0, $align='L', $ln=true, $stretch=0, $firstline=false, $firstblock=false, $maxh=0);
+		
+		$rodape =  "\r\n---------------------------\r\nAgradecemos a preferencia";
+		
+		$pdf->SetFont('times', '', 8);		
+        $pdf->Write($h=0,$rodape, $link='', $fill=0, $align='L', $ln=true, $stretch=0, $firstline=false, $firstblock=false, $maxh=0);							
+		
+        $pdf->Output('RPS-'.$numero_rps, 'D');					
+	}
     
     function ResetObject() {
         foreach ($this as $key => $value) {
