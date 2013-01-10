@@ -309,23 +309,30 @@ class fla_rotatividade {
         
         $arrRotatividade = $this->buscaCarro($this);
         $cod_cartao = $arrRotatividade[0]['cod_cartao'];
-	$hora_entrada =	$arrRotatividade[0]['hor_entrada'];
+		$hora_entrada =	$arrRotatividade[0]['hor_entrada'];
+		$dat_entrada = 	mostraData($arrRotatividade[0]['dat_cadastro']);
         $des_placa = strtoupper($arrRotatividade[0]['des_placa']);
 		
 		$objCliente->set_des_placa($des_placa);
 		$arrCliente = $objCliente->buscaClientes($objCliente);
-		
-		$objModelo->set_cod_modelo($arrCliente[0]['cod_modelo']);		
-        $arrModelo = $objModelo->buscaModelos($objModelo);
-		$des_modelo = $arrModelo[0]['des_modelo'];
+		if (!empty($arrCliente[0]['cod_modelo'])) {
+			$objModelo->set_cod_modelo($arrCliente[0]['cod_modelo']);		
+			$arrModelo = $objModelo->buscaModelos($objModelo);
+			$des_modelo = $arrModelo[0]['des_modelo'];
+		} else {
+			$des_modelo = 'Nao cadastrado';
+		}
 		
 		$pdf->SetFont('times', 'B', 8);		
         $pdf->Write($h=0, $nom_prestador, $link='', $fill=0, $align='L', $ln=true, $stretch=0, $firstline=false, $firstblock=false, $maxh=0);
 		
 		$pdf->SetFont('times', 'B', 10);				
-        $conteudo_cabecalho = sprintf("%s \r\nTelefone:%s\r\n\r\n",$end_prestador,$tel_prestador);		
-        $conteudo_rodape =    sprintf("Hora Entrada:%s\r\nVeiculo:%s\r\nPlaca: %s\r\n%s\r\n%s",$hora_entrada,$des_modelo,$des_placa,$horario_atendimento,$multa);
-        
+        $conteudo_cabecalho = sprintf("%s \r\nTelefone: %s\r\n\r\n",$end_prestador,$tel_prestador);		
+		
+		$pdf->SetFont('times', 'B', 12);		
+        $pdf->Write($h=0, "Entrada: $dat_entrada as $hora_entrada", $link='', $fill=0, $align='L', $ln=true, $stretch=0, $firstline=false, $firstblock=false, $maxh=0);		
+		
+        $conteudo_rodape =    sprintf("\r\nVeiculo: %s\r\nPlaca: %s\r\n%s\r\n%s",, ,$des_modelo,$des_placa,$horario_atendimento,$multa);        
         
         $conteudo_cabecalho = iconv('UTF-8','IBM850',$conteudo_cabecalho);
         $pdf->Write($h=0, $conteudo_cabecalho, $link='', $fill=0, $align='L', $ln=true, $stretch=0, $firstline=false, $firstblock=false, $maxh=0);

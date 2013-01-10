@@ -246,7 +246,7 @@ class fla_mensalidade_usuario {
 		$pdf->SetFont('times', '', 8);		
         $pdf->Write($h=0, $cabecalho, $link='', $fill=0, $align='L', $ln=true, $stretch=0, $firstline=false, $firstblock=false, $maxh=0);					
 		
-        $titulo = "Recibo de pagamento de mensalista";		
+        $titulo = "Ref: Pgto Mensalidade";		
 		$pdf->SetFont('times', 'B', 10);		
         $pdf->Write($h=0, $titulo, $link='', $fill=0, $align='L', $ln=true, $stretch=0, $firstline=false, $firstblock=false, $maxh=0);					
 		
@@ -256,8 +256,9 @@ class fla_mensalidade_usuario {
 		$descricao .= "A importancia de R$ ".$arrMensalidadeUsuario[0]['valor_pago']."\r\n";
 		$descricao .= "Referente ao pagamento de mensalidade do veiculo: \r\n";
 		$descricao .= "Modelo: ".$des_modelo." Placa: ".strtoupper($arrCliente[0]['des_placa'])."\r\n";
-		$descricao .= "Para uso do estacionamento no periodo entre: \r\n";
-		$descricao .= mostraData($arrMensalidadeUsuario[0]['periodo_inicial'])." a ".mostraData($arrMensalidadeUsuario[0]['periodo_final']);
+		$descricao .= "Data do pagamento: ".mostraData($arrMensalidadeUsuario[0]['data_pagamento']);
+		//$descricao .= "Para uso do estacionamento no periodo entre: \r\n";
+		//$descricao .= mostraData($arrMensalidadeUsuario[0]['periodo_inicial'])." a ".mostraData($arrMensalidadeUsuario[0]['periodo_final']);
 		
 		$conteudo = sprintf("%s\r\n%s",$sub_titulo, $descricao);		
         $conteudo_impressao = $conteudo.$rodape;
@@ -270,7 +271,7 @@ class fla_mensalidade_usuario {
 		$pdf->SetFont('times', '', 8);		
         $pdf->Write($h=0,$rodape, $link='', $fill=0, $align='L', $ln=true, $stretch=0, $firstline=false, $firstblock=false, $maxh=0);							
 		
-        $pdf->Output('RPS-'.$numero_rps, 'D');					
+        $pdf->Output('Comprovante-'.str_replace(" ","_",$arrCliente[0]['nom_cliente']), 'D');					
 	}
     
     function ResetObject() {
