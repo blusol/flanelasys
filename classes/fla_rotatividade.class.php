@@ -2,11 +2,11 @@
 
 //include_once('../includes/config.php');
 include_once($path_classes . 'fla_conexao.class.php');
-include_once($path_libraries.'tcpdf/config/lang/eng.php');
-include_once($path_libraries.'tcpdf/tcpdf.php');
-include_once($path_classes.'fla_empresas.class.php');
-include_once($path_classes.'fla_modelos.class.php');
-include_once($path_classes.'fla_clientes.class.php');
+include_once($path_libraries . 'tcpdf/config/lang/eng.php');
+include_once($path_libraries . 'tcpdf/tcpdf.php');
+include_once($path_classes . 'fla_empresas.class.php');
+include_once($path_classes . 'fla_modelos.class.php');
+include_once($path_classes . 'fla_clientes.class.php');
 
 class fla_rotatividade {
 
@@ -178,7 +178,7 @@ class fla_rotatividade {
                 , $objRotatividade->get_des_placa()
                 , base64_decode(hexToStr($objRotatividade->get_cod_rotativade())));
         $rsRemoveRotatividade = $objConexao->prepare($SQL);
-        
+
         $rsRemoveRotatividade->execute();
     }
 
@@ -187,17 +187,17 @@ class fla_rotatividade {
         $objConexao = new fla_conexao();
         $where = "";
         $separador = "";
-        $colunas_select = "";        
+        $colunas_select = "";
         $and = "";
         $arrCarros = array();
-        
+
         $parametros_where = get_object_vars($objRotatividade);
-        $parametros_where = array_filter($parametros_where,'strlen');
+        $parametros_where = array_filter($parametros_where, 'strlen');
         $tamanho_parametros = count($parametros_where);
-        
+
         $arrAtributos = get_class_vars(get_class($objRotatividade));
         $countArrAtributos = count($arrAtributos);
-        
+
         $aux = 1;
         if (is_array($parametros_where)) {
             foreach ($parametros_where as $atributo => $valor) {
@@ -208,14 +208,13 @@ class fla_rotatividade {
                         $and = "";
                     }
                     if (is_numeric($valor)) {
-                        $where .= $atributo." = ".$valor.$and;
+                        $where .= $atributo . " = " . $valor . $and;
                     } else {
-                        $where .= $atributo." = '".$valor."'".$and;
+                        $where .= $atributo . " = '" . $valor . "'" . $and;
                     }
                 }
                 $aux++;
             }
-                
         }
         $aux = 1;
         if (is_array($arrAtributos)) {
@@ -224,16 +223,16 @@ class fla_rotatividade {
                     $separador = ",";
                 else
                     $separador = "";
-                
-                $colunas_select .= $key.$separador.chr(10);
-                $aux++;                
+
+                $colunas_select .= $key . $separador . chr(10);
+                $aux++;
             }
         }
 
         if (!empty($where)) {
-            $where = " where ".$where;
+            $where = " where " . $where;
         }
-        $SQL = sprintf("select %s from fla_rotatividade rot %s",$colunas_select,$where);
+        $SQL = sprintf("select %s from fla_rotatividade rot %s", $colunas_select, $where);
         $rsCarrosEstacionados = $objConexao->prepare($SQL);
         $rsCarrosEstacionados->execute();
         $count = $rsCarrosEstacionados->rowCount();
@@ -279,104 +278,103 @@ class fla_rotatividade {
         }
         return $arrCarrosEstacionados;
     }
-    
+
     public function imprimeCupomEntrada() {
         $objEmpresa = new fla_empresas();
         global $path_relative;
         $arrEmpresa = array();
         $arrRotatividade = array();
-		$objModelo = new fla_modelos();
-		$objCliente = new fla_clientes();
-        
+        $objModelo = new fla_modelos();
+        $objCliente = new fla_clientes();
+
         $arrEmpresa = $objEmpresa->buscaEmpresas($objEmpresa);
-        
-        $pdf = new TCPDF("P", PDF_UNIT, 'ETIQUETA', true, 'IBM850', false);        
+
+        $pdf = new TCPDF("P", PDF_UNIT, 'ETIQUETA', true, 'IBM850', false);
         //$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);        
-        $pdf->SetMargins(0,0,0,true);
+        $pdf->SetMargins(0, 0, 0, true);
         //$pdf->SetMargins(PDF_MARGIN_LEFT,PDF_MARGIN_TOP,PDF_MARGIN_RIGHT);
         $pdf->setPrintHeader(false);
         $pdf->setPrintFooter(false);
         $pdf->AddPage();
-        
-       // $nom_prestador  = limitar($arrEmpresa[0]['nom_fantasia'],25);
-        $nom_prestador  = $arrEmpresa[0]['nom_fantasia'];
-        $end_prestador  = $arrEmpresa[0]['des_endereco'];   
-        $tel_prestador  = $arrEmpresa[0]['num_telefone'];
-        $tel_prestador  = mascara_string("(##) ####-####",$tel_prestador);
-        
+
+        // $nom_prestador  = limitar($arrEmpresa[0]['nom_fantasia'],25);
+        $nom_prestador = $arrEmpresa[0]['nom_fantasia'];
+        $end_prestador = $arrEmpresa[0]['des_endereco'];
+        $tel_prestador = $arrEmpresa[0]['num_telefone'];
+        $tel_prestador = mascara_string("(##) ####-####", $tel_prestador);
+
         $horario_atendimento = "Horario de atendimento:\r\n07:00hrs as 19:00hrs";
         $multa = "A perda deste cupom implicara \r\nem multa de R$ 10,00";
-        
+
         $arrRotatividade = $this->buscaCarro($this);
         $cod_cartao = $arrRotatividade[0]['cod_cartao'];
-		$hora_entrada =	$arrRotatividade[0]['hor_entrada'];
-		$dat_entrada = 	mostraData($arrRotatividade[0]['dat_cadastro']);
+        $hora_entrada = $arrRotatividade[0]['hor_entrada'];
+        $dat_entrada = mostraData($arrRotatividade[0]['dat_cadastro']);
         $des_placa = strtoupper($arrRotatividade[0]['des_placa']);
-		
-		$objCliente->set_des_placa($des_placa);
-		$arrCliente = $objCliente->buscaClientes($objCliente);
-		if (!empty($arrCliente[0]['cod_modelo'])) {
-			$objModelo->set_cod_modelo($arrCliente[0]['cod_modelo']);		
-			$arrModelo = $objModelo->buscaModelos($objModelo);
-			$des_modelo = $arrModelo[0]['des_modelo'];
-		} else {
-			$des_modelo = 'Nao cadastrado';
-		}
-		
-		$pdf->SetFont('times', 'B', 8);		
-        $pdf->Write($h=0, $nom_prestador, $link='', $fill=0, $align='L', $ln=true, $stretch=0, $firstline=false, $firstblock=false, $maxh=0);
-		
-		$pdf->SetFont('times', 'B', 10);				
-        $conteudo_cabecalho = sprintf("%s \r\nTelefone: %s\r\n\r\n",$end_prestador,$tel_prestador);		
-		
-		$pdf->SetFont('times', 'B', 12);		
-        $pdf->Write($h=0, "Entrada: $dat_entrada as $hora_entrada", $link='', $fill=0, $align='L', $ln=true, $stretch=0, $firstline=false, $firstblock=false, $maxh=0);		
-		
-        $conteudo_rodape =    sprintf("\r\nVeiculo: %s\r\nPlaca: %s\r\n%s\r\n%s",, ,$des_modelo,$des_placa,$horario_atendimento,$multa);        
+
+        $objCliente->set_des_placa($des_placa);
+        $arrCliente = $objCliente->buscaClientes($objCliente);
+        if (!empty($arrCliente[0]['cod_modelo'])) {
+            $objModelo->set_cod_modelo($arrCliente[0]['cod_modelo']);
+            $arrModelo = $objModelo->buscaModelos($objModelo);
+            $des_modelo = $arrModelo[0]['des_modelo'];
+        } else {
+            $des_modelo = 'Nao cadastrado';
+        }
+
+        $des_modelo = remove_acentuacao($des_modelo);
+        $pdf->SetFont('times', 'B', 8);
+        $pdf->Write($h = 0, $nom_prestador, $link = '', $fill = 0, $align = 'L', $ln = true, $stretch = 0, $firstline = false, $firstblock = false, $maxh = 0);
+
+        $pdf->SetFont('times', 'B', 10);
+        $conteudo_cabecalho = sprintf("%s \r\nTelefone: %s\r\n\r\n", $end_prestador, $tel_prestador);
         
-        $conteudo_cabecalho = iconv('UTF-8','IBM850',$conteudo_cabecalho);
-        $pdf->Write($h=0, $conteudo_cabecalho, $link='', $fill=0, $align='L', $ln=true, $stretch=0, $firstline=false, $firstblock=false, $maxh=0);
-        
-        $style= array(
-            'position'=>'L',
-            'border'=>false,
-            'padding'=>5,
-            'fgcolor'=>array(0,0,0),
-            'bgcolor'=>false,
-            'text'=> false,
-            'font'=> 'helvetica',
+        $conteudo_cabecalho = iconv('UTF-8', 'IBM850', $conteudo_cabecalho);
+        $pdf->Write($h = 0, $conteudo_cabecalho, $link = '', $fill = 0, $align = 'L', $ln = true, $stretch = 0, $firstline = false, $firstblock = false, $maxh = 0);
+
+        $style = array(
+            'position' => 'L',
+            'border' => false,
+            'padding' => 5,
+            'fgcolor' => array(0, 0, 0),
+            'bgcolor' => false,
+            'text' => false,
+            'font' => 'helvetica',
             'fontsize' => 3,
             'stretchtext' => 2
         );
-        
-        $pdf->write1DBarcode($cod_cartao, 'C128','','',60,18,0.4,$style,'N');
-		//$pdf->write1DBarcode($cod_cartao, 'C128A','','',60,18,0.4,$style,'N');
-		//$pdf->write1DBarcode($cod_cartao, 'C128B','','',60,18,0.4,$style,'N');
-		//$pdf->write1DBarcode($cod_cartao, 'C128C','','',60,18,0.4,$style,'N');
-        
+
+        $pdf->write1DBarcode($cod_cartao, 'C128', '', '', 60, 18, 0.4, $style, 'N');
+        //$pdf->write1DBarcode($cod_cartao, 'C128A','','',60,18,0.4,$style,'N');
+        //$pdf->write1DBarcode($cod_cartao, 'C128B','','',60,18,0.4,$style,'N');
+        //$pdf->write1DBarcode($cod_cartao, 'C128C','','',60,18,0.4,$style,'N');
         //$pdf->write1DBarcode($cod_cartao, 'C128B', '', '', 5, 5, 0.4, $style, 'N');
 
-        $cod_cartao = iconv('UTF-8','IBM850',$cod_cartao);
-        $pdf->Write($h=0, 'Cartao: '.$cod_cartao, $link='', $fill=0, $align='L', $ln=true, $stretch=0, $firstline=false, $firstblock=false, $maxh=0);        
+        $cod_cartao = iconv('UTF-8', 'IBM850', $cod_cartao);
+        $pdf->Write($h = 0, 'Cartao: ' . $cod_cartao, $link = '', $fill = 0, $align = 'L', $ln = true, $stretch = 0, $firstline = false, $firstblock = false, $maxh = 0);
+
+        $pdf->SetFont('times', 'B', 12);
+        $pdf->Write($h = 0, "Entrada: $dat_entrada as $hora_entrada", $link = '', $fill = 0, $align = 'L', $ln = true, $stretch = 0, $firstline = false, $firstblock = false, $maxh = 0);
+        $conteudo_rodape = sprintf("\r\nVeiculo: %s\r\nPlaca: %s\r\n%s\r\n%s", $des_modelo, $des_placa, $horario_atendimento, $multa);        
         
-        $conteudo_rodape = iconv('UTF-8','IBM850',$conteudo_rodape);
-        $pdf->Write($h=0, $conteudo_rodape, $link='', $fill=0, $align='L', $ln=true, $stretch=0, $firstline=false, $firstblock=false, $maxh=0);        
-        
+        $conteudo_rodape = iconv('UTF-8', 'IBM850', $conteudo_rodape);
+        $pdf->Write($h = 0, $conteudo_rodape, $link = '', $fill = 0, $align = 'L', $ln = true, $stretch = 0, $firstline = false, $firstblock = false, $maxh = 0);
+
         //$arquivo_cartao = $pdf->Output('CupomEntrada-'.$cod_cartao,"S");
         //var_dump(file_put_contents($path_relative.'cupons/CupomEntrada-'.$cod_cartao, $arquivo_cartao));
-        $pdf->Output('CupomEntrada-'.$cod_cartao);
+        $pdf->Output('CupomEntrada-' . $cod_cartao);
     }
-    
+
     public function geraProximaNumeroCartao() {
         $objConexao = new fla_conexao();
-        $sql = "select max(cod_cartao) ultimo_cartao from fla_rotatividade where dat_cadastro = '".date("Y-m-d")."'";
-        $rsUltimoCartao = $objConexao->query($sql)->fetchObject() or die("ERROR: " . implode(":", $objConexao->errorInfo())."<p>$sql</p>");
+        $sql = "select max(cod_cartao) ultimo_cartao from fla_rotatividade where dat_cadastro = '" . date("Y-m-d") . "'";
+        $rsUltimoCartao = $objConexao->query($sql)->fetchObject() or die("ERROR: " . implode(":", $objConexao->errorInfo()) . "<p>$sql</p>");
         if ($rsUltimoCartao->ultimo_cartao) {
             $cod_cartao = $rsUltimoCartao->ultimo_cartao + 1;
         } else {
-            $cod_cartao = date("Ymd").(int)1;
+            $cod_cartao = date("Ymd") . (int) 1;
         }
-        return $cod_cartao;        
+        return $cod_cartao;
     }
 
 }

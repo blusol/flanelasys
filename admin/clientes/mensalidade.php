@@ -52,11 +52,14 @@ if (isset($_GET) && !empty($_GET['imprimir'])) {
 $objClientes->set_cod_cliente($cod_cliente);
 $arrCliente = $objClientes->buscaClientes($objClientes);
 
-$arrMensalidade = $objMensalidade->buscaMensalidade($arrCliente[0]['tip_mensalidade']);
+$objMensalidade->set_cod_mensalidade($arrCliente[0]['tip_mensalidade']);
+$arrMensalidade = $objMensalidade->buscaMensalidade();
 $cod_cliente = $arrCliente[0]['cod_cliente'];
 
 $objMensalidadeUsuario->set_cod_cliente($cod_cliente);
 $arrMensalidadeUsuario = $objMensalidadeUsuario->buscaPagamentos();
+if (!$arrMensalidadeUsuario)
+    $arrMensalidadeUsuario = array();
 ?>
 <html>
     <head>

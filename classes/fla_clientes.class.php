@@ -301,49 +301,63 @@ class fla_clientes {
     public function editaCliente($objCliente) {
         $objConexao = new fla_conexao();
 
-        $parametros_where = get_object_vars($objCliente);
-        $parametros_where = array_filter($parametros_where, 'strlen');
-        $tamanho_parametros = count($parametros_where);
-        $update = "";
-        $aux = 1;
-        if (is_array($parametros_where)) {
-            foreach ($parametros_where as $atributo => $valor) {
-                if (($atributo != "cod_cliente")) {
-                    if ((!is_null($valor))) {
-                        if ($aux != $tamanho_parametros) {
-                            $and = " , ";
-                        } else {
-                            $and = "";
-                        }
+        // Verifica se a placa já está sendo usada em outro veículo
+        $SQL = "SELECT
+                    cod_cliente
+                FROM
+                    fla_clientes
+                WHERE
+                    des_placa = '" . $objCliente->get_des_placa() . "' AND cod_cliente <> ".$objCliente->get_cod_cliente();
+        $cliente = $objConexao->prepare($SQL);
+        $cliente->Execute();        
+        if ($cliente->rowCount() == 0) {
+            $parametros_where = get_object_vars($objCliente);
+            $parametros_where = array_filter($parametros_where, 'strlen');
+            $tamanho_parametros = count($parametros_where);
+            $update = "";
+            $aux = 1;
+            if (is_array($parametros_where)) {
+                foreach ($parametros_where as $atributo => $valor) {
+                    if (($atributo != "cod_cliente")) {
+                        if ((!is_null($valor))) {
+                            if ($aux != $tamanho_parametros) {
+                                $and = " , ";
+                            } else {
+                                $and = "";
+                            }
 
-                        if (($atributo == "cpf_cnpj_cliente") || ($atributo == "insc_municipal_cliente") || ($atributo == "insc_estadual_cliente") || ($atributo == 'num_telefone') || ($atributo == 'num_celular')) {
-                            $valor = str_replace(array("-", "/", ".", ")", "(", " "), array(""), $valor);
-                        }
+                            if (($atributo == "cpf_cnpj_cliente") || ($atributo == "insc_municipal_cliente") || ($atributo == "insc_estadual_cliente") || ($atributo == 'num_telefone') || ($atributo == 'num_celular')) {
+                                $valor = str_replace(array("-", "/", ".", ")", "(", " "), array(""), $valor);
+                            }
 
-                        if (is_numeric($valor) && (!in_array($atributo, array("cpf_cnpj_cliente", "insc_municipal_cliente", "insc_estadual_cliente")))) {
-                            $update .= $atributo . " = " . $valor . $and;
-                        } else {
-                            $update .= $atributo . " = '" . $valor . "'" . $and;
+                            if (is_numeric($valor) && (!in_array($atributo, array("cpf_cnpj_cliente", "insc_municipal_cliente", "insc_estadual_cliente")))) {
+                                $update .= $atributo . " = " . $valor . $and;
+                            } else {
+                                $update .= $atributo . " = '" . $valor . "'" . $and;
+                            }
                         }
                     }
+                    $aux++;
                 }
-                $aux++;
             }
+
+                    $SQL = sprintf('SELECT des_placa FROM fla_clientes WHERE cod_cliente = %s',$objCliente->get_cod_cliente());
+                    $rsClientes = $objConexao->query($SQL)->fetchObject();
+                    $placa_anterior = $rsClientes->des_placa;
+
+            $SQL = sprintf('UPDATE fla_clientes SET ' . $update . ' WHERE cod_cliente = %s', $objCliente->get_cod_cliente());
+            $query = $objConexao->prepare($SQL);
+            $query->Execute();
+
+                    if ($placa_anterior != $objCliente->get_des_placa()) {
+                            $SQL = sprintf('UPDATE fla_rotatividade SET des_placa = "'.$objCliente->get_des_placa().'" WHERE des_placa = "%s"', $placa_anterior);
+                            $query = $objConexao->prepare($SQL);
+                            $query->Execute();		
+                    }
+                    return true;
+        } else {
+            return false;
         }
-		
-		$SQL = sprintf('SELECT des_placa FROM fla_clientes WHERE cod_cliente = %s',$objCliente->get_cod_cliente());
-		$rsClientes = $objConexao->query($SQL)->fetchObject();
-		$placa_anterior = $rsClientes->des_placa;
-		
-        $SQL = sprintf('UPDATE fla_clientes SET ' . $update . ' WHERE cod_cliente = %s', $objCliente->get_cod_cliente());
-        $query = $objConexao->prepare($SQL);
-        $query->Execute();
-		
-		if ($placa_anterior != $objCliente->get_des_placa()) {
-			$SQL = sprintf('UPDATE fla_rotatividade SET des_placa = "'.$objCliente->get_des_placa().'" WHERE des_placa = "%s"', $placa_anterior);
-			$query = $objConexao->prepare($SQL);
-			$query->Execute();		
-		}
     }
 
     public function consultahistorico($des_placa, $limite = null) {

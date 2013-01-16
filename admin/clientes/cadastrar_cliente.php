@@ -70,8 +70,11 @@ if (!empty($_POST)) {
         if (!empty($_POST["cod_cliente"])) {
             $cod_cliente = $_POST["cod_cliente"];
             $objClientes->set_cod_cliente($_POST["cod_cliente"]);
-            $objClientes->editaCliente($objClientes);                
-            $msgRetorno = 'Dados atualizados com sucesso!';
+            $retorno = $objClientes->editaCliente($objClientes);          
+            if ($retorno)
+                $msgRetorno = 'Dados atualizados com sucesso!';
+            else
+                $msgRetorno = '<span style="color:red;font-weight:bolder;">A placa informada já está sendo utilizada por outro veículo!</span>';
         } else {
             $cod_cliente = $objClientes->insereCliente($objClientes);
             if (is_numeric($cod_cliente)) {
@@ -400,7 +403,7 @@ for ($i = 0; $i < count($arrCores); $i++) {
                                     <?php 
                                         for ($i =0;$i < count($arrMensalidade);$i++) {
                                             if ($arrMensalidade[$i]['cod_mensalidade'] == $arrCliente[0]['tip_mensalidade'])
-                                                echo sprintf("<option value='%s' selected='selected'>%s - R$ %s</option>",$arrMensalidade[$i]['cod_mensalidade'],$arrMensalidade[$i]['des_mensalidade'],$arrMensalidade[$i]['val_mensalidade']).chr(10);
+                                                echo sprintf("<option value='%s' selected='selected'>%s - Valor R$ %s</option>",$arrMensalidade[$i]['cod_mensalidade'],$arrMensalidade[$i]['des_mensalidade'],$arrMensalidade[$i]['val_mensalidade']).chr(10);
                                             else
                                                 echo sprintf("<option value='%s'>%s - R$ %s</option>",$arrMensalidade[$i]['cod_mensalidade'],$arrMensalidade[$i]['des_mensalidade'],$arrMensalidade[$i]['val_mensalidade']).chr(10);
                                         }
