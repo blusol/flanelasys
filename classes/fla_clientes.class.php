@@ -1,8 +1,7 @@
 <?php
 
-//include_once('../../includes/config.php');
 include_once($path_classes . 'fla_conexao.class.php');
-
+include_once($path_classes . 'fla_rotatividade.class.php');
 class fla_clientes {
 
     private $cod_cliente;
@@ -399,6 +398,41 @@ class fla_clientes {
         }
     }
 
+    public function removeCliente() {
+        $objConexao = new fla_conexao();
+        $objRotatividade = new fla_rotatividade();
+        
+        $objRotatividade->set_des_placa($this->get_des_placa());
+        $objRotatividade->set_des_situacao('P');
+        $arrRotatividade = $objRotatividade->buscaCarro($objRotatividade);
+        
+        if (!$arrRotatividade) {
+            try {
+                $sql_rotatidade = sprintf("DELETE FROM fla_rotatividade WHERE UPPER(des_placa) = '%s'",strtoupper($this->get_des_placa()));
+                $query = $objConexao->prepare($sql_rotatidade) or die($objConexao->errorInfo());
+                $query->Execute();                
+                $sql_nfes = sprintf("DELETE FROM fla_nfes WHERE cod_cliente = %s",$this->get_cod_cliente());
+                $query = $objConexao->prepare($sql_nfes) or die($objConexao->errorInfo());
+                $query->Execute();                
+                $sql_mensalidade_usuario = sprintf("DELETE FROM fla_mensalidade_usuario WHERE cod_cliente = %s",$this->get_cod_cliente());
+                $query = $objConexao->prepare($sql_mensalidade_usuario) or die($objConexao->errorInfo());
+                $query->Execute();                
+                $sql_clientes = sprintf("DELETE FROM fla_clientes WHERE cod_cliente = %s",$this->get_cod_cliente());
+                $query = $objConexao->prepare($sql_clientes) or die($objConexao->errorInfo());
+                $query->Execute();       
+                $msg = 'Cliente removido com sucesso!';
+                return $msg;
+            } catch (PDOException $e) {
+                $msg = '<span style="color:red;">'.$e->getMessage().'</span>';
+                return $msg;
+            }            
+        } else {
+            $msg = '<span style="color:red;">O cliente não pode ser excluído por que se encontra estacionado no momento!<br/>Por favor libere o veículo e tente novamente.</span>';
+            return $msg;
+        }
+        
+    }
+    
     public function buscaClientes($objCliente) {
         $objConexao = new fla_conexao();
         $where = "";
@@ -423,7 +457,7 @@ class fla_clientes {
                     } else {
                         $and = "";
                     }
-                    if (is_numeric($valor)) {
+                    if (is_numeric($valor) && ($atributo != 'des_placa')) {
                         $where .= $atributo . " = " . $valor . $and;
                     } else {
                         $where .= $atributo . " LIKE '%" . $valor . "%'" . $and;

@@ -12,12 +12,14 @@ $palavra_chave = "";
 $filtro_palavra_chave = "";
 $tipo_cliente = "";
 
-if (isset($_POST)) {
+if (!empty($_POST)) {
     if (!empty($_POST['palavra_chave'])) {
-        $palavra_chave = $_POST['palavra_chave'];
+        $palavra_chave = trim($_POST['palavra_chave']);
     }
     if (!empty($_POST["filtro_palavra_chave"])) {
         $filtro_palavra_chave = $_POST["filtro_palavra_chave"];
+    } else {
+        $filtro_palavra_chave = "Placa";
     }
     if (!empty($_POST['tipo_cliente'])) {
         $tipo_cliente = $_POST['tipo_cliente'];
@@ -28,6 +30,8 @@ if (isset($_POST)) {
             $objClientes->set_nom_cliente($palavra_chave);
         elseif ($filtro_palavra_chave == 'Placa')
             $objClientes->set_des_placa ($palavra_chave);
+    } else {
+        $objClientes->set_des_placa($palavra_chave);
     }
     
     if ($tipo_cliente == "M")
@@ -58,7 +62,7 @@ if ($arrClientes == false)
                 <form method="POST" action="index.php">
                         Palavra chave: <input name="palavra_chave" id="palava_chave" value="<?php echo $palavra_chave;?>" />
                         <select name="filtro_palavra_chave">
-                                <option value="Nome">Busca por </option>
+                                <option value="">Busca por </option>
                                 <option value="Nome" <?php echo $filtro_palavra_chave == 'Nome'? 'selected="selected"' : '';?>>Nome</option>
                                 <option value="Placa" <?php echo $filtro_palavra_chave == 'Placa'? 'selected="selected"' : '';?>>Placa</option>
                         </select>
