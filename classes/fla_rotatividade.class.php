@@ -362,7 +362,12 @@ class fla_rotatividade {
 
         //$arquivo_cartao = $pdf->Output('CupomEntrada-'.$cod_cartao,"S");
         //var_dump(file_put_contents($path_relative.'cupons/CupomEntrada-'.$cod_cartao, $arquivo_cartao));
-        $pdf->Output('CupomEntrada-' . $cod_cartao);
+        $arquivo = $path_relative.'cuponsEntrada/CupomEntrada-' . $cod_cartao.'.pdf';
+        $pdf->Output($path_relative.'cuponsEntrada/CupomEntrada-' . $cod_cartao.'.pdf','F');
+        
+        //   $comando = ?C:\Foxit\Reader.exe /t C:\meupdf.pdf ?minha impressora HP??;
+        
+        //       exec($comando);
     }
 
     public function geraProximaNumeroCartao() {
