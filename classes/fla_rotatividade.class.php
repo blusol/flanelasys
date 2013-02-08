@@ -354,20 +354,25 @@ class fla_rotatividade {
         $pdf->Write($h = 0, 'Cartao: ' . $cod_cartao, $link = '', $fill = 0, $align = 'L', $ln = true, $stretch = 0, $firstline = false, $firstblock = false, $maxh = 0);
 
         $pdf->SetFont('times', 'B', 12);
-        $pdf->Write($h = 0, "Entrada: $dat_entrada as $hora_entrada", $link = '', $fill = 0, $align = 'L', $ln = true, $stretch = 0, $firstline = false, $firstblock = false, $maxh = 0);
-        $conteudo_rodape = sprintf("\r\nVeiculo: %s\r\nPlaca: %s\r\n%s\r\n%s", $des_modelo, $des_placa, $horario_atendimento, $multa);        
+        $pdf->Write($h = 0, "Dia: $dat_entrada \r\nHorario: $hora_entrada", $link = '', $fill = 0, $align = 'L', $ln = true, $stretch = 0, $firstline = false, $firstblock = false, $maxh = 0);
+        $conteudo_rodape = sprintf("\r\nVeiculo: %s\r\nPlaca: %s\r\n%s\r\n", $des_modelo, $des_placa, $horario_atendimento);        
         
+		$pdf->SetFont('times', 'B', 12);
         $conteudo_rodape = iconv('UTF-8', 'IBM850', $conteudo_rodape);
         $pdf->Write($h = 0, $conteudo_rodape, $link = '', $fill = 0, $align = 'L', $ln = true, $stretch = 0, $firstline = false, $firstblock = false, $maxh = 0);
 
+		$pdf->SetFont('times', 'B', 10);
+        $multa = iconv('UTF-8', 'IBM850', $multa);
+        $pdf->Write($h = 0, $multa, $link = '', $fill = 0, $align = 'L', $ln = true, $stretch = 0, $firstline = false, $firstblock = false, $maxh = 0);		
+		
         //$arquivo_cartao = $pdf->Output('CupomEntrada-'.$cod_cartao,"S");
         //var_dump(file_put_contents($path_relative.'cupons/CupomEntrada-'.$cod_cartao, $arquivo_cartao));
-        $arquivo = $path_relative.'cuponsEntrada/CupomEntrada-' . $cod_cartao.'.pdf';
-        $pdf->Output($path_relative.'cuponsEntrada/CupomEntrada-' . $cod_cartao.'.pdf','F');
+        //$arquivo = $path_relative.'cuponsEntrada/CupomEntrada-' . $cod_cartao.'.pdf';
+        //$pdf->Output($path_relative.'cuponsEntrada/CupomEntrada-' . $cod_cartao.'.pdf',);
+		$pdf->Output('CupomEntrada-' . $cod_cartao.'.pdf','I');
         
-        //   $comando = ?C:\Foxit\Reader.exe /t C:\meupdf.pdf ?minha impressora HP??;
-        
-        //       exec($comando);
+        //$comando = "C:\FoxitSoftware\FoxitReader.exe -z 200 /t ".$arquivo." \"MP-2500 TH\"";
+        //exec($comando);
     }
 
     public function geraProximaNumeroCartao() {

@@ -211,6 +211,7 @@ class fla_mensalidade {
                         LEFT JOIN fla_mensalidade_usuario menusu ON (menusu.cod_cliente = cli.cod_cliente)
                 where
                         cli.dia_vencimento > 0
+						and cli.ind_ativo = 1
                         and
                         cli.cod_cliente not in 
                         (
@@ -223,6 +224,7 @@ class fla_mensalidade {
                         )
                 order by
                         cli.dia_vencimento asc , cli.nom_cliente asc";
+		echo "<!--".$sql."-->";				
         $rsMensalidadeAtrasada = $objConexao->prepare($sql);
         $rsMensalidadeAtrasada->execute();
         $count = $rsMensalidadeAtrasada->rowCount();

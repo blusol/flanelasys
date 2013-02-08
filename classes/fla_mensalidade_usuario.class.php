@@ -271,7 +271,7 @@ class fla_mensalidade_usuario {
 		$pdf->SetFont('times', '', 8);		
         $pdf->Write($h=0,$rodape, $link='', $fill=0, $align='L', $ln=true, $stretch=0, $firstline=false, $firstblock=false, $maxh=0);							
 		
-        $pdf->Output('Comprovante-'.str_replace(" ","_",$arrCliente[0]['nom_cliente']), 'D');					
+        $pdf->Output('Comprovante-'.str_replace(" ","_",$arrCliente[0]['nom_cliente']));					
 	}
     
     function ResetObject() {
