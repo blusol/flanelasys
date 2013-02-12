@@ -41,6 +41,15 @@ if (isset($_POST) && !empty($_POST['ImprimirComprovante'])) {
 	$objMensalidadeUsuario->geraComprovante();
 }
 
+if (isset($_POST) && !empty($_POST['ExcluirPagamento'])) {
+	$cod_mensalidade_usuario = $_POST['cod_mensalidade_usuario'];
+	$cod_cliente = $_POST['cod_cliente'];
+	
+	$objMensalidadeUsuario->set_cod_mensalidade_usuario($cod_mensalidade_usuario);
+	$msgRetorno = $objMensalidadeUsuario->excluirPagamento();
+	
+}
+
 if (isset($_GET) && !empty($_GET['imprimir'])) {
     $cod_pagamento = $_GET['cod_pagamento'];
     $cod_cliente = $_POST['cod_cliente'];
@@ -56,6 +65,7 @@ $objMensalidade->set_cod_mensalidade($arrCliente[0]['tip_mensalidade']);
 $arrMensalidade = $objMensalidade->buscaMensalidade();
 $cod_cliente = $arrCliente[0]['cod_cliente'];
 
+$objMensalidadeUsuario->ResetObject();
 $objMensalidadeUsuario->set_cod_cliente($cod_cliente);
 $arrMensalidadeUsuario = $objMensalidadeUsuario->buscaPagamentos();
 if (!$arrMensalidadeUsuario)
@@ -190,6 +200,7 @@ include_once("../../cabecalho.php");
                         <td>Valor</td>
                         <td>Período</td>
                         <td>Comprovante</td>
+						<td>Excluir</td>
                     </tr>
                         <?php
                             for ($i = 0; $i < count($arrMensalidadeUsuario); $i++) {
@@ -198,6 +209,7 @@ include_once("../../cabecalho.php");
                                 echo sprintf("<td>R$ %s</td>", number_format($arrMensalidadeUsuario[$i]['valor_pago'],2,",",".")).chr(10);
                                 echo sprintf("<td>%s á %s</td>", mostraData($arrMensalidadeUsuario[$i]['periodo_inicial']),mostraData($arrMensalidadeUsuario[$i]['periodo_final'])).chr(10);
 								echo sprintf("<td><form action=\"mensalidade.php\" method=\"POST\"><input type=\"hidden\" id=\"cod_cliente\" name=\"cod_cliente\" value=\"%s\" /><input type='submit' name='ImprimirComprovante' value='Imprimir'/><input type='hidden' name='cod_mensalidade_usuario' value='%s'></form></td>",$cod_cliente, $arrMensalidadeUsuario[$i]['cod_mensalidade_usuario']).chr(10);
+								echo sprintf("<td><form action=\"mensalidade.php\" method=\"POST\"><input type=\"hidden\" id=\"cod_cliente\" name=\"cod_cliente\" value=\"%s\" /><input type='submit' name='ExcluirPagamento' value='Excluir'/><input type='hidden' name='cod_mensalidade_usuario' value='%s'></form></td>",$cod_cliente, $arrMensalidadeUsuario[$i]['cod_mensalidade_usuario']).chr(10);
                                 echo '</tr>'.chr(10);
                             }
                         ?>

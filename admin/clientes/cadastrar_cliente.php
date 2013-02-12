@@ -251,13 +251,13 @@ if (!empty($cod_cliente)) {
     echo '<a href="cadastrar_cliente.php">Cadastrar novo</a> | ';
     echo sprintf('<a href="cadastrar_cliente.php?cod_cliente=%s">Dados Gerais</a> | ', $cod_cliente);
     echo sprintf('<a href="historico.php?cod_cliente=%s">Histórico</a> | ', $cod_cliente);
-    echo sprintf('<a id="excluirCliente" href="cadastrar_cliente.php?cod_cliente=%s&acao=excluir">Excluir</a> ', $cod_cliente);
+
+	if ((!empty($arrCliente[0]['tipo_cliente']) && $arrCliente[0]['tipo_cliente'] == 'M')) {
+		echo sprintf('<a href="mensalidade.php?cod_cliente=%s">Mensalidades</a> |', $cod_cliente);
+	}	
+	echo sprintf('<a id="excluirCliente" href="cadastrar_cliente.php?cod_cliente=%s&acao=excluir">Excluir</a> ', $cod_cliente);	
 } else {
     echo '<a href="cadastrar_cliente.php">Cadastrar novo</a> |';
-}
-if (!empty($cod_cliente) && (!empty($arrCliente[0]['tipo_cliente']) && $arrCliente[0]['tipo_cliente'] == 'M')) {
-    echo sprintf('<a href="mensalidade.php?cod_cliente=%s">Mensalidades</a> |', $cod_cliente);
-    echo sprintf('<a id="excluirCliente" href="cadastrar_cliente.php?cod_cliente=%s&acao=excluir">Excluir</a> ', $cod_cliente);
 }
 ?>
                 </p>

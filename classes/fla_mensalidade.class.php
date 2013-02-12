@@ -220,11 +220,10 @@ class fla_mensalidade {
                                 from 
                                     fla_mensalidade_usuario
                                 where 
-                                    '" . date("Y-m-d") . "' between menusu.periodo_inicial and menusu.periodo_final
+                                    '" . date("Y-m-d") . "' between periodo_inicial and periodo_final
                         )
                 order by
                         cli.dia_vencimento asc , cli.nom_cliente asc";
-		echo "<!--".$sql."-->";				
         $rsMensalidadeAtrasada = $objConexao->prepare($sql);
         $rsMensalidadeAtrasada->execute();
         $count = $rsMensalidadeAtrasada->rowCount();

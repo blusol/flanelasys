@@ -115,6 +115,18 @@ class fla_mensalidade_usuario {
         }
     }
     
+	public function excluirPagamento() {
+		$objConexao = new fla_conexao();		
+		try {
+			$SQL = "DELETE FROM fla_mensalidade_usuario WHERE cod_mensalidade_usuario = ".$this->get_cod_mensalidade_usuario();
+			$query = $objConexao->prepare($SQL) or die($objConexao->errorInfo());
+			$query->Execute();
+			return '<span style="color:green;">Pagamento excluído com sucesso</span>';
+		} catch (PDOException $e) {
+			return '<span style="color:red;">Erro ao excluir pagamento: '.$e->getMessage().'</span>';
+		}
+	}
+	
     public function buscaPagamentos() {
         $objConexao = new fla_conexao();
         $where = "";
@@ -271,7 +283,7 @@ class fla_mensalidade_usuario {
 		$pdf->SetFont('times', '', 8);		
         $pdf->Write($h=0,$rodape, $link='', $fill=0, $align='L', $ln=true, $stretch=0, $firstline=false, $firstblock=false, $maxh=0);							
 		
-        $pdf->Output('Comprovante-'.str_replace(" ","_",$arrCliente[0]['nom_cliente']));					
+        $pdf->Output('Comprovante-'.str_replace(" ","_",$arrCliente[0]['nom_cliente']),"D");					
 	}
     
     function ResetObject() {

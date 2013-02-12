@@ -367,12 +367,12 @@ class fla_rotatividade {
 		
         //$arquivo_cartao = $pdf->Output('CupomEntrada-'.$cod_cartao,"S");
         //var_dump(file_put_contents($path_relative.'cupons/CupomEntrada-'.$cod_cartao, $arquivo_cartao));
-        //$arquivo = $path_relative.'cuponsEntrada/CupomEntrada-' . $cod_cartao.'.pdf';
-        //$pdf->Output($path_relative.'cuponsEntrada/CupomEntrada-' . $cod_cartao.'.pdf',);
-		$pdf->Output('CupomEntrada-' . $cod_cartao.'.pdf','I');
+        $arquivo = $path_relative.'cuponsEntrada/CupomEntrada-' . $cod_cartao.'.pdf';
+        $pdf->Output($path_relative.'cuponsEntrada/CupomEntrada-' . $cod_cartao.'.pdf',"F");
+		//$pdf->Output('CupomEntrada-' . $cod_cartao.'.pdf','I');
         
-        //$comando = "C:\FoxitSoftware\FoxitReader.exe -z 200 /t ".$arquivo." \"MP-2500 TH\"";
-        //exec($comando);
+        $comando = "C:\Sumatra\SumatraPDF.exe -print-to \"HP Photosmart C4400 series\" ".$arquivo;
+        exec($comando);
     }
 
     public function geraProximaNumeroCartao() {
