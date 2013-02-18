@@ -45,39 +45,11 @@ if (!empty($_GET['cod_preco'])) {
 <html>
     <head>
         <title>Cadastro de clientes - Administração - Flanela Sys</title>
-        <link href="../../images/style.css" rel="stylesheet" type="text/css" />
-        <link href="../images/style.css" rel="stylesheet" type="text/css" />
-        <script src="<?php echo $url_lib_jquery; ?>jquery.js" type="text/javascript"></script>
-        <script type="text/javascript" src="<?php echo $url_includes . 'script.js'; ?>"></script>
-        <script type="text/javascript" src="<?php echo $url_lib_jquery . 'jquery.maskedinput.js'; ?>"></script>
+		<link href="../../images/style.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="<?php echo $url_lib_jquery.'jquery.js';?>"></script>
+		<script type="text/javascript" src="<?php echo $url_lib_jquery.'jquery.maskedinput.js';?>"></script>
+		<script type="text/javascript" src="<?php echo $url_includes.'script.js';?>"></script>		
         <script type="text/javascript">
-            var timeout         = 500;
-            var closetimer		= 0;
-            var ddmenuitem      = 0;
-
-            function jsddm_open()
-            {	jsddm_canceltimer();
-                jsddm_close();
-                ddmenuitem = $(this).find('ul').eq(0).css('visibility', 'visible');}
-
-            function jsddm_close()
-            {	if(ddmenuitem) ddmenuitem.css('visibility', 'hidden');}
-
-            function jsddm_timer()
-            {	closetimer = window.setTimeout(jsddm_close, timeout);}
-
-            function jsddm_canceltimer()
-            {	if(closetimer)
-                {	window.clearTimeout(closetimer);
-                    closetimer = null;}}
-
-            $(document).ready(function()
-            {	$('#jsddm > li').bind('mouseover', jsddm_open);
-                $('#jsddm > li').bind('mouseout',  jsddm_timer);});
-
-            document.onclick = jsddm_close;
-				
-				
             function setaModelo(modelo) {
                 document.getElementById("codigo_modelo").value = modelo;
             }

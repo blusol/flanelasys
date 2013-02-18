@@ -365,14 +365,23 @@ class fla_rotatividade {
         $multa = iconv('UTF-8', 'IBM850', $multa);
         $pdf->Write($h = 0, $multa, $link = '', $fill = 0, $align = 'L', $ln = true, $stretch = 0, $firstline = false, $firstblock = false, $maxh = 0);		
 		
+		// write some JavaScript code
+		$js = <<<EOD
+				this.print({bUI: true, bSilent: false, bShrinkToFit: true}); 
+EOD;
+		
+		// set javascript
+		$pdf->IncludeJS($js);
+		
         //$arquivo_cartao = $pdf->Output('CupomEntrada-'.$cod_cartao,"S");
         //var_dump(file_put_contents($path_relative.'cupons/CupomEntrada-'.$cod_cartao, $arquivo_cartao));
-        $arquivo = $path_relative.'cuponsEntrada/CupomEntrada-' . $cod_cartao.'.pdf';
-        $pdf->Output($path_relative.'cuponsEntrada/CupomEntrada-' . $cod_cartao.'.pdf',"F");
+        //$arquivo = $path_relative.'cuponsEntrada/CupomEntrada-' . $cod_cartao.'.pdf';
+        //$pdf->Output($path_relative.'cuponsEntrada/CupomEntrada-' . $cod_cartao.'.pdf',"F");
+        $pdf->Output($path_relative.'cuponsEntrada/CupomEntrada-' . $cod_cartao.'.pdf',"I");
 		//$pdf->Output('CupomEntrada-' . $cod_cartao.'.pdf','I');
         
-        $comando = "C:\Sumatra\SumatraPDF.exe -print-to \"HP Photosmart C4400 series\" ".$arquivo;
-        exec($comando);
+        //$comando = "C:\Sumatra\SumatraPDF.exe -print-to \"MP-2500 TH\" ".$arquivo;
+        //exec($comando);
     }
 
     public function geraProximaNumeroCartao() {

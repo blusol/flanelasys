@@ -215,7 +215,7 @@ class fla_mensalidade_usuario {
 		$des_modelo = remove_acentuacao($des_modelo);
         $pdf = new TCPDF("P", "in", 'ETIQUETA', true, 'IBM850', false);        
         $pdf->SetMargins(0,0,0,true);
-        $pdf->SetFont('times', 'B', 10);
+        $pdf->SetFont('times', '', 8);
         $pdf->setPrintHeader(false);
         $pdf->setPrintFooter(false);
         $pdf->AddPage();        
@@ -255,11 +255,11 @@ class fla_mensalidade_usuario {
                             , "Insc. Estadual:".$insc_estadual_prestador
                     );
 					
-		$pdf->SetFont('times', '', 8);		
+		$pdf->SetFont('times', '', 10);		
         $pdf->Write($h=0, $cabecalho, $link='', $fill=0, $align='L', $ln=true, $stretch=0, $firstline=false, $firstblock=false, $maxh=0);					
 		
         $titulo = "Ref: Pgto Mensalidade";		
-		$pdf->SetFont('times', 'B', 10);		
+		$pdf->SetFont('times', 'B', 12);		
         $pdf->Write($h=0, $titulo, $link='', $fill=0, $align='L', $ln=true, $stretch=0, $firstline=false, $firstblock=false, $maxh=0);					
 		
 		$descricao = "Recebemos de: ".limitar($arrCliente[0]['nom_cliente'],30)."\r\n";
@@ -267,23 +267,23 @@ class fla_mensalidade_usuario {
 		$descricao .= "CPF/CNPJ: ". $arrCliente[0]['cpf_cnpj_cliente']."\r\n";
 		$descricao .= "A importancia de R$ ".$arrMensalidadeUsuario[0]['valor_pago']."\r\n";
 		$descricao .= "Referente ao pagamento de\r\nmensalidade do veiculo: \r\n";
-		$descricao .= "Modelo: ".$des_modelo." Placa: ".strtoupper($arrCliente[0]['des_placa'])."\r\n";
-		$descricao .= "Data do pagamento: ".mostraData($arrMensalidadeUsuario[0]['data_pagamento']);
+		$descricao .= "Modelo: ".$des_modelo." Placa: \r\n".strtoupper($arrCliente[0]['des_placa'])."\r\n";
+		$descricao .= "Data Pgto: ".mostraData($arrMensalidadeUsuario[0]['data_pagamento']);
 		//$descricao .= "Para uso do estacionamento no periodo entre: \r\n";
 		//$descricao .= mostraData($arrMensalidadeUsuario[0]['periodo_inicial'])." a ".mostraData($arrMensalidadeUsuario[0]['periodo_final']);
 		
 		//$conteudo = sprintf("%s\r\n%s",$sub_titulo, $descricao);	
         //$conteudo_impressao = iconv('UTF-8','IBM850',$descricao);
 		//var_dump($conteudo_impressao);exit;
-		$pdf->SetFont('times', '', 10);				
+		$pdf->SetFont('times', 'B', 10);				
         $pdf->Write($h=0, $descricao, $link='', $fill=0, $align='L', $ln=true, $stretch=0, $firstline=false, $firstblock=false, $maxh=0);
 		
 		$rodape =  "\r\n---------------------------\r\nAgradecemos a preferencia";
 		
-		$pdf->SetFont('times', '', 8);		
+		$pdf->SetFont('times', 'B', 10);		
         $pdf->Write($h=0,$rodape, $link='', $fill=0, $align='L', $ln=true, $stretch=0, $firstline=false, $firstblock=false, $maxh=0);							
 		
-        $pdf->Output('Comprovante-'.str_replace(" ","_",$arrCliente[0]['nom_cliente']),"D");					
+        $pdf->Output('Comprovante-'.str_replace(" ","_",$arrCliente[0]['nom_cliente']),"I");					
 	}
     
     function ResetObject() {

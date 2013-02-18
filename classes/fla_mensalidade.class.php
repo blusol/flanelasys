@@ -222,8 +222,11 @@ class fla_mensalidade {
                                 where 
                                     '" . date("Y-m-d") . "' between periodo_inicial and periodo_final
                         )
+				group by
+					cli.cod_cliente
                 order by
                         cli.dia_vencimento asc , cli.nom_cliente asc";
+		//echo $sql;
         $rsMensalidadeAtrasada = $objConexao->prepare($sql);
         $rsMensalidadeAtrasada->execute();
         $count = $rsMensalidadeAtrasada->rowCount();

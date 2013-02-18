@@ -179,5 +179,22 @@ class fla_modelos {
 		$rsModelos = $objConexao->prepare($SQL);
 		$rsModelos->execute() or die ('Erro: <br>'.$objConexao->errorInfo().'<br> SQL: ' . $SQL);			
 	}
+	
+	public function excluirModelos($arrModelos) {
+		$objConexao = new fla_conexao();
+		
+		// Transformando a variavel passado por parametro em um array
+		$arrModelos = (array) $arrModelos;
+
+		// Pegando o código dos veiculos que estão selecionados como disponivel
+		if (count($arrModelos)) {
+			$modelos_populares = implode(",",$arrModelos);
+		}
+		
+		// Setando os modelos do array para ativos
+		$SQL = sprintf("DELETE FROM fla_modelos WHERE cod_modelo IN (%s)",$modelos_populares);
+		$rsModelos = $objConexao->prepare($SQL);
+		$rsModelos->execute() or die ('Erro: <br>'.$objConexao->errorInfo().'<br> SQL: ' . $SQL);			
+	}	
 }	
 ?>

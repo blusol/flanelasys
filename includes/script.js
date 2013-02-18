@@ -177,6 +177,21 @@ $(document).ready(function() {
         }
     });	
 });
+
+// Função para marcar/desmarcar todos os veiculos como popular
+$(document).ready(function() {
+    $('#selecionar_excluir').click(function() {
+        if(this.checked == true){
+            $("input[id=ind_excluir]").each(function() { 
+                this.checked = true; 
+            });
+        } else {
+            $("input[id=ind_excluir]").each(function() { 
+                this.checked = false; 
+            });
+        }
+    });	
+});
  
 function processReqChange() { 
 

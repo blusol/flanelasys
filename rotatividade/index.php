@@ -83,8 +83,7 @@ if (isset($_POST['cod_cartao'])) {
             $objRotatividade->set_dat_cadastro($dat_cadastro);            
             $cod_rotatividade = $objRotatividade->insereRotatividade($objRotatividade);
             $msgRetorno = 'Entrada de veiculo feito com sucesso';
-            $imprime_cupom = true;
-            //$objRotatividade->imprimeCupomEntrada();
+			$msgRetorno .= '<br> Deseja imprimir cupom de entrada? <a href="'.$url.'rotatividade/index.php?imprimirCupomEntrada=Sim&cod_rotatividade='.$cod_rotatividade.'">Sim</a>';			
         } else {
             $msgRetorno = 'Este veiculo já se encontra estacionado';
         }
@@ -118,6 +117,12 @@ if (isset($_GET) && !empty($_GET['imprimir'])) {
     geraRPS($cod_rotatividade,1,$cod_cliente);
     Header("Location:" . $url . "rotatividade/index.php");
 }
+
+if (isset($_GET) && !empty($_GET['imprimirCupomEntrada'])) {
+    $cod_rotatividade = $_GET['cod_rotatividade'];
+	$imprime_cupom = true;
+}
+
 
 $hora_entrada = date("H:i:s");
 $hora_saida = "";
@@ -390,7 +395,6 @@ $arrPlacas = $objPlacas->buscaClientes($objPlacas);
             <script>
                 jQuery(function($){   
                     window.open('<?php echo $url;?>rotatividade/imprimeCupomEntrada.php?cod_rotatividade='+<?php echo $cod_rotatividade; ?>, 'imprimeCupom', 'window settings');
-                    return false;
                 });
             </script>        
 <?php
