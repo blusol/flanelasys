@@ -83,7 +83,7 @@ if (isset($_POST['cod_cartao'])) {
             $objRotatividade->set_dat_cadastro($dat_cadastro);            
             $cod_rotatividade = $objRotatividade->insereRotatividade($objRotatividade);
             $msgRetorno = 'Entrada de veiculo feito com sucesso';
-			$msgRetorno .= '<br> Deseja imprimir cupom de entrada? <a href="'.$url.'rotatividade/index.php?imprimirCupomEntrada=Sim&cod_rotatividade='.$cod_rotatividade.'">Sim</a>';			
+			$verificaImprimir = true;
         } else {
             $msgRetorno = 'Este veiculo já se encontra estacionado';
         }
@@ -117,9 +117,7 @@ if (isset($_GET) && !empty($_GET['imprimir'])) {
     geraRPS($cod_rotatividade,1,$cod_cliente);
     Header("Location:" . $url . "rotatividade/index.php");
 }
-
-if (isset($_GET) && !empty($_GET['imprimirCupomEntrada'])) {
-    $cod_rotatividade = $_GET['cod_rotatividade'];
+if (isset($_POST) && !empty($_POST['imprimirCupomEntrada']) && ($verificaImprimir == true)) {
 	$imprime_cupom = true;
 }
 
@@ -328,7 +326,8 @@ $arrPlacas = $objPlacas->buscaClientes($objPlacas);
                             <input type="hidden" name="codigo_modelo" id="codigo_modelo" value="0">
                             <input type="hidden" name="cod_rotatividade" id="cod_rotatividade" value="<?php echo $cod_rotatividade; ?>">
                             <input type="hidden" name="dat_cadastro" id="dat_cadastro" value="<?php echo date('d/m/Y'); ?>">
-                            <input type="hidden" name="hor_entrada" id="hor_entrada" value="<?php echo $hora_entrada; ?>">												
+                            <input type="hidden" name="hor_entrada" id="hor_entrada" value="<?php echo $hora_entrada; ?>">
+							<strong>Imprimir cupom</strong> <input type="checkbox" name="imprimirCupomEntrada" id="imprimirCupomEntrada" value="1" checked="checked">
                             <input type="submit" name="_submit" value="Enviar">
                         </form>		
                     </div>

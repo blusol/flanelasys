@@ -11,6 +11,3 @@ if (isset($_GET) && !empty($_GET['cod_rotatividade'])) {
     $objRotatividade->imprimeCupomEntrada();
 }
 ?>
-<script language="javascript">
-    window.close();
-</script>
