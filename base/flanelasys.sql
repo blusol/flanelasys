@@ -130,7 +130,7 @@ CREATE TABLE `fla_empresas` (
 
 LOCK TABLES `fla_empresas` WRITE;
 
-insert  into `fla_empresas`(`cod_empresa`,`nom_fantasia`,`raz_social`,`num_cnpj`,`num_ie`,`num_insc_municipal`,`cep_empresa`,`des_endereco`,`des_bairro`,`des_estado`,`des_cidade`,`num_telefone`,`num_celular`,`tip_empresa`,`ind_disponivel`) values (4,'Hermann\'s Park Estacionamento','Hermann\'s Park Estacionamento Ltda ME',81606949000131,0,74237,89010320,'Rua Eng Rodolfo Ferraz, 293','Centro','SC','Blumenau',4730352703,4799691810,'M',1);
+insert  into `fla_empresas`(`cod_empresa`,`nom_fantasia`,`raz_social`,`num_cnpj`,`num_ie`,`num_insc_municipal`,`cep_empresa`,`des_endereco`,`des_bairro`,`des_estado`,`des_cidade`,`num_telefone`,`num_celular`,`tip_empresa`,`ind_disponivel`) values (4,'Minor Parking','Minor Parking',0,0,0,0,'','','','',0,0,'M',1);
 
 UNLOCK TABLES;
 
