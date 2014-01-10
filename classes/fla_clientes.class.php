@@ -485,15 +485,18 @@ class fla_clientes {
 
 		$limit = '';
 		
-		if ($offset == 0 || $offset == 1) {
-			$limit = ' LIMIT '.$limite;
-		} else {			
-			if (($offset-1) > 1)
-				$limit = " LIMIT $limite OFFSET " . ($offset-1) * $limite;					
+		if ($offset > 0 && $limit > 0) {
+			if ($offset == 0 || $offset == 1) {
+				$limit = ' LIMIT '.$limite;
+			} else {			
+				if (($offset-1) > 1)
+					$limit = " LIMIT $limite OFFSET " . ($offset-1) * $limite;	
+				else
+					$limit = " LIMIT $limite OFFSET " . $offset * $limite;	
+			}
 		}
 		
-        $SQL = sprintf("select %s from fla_clientes rot %s %s", $colunas_select, $where, $limit);
-        //echo $SQL;
+        $SQL = sprintf("select %s from fla_clientes rot %s ORDER BY cod_cliente DESC %s ", $colunas_select, $where, $limit);
         $rsClientes = $objConexao->prepare($SQL);
         $rsClientes->execute();
         $count = $rsClientes->rowCount();
