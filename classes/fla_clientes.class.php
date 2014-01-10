@@ -484,6 +484,7 @@ class fla_clientes {
         }
 
         $SQL = sprintf("select %s from fla_clientes rot %s", $colunas_select, $where);
+        //echo $SQL;
         $rsClientes = $objConexao->prepare($SQL);
         $rsClientes->execute();
         $count = $rsClientes->rowCount();

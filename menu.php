@@ -9,6 +9,7 @@
         <ul>
             <li><a href="<?php echo $url; ?>relatorios/fechamento_caixa.php">:: Fechamento de Caixa </a></li>
             <li><a href="<?php echo $url; ?>relatorios/gera_rps.php">:: Gerar Lote RPS </a></li>
+            <li><a href="<?php echo $url; ?>relatorios/mensalistas.php">:: Mensalistas </a></li>
         </ul>
     </li>
 

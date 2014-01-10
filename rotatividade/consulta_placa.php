@@ -37,7 +37,7 @@ function buscaPlaca($des_placa) {
                     $des_cor = $placa['des_cor'];
                     echo sprintf('new Array("%s","%s","%s")', $cod_marca, $cod_modelo, $des_cor);
                 } else {
-                    echo 'new Array("","","","Este veiculo é mensalista!")';
+                    echo sprintf('new Array("","","MENSALISTA","%s")',utf8_encode("Este veiculo é mensalista!"));
                 }
             }
         }

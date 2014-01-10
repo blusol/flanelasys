@@ -264,26 +264,30 @@ function processReqChange() {
             }
 				
             if (acao == "consulta_placa") {
+                document.form._submit.disabled = false;
                 if (myArray !== undefined) {
-                    if (myArray[0] !== "") {
-                        var arrCodMarca  = document.getElementById('cod_marca');
-                        for (i=0;i<arrCodMarca.length;i++) {
-                            if (arrCodMarca.options[i].value == myArray[0]) {
-                                arrCodMarca.options[i].selected = true;
-                            }
+                        if (myArray[0] !== "") {
+                            var arrCodMarca  = document.getElementById('cod_marca');
+                            for (i=0;i<arrCodMarca.length;i++) {
+                                if (arrCodMarca.options[i].value == myArray[0]) {
+                                    arrCodMarca.options[i].selected = true;
+                                }
 
-                        }
-                        exibeModeloSelect(myArray[0],myArray[1]);
-                        var arrDesCor = document.getElementById('des_cor');				
-                        for (i=0;i<arrDesCor.length;i++) {
-                            if (arrDesCor.options[i].value == myArray[2]) {
-                                arrDesCor.options[i].selected = true;
-                            }					 
-                        }
-                    $("#des_cor").trigger("liszt:updated");
-                    $("#cod_marca").trigger("liszt:updated");                    
+                            }
+                            exibeModeloSelect(myArray[0],myArray[1]);
+                            var arrDesCor = document.getElementById('des_cor');				
+                            for (i=0;i<arrDesCor.length;i++) {
+                                if (arrDesCor.options[i].value == myArray[2]) {
+                                    arrDesCor.options[i].selected = true;
+                                }					 
+                            }
+                        $("#des_cor").trigger("liszt:updated");
+                        $("#cod_marca").trigger("liszt:updated");                    
                     } else {
                         alert(myArray[3]);
+                        //if (myArray[2] == "MENSALISTA") {
+                        //   document.form._submit.disabled = true;
+                        //}
                     }
                 }
             }

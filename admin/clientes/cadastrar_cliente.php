@@ -422,12 +422,18 @@ for ($i = 0; $i < count($arrCores); $i++) {
                                 <select name="tip_mensalidade" id="tip_mensalidade">
                                     <option value=""></option>
 <?php
-for ($i = 0; $i < count($arrMensalidade); $i++) {
-    if ($arrMensalidade[$i]['cod_mensalidade'] == $arrCliente[0]['tip_mensalidade'])
-        echo sprintf("<option value='%s' selected='selected'>%s - Valor R$ %s</option>", $arrMensalidade[$i]['cod_mensalidade'], $arrMensalidade[$i]['des_mensalidade'], $arrMensalidade[$i]['val_mensalidade']) . chr(10);
-    else
-        echo sprintf("<option value='%s'>%s - R$ %s</option>", $arrMensalidade[$i]['cod_mensalidade'], $arrMensalidade[$i]['des_mensalidade'], $arrMensalidade[$i]['val_mensalidade']) . chr(10);
-}
+if (is_array($arrMensalidade)) {
+    for ($i = 0; $i < count($arrMensalidade); $i++) {
+        if ($arrMensalidade[$i]['cod_mensalidade'] == $arrCliente[0]['tip_mensalidade'])
+            echo sprintf("<option value='%s' selected='selected'>%s - Valor R$ %s</option>", $arrMensalidade[$i]['cod_mensalidade'], $arrMensalidade[$i]['des_mensalidade'], $arrMensalidade[$i]['val_mensalidade']) . chr(10);
+        else
+            echo sprintf("<option value='%s'>%s - R$ %s</option>", $arrMensalidade[$i]['cod_mensalidade'], $arrMensalidade[$i]['des_mensalidade'], $arrMensalidade[$i]['val_mensalidade']) . chr(10);
+    }
+} else {
+?>
+    <option value="" selected="selected">Não existem planos cadastrados</option>
+<?php        
+    }
 ?>
                                 </select>
                             </td>

@@ -71,21 +71,30 @@ if (isset($_POST['cod_cartao'])) {
 
     if (empty($val_total)) {
         $objClientes->set_des_placa($des_placa);
-        $objClientes->set_cod_marca($cod_marca);
-        $objClientes->set_des_cor($des_cor);
-        $objClientes->set_cod_modelo($cod_modelo);
-        $objClientes->insereCliente($objClientes);
-
-        $verifica = $objRotatividade->buscaCarro($objRotatividade,"P");
-        $objRotatividade->set_cod_cartao($cod_cartao);
-        if ($verifica == false) {
-            $objRotatividade->set_hor_entrada($hor_entrada);
-            $objRotatividade->set_dat_cadastro($dat_cadastro);            
-            $cod_rotatividade = $objRotatividade->insereRotatividade($objRotatividade);
-            $msgRetorno = 'Entrada de veiculo feito com sucesso';
-			$verificaImprimir = true;
+        $objClientes->set_tipo_cliente('M');
+        $arrClientes = $objClientes->buscaClientes($objClientes);        
+        
+        if (is_array($arrClientes)) {
+            $msgRetorno = 'Este veículo é mensalista!';
         } else {
-            $msgRetorno = 'Este veiculo já se encontra estacionado';
+            $objClientes->ResetObject();
+            $objClientes->set_des_placa($des_placa);
+            $objClientes->set_cod_marca($cod_marca);
+            $objClientes->set_des_cor($des_cor);
+            $objClientes->set_cod_modelo($cod_modelo);
+            $objClientes->insereCliente($objClientes);
+
+            $verifica = $objRotatividade->buscaCarro($objRotatividade,"P");
+            $objRotatividade->set_cod_cartao($cod_cartao);
+            if ($verifica == false) {
+                $objRotatividade->set_hor_entrada($hor_entrada);
+                $objRotatividade->set_dat_cadastro($dat_cadastro);            
+                $cod_rotatividade = $objRotatividade->insereRotatividade($objRotatividade);
+                $msgRetorno = 'Entrada de veiculo feito com sucesso';
+                $verificaImprimir = true;
+            } else {
+                $msgRetorno = 'Este veiculo já se encontra estacionado';
+            }
         }
     } else {
         $objRotatividade->set_cod_cartao($cod_cartao);
@@ -122,7 +131,8 @@ if (isset($_POST) && !empty($_POST['imprimirCupomEntrada']) && ($verificaImprimi
 }
 
 
-$hora_entrada = date("H:i:s");
+//$hora_entrada = date("H:i:s");
+$hora_entrada = "";
 $hora_saida = "";
 $arrRotatividade = $objRotatividade->buscaCarrosEstacionados();
 $arrMensalidadesAtrasadas = $objMensalidade->buscaMensalidadesAtrasadas();
@@ -217,6 +227,41 @@ $arrPlacas = $objPlacas->buscaClientes($objPlacas);
             else
                 document.getElementById('tabelaAtrasados').style.display='none';
         }
+        
+        function updateClock ( )
+            {
+            var currentTime = new Date ( );
+            var currentHours = currentTime.getHours ( );
+            var currentMinutes = currentTime.getMinutes ( );
+            var currentSeconds = currentTime.getSeconds ( );
+
+            // Pad the minutes and seconds with leading zeros, if required
+            currentMinutes = ( currentMinutes < 10 ? "0" : "" ) + currentMinutes;
+            currentSeconds = ( currentSeconds < 10 ? "0" : "" ) + currentSeconds;
+
+            // Choose either "AM" or "PM" as appropriate
+            var timeOfDay = ( currentHours < 12 ) ? "AM" : "PM";
+
+            // Convert the hours component to 12-hour format if needed
+            //currentHours = ( currentHours > 12 ) ? currentHours - 12 : currentHours;
+
+            // Convert an hours component of "0" to "12"
+            //currentHours = ( currentHours == 0 ) ? 12 : currentHours;
+
+            // Compose the string for display
+            var currentTimeString = currentHours + ":" + currentMinutes + ":" + currentSeconds;
+
+            if ($("#hor_saida:input").val() == "")
+                $("#hor_entrada:input").val(currentTimeString);
+
+         }
+
+        <?php if ($hora_entrada == "") { ?>   
+            $(document).ready(function()
+            {
+               setInterval('updateClock()', 1000);
+            });      
+        <?php } ?>
         </script>
         <link href="../images/style.css" rel="stylesheet" type="text/css" />
     </head>
@@ -227,6 +272,7 @@ $arrPlacas = $objPlacas->buscaClientes($objPlacas);
             <div style="clear:both;"></div>
             <div class="data">
                 <p> Módulo de rotatividade </p>
+                <div id="clock"></div>
                 <div class="success"> <?php echo $msgRetorno; ?> </div>		
                 <div id="centro">
                     <div id="display_liberacao" style="display:none;">
@@ -292,7 +338,7 @@ $arrPlacas = $objPlacas->buscaClientes($objPlacas);
                             </fieldset>	
                             <fieldset>
                                 <legend>Estacionamento </legend>				
-                                <label for="hor_entrada">Entrada</label>: <input type="text" readonly class="text"  name="hor_entrada" id="hor_entrada" size="7" value="<?php echo $hora_entrada; ?>">
+                                <label for="hor_entrada">Entrada</label>: <input type="text" class="text"  name="hor_entrada" id="hor_entrada" size="7" value="">
                                 <label for="hor_saida">Saída</label>: <input type="text"  readonly  class="text"  name="hor_saida" id="hor_saida" size="7" value="<?php echo $hora_saida; ?>">
                                 <label for="tem_permanencia">Tempo</label>: <input type="text" readonly class="text" name="tem_permanencia" id="tem_permanencia" size="5"><br>
                                 <label for="cod_preco">Forma de cobrança</label>: <select id="cod_preco" name="cod_preco" onChange="alteraFormaCobranca(document.form.cod_cartao.value,this.value);">
@@ -368,13 +414,17 @@ $arrPlacas = $objPlacas->buscaClientes($objPlacas);
                                 <td style="font-size:12pt;"><strong>Cliente</strong></td>
                             </tr>
                             <?php
-                                $aux = 0;
-                                foreach($arrMensalidadesAtrasadas as $key => $value) {
-                                    echo "<tr>".chr(10);
-                                    echo sprintf('<td style="font-size:12pt;"><a href="%s">%s</a></td>',$url."admin/clientes/mensalidade.php?cod_cliente=".$arrMensalidadesAtrasadas[$aux]['cod_cliente'],$arrMensalidadesAtrasadas[$aux]['dia_vencimento']).chr(10);
-                                    echo sprintf('<td style="font-size:12pt;"><a href="%s">%s</a></td>',$url."admin/clientes/mensalidade.php?cod_cliente=".$arrMensalidadesAtrasadas[$aux]['cod_cliente'],$arrMensalidadesAtrasadas[$aux]['nom_cliente']).chr(10);
-                                    echo "</tr>".chr(10);
-                                    $aux++;
+                                if (is_array($arrMensalidadesAtrasadas)) {
+                                    $aux = 0;
+                                    foreach($arrMensalidadesAtrasadas as $key => $value) {
+                                        echo "<tr>".chr(10);
+                                        echo sprintf('<td style="font-size:12pt;"><a href="%s">%s</a></td>',$url."admin/clientes/mensalidade.php?cod_cliente=".$arrMensalidadesAtrasadas[$aux]['cod_cliente'],$arrMensalidadesAtrasadas[$aux]['dia_vencimento']).chr(10);
+                                        echo sprintf('<td style="font-size:12pt;"><a href="%s">%s</a></td>',$url."admin/clientes/mensalidade.php?cod_cliente=".$arrMensalidadesAtrasadas[$aux]['cod_cliente'],$arrMensalidadesAtrasadas[$aux]['nom_cliente']).chr(10);
+                                        echo "</tr>".chr(10);
+                                        $aux++;
+                                    }
+                                } else {
+                                    echo '<tr><td colspan="2" style="font-size:12pt;">Não existem mensalistas atrasados.</td></tr>';
                                 }
                             ?>			
                         </table>                        

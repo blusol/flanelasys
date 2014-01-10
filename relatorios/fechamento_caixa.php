@@ -69,7 +69,7 @@ if (isset($_POST['_submit'])) {
 ?>
 <html>
     <head>
-        <title>Cadastro de clientes - Administração - Flanela Sys</title>
+        <title>Fechamento de caixa - Relatórios - Flanela Sys</title>
         <link href="<?php echo $url_images; ?>style.css" rel="stylesheet" type="text/css" />
         <link type="text/css" href="<?php echo $url_lib_jquery; ?>plugins/jquery-ui/themes/smoothness/jquery-ui-1.7.2.custom.css" rel="stylesheet" />		
         <script type="text/javascript" src="<?php echo $url_lib_jquery . 'jquery.js'; ?>"></script>
