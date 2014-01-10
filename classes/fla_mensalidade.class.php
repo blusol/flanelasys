@@ -226,7 +226,7 @@ class fla_mensalidade {
 					cli.cod_cliente
                 order by
                         cli.dia_vencimento asc , cli.nom_cliente asc";
-		echo "<pre>".$sql."</pre>";
+		// echo "<pre>".$sql."</pre>";
         $rsMensalidadeAtrasada = $objConexao->prepare($sql);
         $rsMensalidadeAtrasada->execute();
         $count = $rsMensalidadeAtrasada->rowCount();

@@ -4,6 +4,7 @@ include_once('../../includes/funcao.php');
 require_once($path_relative . 'verifica.php');
 include_once($path_classes . 'fla_clientes.class.php');
 include_once($path_classes . 'fla_modelos.class.php');
+include_once($path_libraries . 'pdopagination/pagination.php');
 
 $objClientes = new fla_clientes();
 $objModelos = new fla_modelos();
@@ -11,6 +12,66 @@ $objModelos = new fla_modelos();
 $palavra_chave = "";
 $filtro_palavra_chave = "";
 $tipo_cliente = "";
+
+
+/*
+* Connect to the database (Replacing the XXXXXX's with the correct details)
+*/
+try
+{
+     $dbh = new PDO('mysql:host=127.0.0.1;dbname=flanelasys', 'root', '');
+     $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+}
+catch(PDOException $e)
+{
+    print "Error!: " . $e->getMessage() . "<br/>";
+}
+
+/*
+* Get and/or set the page number we are on
+*/
+if(isset($_GET['page'])) {
+	$page = $_GET['page'];
+} else {
+	$page = 1;
+}
+
+/*
+* Set a few of the basic options for the class, replacing the URL with your own of course
+*/
+$options = array(
+    'results_per_page' => 20,
+    'url' => $url.'admin/clientes/index.php?page=*VAR*',
+	'text_prev'                     => '&lsaquo; Anterior',  
+    'text_next'                     => 'Próximo &rsaquo;',  
+    'text_first'                    => '&laquo; Primeiro',  
+    'text_last'                     => 'Último &raquo;',	
+    'class_dead_links'              => 'previous-off',	
+    'db_handle' => $dbh
+);
+
+/*
+* Create the pagination object
+*/
+try {
+    $paginate = new pagination($page, 'SELECT * FROM fla_clientes ORDER BY nom_cliente', $options);
+} catch(paginationException $e) {
+    echo $e;
+    exit();
+}
+
+/*
+* Create the pagination object
+*/
+try
+{
+    $paginate = new pagination($page, 'SELECT * FROM fla_clientes ORDER BY nom_cliente', $options);
+}
+catch(paginationException $e)
+{
+    echo $e;
+    exit();
+}
 
 if (!empty($_POST)) {
     if (!empty($_POST['palavra_chave'])) {
@@ -40,7 +101,7 @@ if (!empty($_POST)) {
         $objClientes->set_tipo_cliente ("R");
 }
 
-$arrClientes = $objClientes->buscaClientes($objClientes);
+$arrClientes = $objClientes->buscaClientes($objClientes, 20,$page);
 if ($arrClientes == false)
     $arrClientes = array();
 ?>
@@ -110,6 +171,23 @@ if ($arrClientes == false)
                     }
                     ?>
                 </table>
+				<?php
+				if($paginate->success == true) {
+					$links_data = $paginate->links_array;
+				?>
+				<div id="pagination">
+					<ul class="pagination">
+						<li class="next"><a href="<?php echo $links_data['extras']['first']['link_url']?>"><?php echo $links_data['extras']['first']['label']?></a></li>
+						<li class="next"><a href="<?php echo $links_data['extras']['previous']['link_url']?>"><?php echo $links_data['extras']['previous']['label']?></a></li>
+						<li class="next"><a href="<?php echo $links_data['extras']['next']['link_url']?>"><?php echo $links_data['extras']['next']['label']?></a></li>
+						<li class="next"><a href="<?php echo $links_data['extras']['last']['link_url']?>"><?php echo $links_data['extras']['last']['label']?></a></li>
+						<li>&nbsp;Total de resultados: <?php echo $paginate->total_results;?></li>
+					</ul>
+				</div>
+				
+				<?php
+				}
+				?>
             </div>
         </div>
     </body>

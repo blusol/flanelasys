@@ -433,7 +433,7 @@ class fla_clientes {
         
     }
     
-    public function buscaClientes($objCliente) {
+    public function buscaClientes($objCliente, $limite = 0, $offset = 0) {
         $objConexao = new fla_conexao();
         $where = "";
         $separador = "";
@@ -478,12 +478,21 @@ class fla_clientes {
                 $aux++;
             }
         }
-
+		
         if (!empty($where)) {
             $where = " where " . $where;
         }
 
-        $SQL = sprintf("select %s from fla_clientes rot %s", $colunas_select, $where);
+		$limit = '';
+		
+		if ($offset == 0 || $offset == 1) {
+			$limit = ' LIMIT '.$limite;
+		} else {			
+			if (($offset-1) > 1)
+				$limit = " LIMIT $limite OFFSET " . ($offset-1) * $limite;					
+		}
+		
+        $SQL = sprintf("select %s from fla_clientes rot %s %s", $colunas_select, $where, $limit);
         //echo $SQL;
         $rsClientes = $objConexao->prepare($SQL);
         $rsClientes->execute();
