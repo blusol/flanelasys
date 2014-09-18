@@ -248,125 +248,84 @@ class fla_mensalidade {
     function relatorioMensalistas($periodo_inicial,$periodo_final,$situacao = "T") {
         $objConexao = new fla_conexao();
         $arrMensalidadeAtrasada = array();
-
+		$arrPeriodo_inicial = explode('/',$periodo_inicial);
+		$arrPeriodo_final = explode('/',$periodo_final);
         switch ($situacao) {
             case "T":
                 $sql = "(
-                        SELECT
-                            cli.dia_vencimento
-                            , cli.cod_cliente
-                            , cli.nom_cliente
-                            , 'A' situacao
-                            , men.des_mensalidade
-                            , men.val_mensalidade
-                        FROM
-                            fla_clientes cli
-                            LEFT JOIN fla_mensalidade_usuario menusu ON (menusu.cod_cliente = cli.cod_cliente)
-                            LEFT JOIN fla_mensalidade men ON (cli.tip_mensalidade = men.cod_mensalidade)
-                        WHERE
-                            cli.dia_vencimento > 0 AND cli.ind_ativo = 1 
-                            AND cli.cod_cliente NOT IN (
-                                SELECT
-                                    cod_cliente
-                                FROM
-                                    fla_mensalidade_usuario
-                                WHERE
-                                    periodo_inicial BETWEEN '".$periodo_inicial."' AND '".$periodo_final."' OR periodo_final BETWEEN '".$periodo_inicial."' AND '".$periodo_final."'
-                            )
-                        GROUP BY cli.cod_cliente
-                        ORDER BY cli.dia_vencimento ASC, cli.nom_cliente ASC
+						select 
+							cli.nom_cliente
+							, men.des_mensalidade
+							, men.val_mensalidade
+							, cli.dia_vencimento
+							,'A' as situacao
+						from
+							fla_clientes cli
+							INNER JOIN fla_mensalidade men ON (men.cod_mensalidade = cli.tip_mensalidade)
+						where
+							cli.tip_mensalidade > 0
+							and CONCAT('".$arrPeriodo_inicial[0]."/".$arrPeriodo_inicial[1]."/',LPAD(dia_vencimento,2,0))  >= '".$periodo_inicial."' AND CONCAT('".$arrPeriodo_inicial[0]."/".$arrPeriodo_inicial[1]."/',LPAD(dia_vencimento,2,0))  <= '".$periodo_final."'
+							and cli.cod_cliente NOT IN (select cod_cliente FROM fla_mensalidade_usuario where data_pagamento BETWEEN '2014/09/01' and '2014/09/18')
+							and cli.tipo_cliente = 'M'
+						ORDER BY
+							cli.dia_vencimento asc, cli.nom_cliente asc
                      )
-                    UNION
+                    UNION ALL
                     (
-                        SELECT
-                            cli.dia_vencimento
-                            , cli.cod_cliente
-                            , cli.nom_cliente
-                            , 'Q' as situacao
-                            , men.des_mensalidade
-                            , men.val_mensalidade
-                        FROM
-                            fla_clientes cli
-                            LEFT JOIN fla_mensalidade_usuario menusu ON (menusu.cod_cliente = cli.cod_cliente)
-                            LEFT JOIN fla_mensalidade men ON (cli.tip_mensalidade = men.cod_mensalidade)
-                        WHERE
-                            cli.dia_vencimento > 0  AND cli.ind_ativo = 1
-                        AND cli.cod_cliente IN (
-                            SELECT
-                                cod_cliente
-                            FROM
-                                fla_mensalidade_usuario
-                            WHERE
-                                periodo_inicial BETWEEN '".$periodo_inicial."' AND '".$periodo_final."' OR periodo_final BETWEEN '".$periodo_inicial."' AND '".$periodo_final."'
-                        GROUP BY cli.cod_cliente
-                        ORDER BY cli.dia_vencimento ASC, cli.nom_cliente ASC)
+						select
+							cli.nom_cliente
+							, men.des_mensalidade
+							, men.val_mensalidade
+							, cli.dia_vencimento
+							,'Q' as situacao
+						from
+							fla_mensalidade_usuario menusu
+							INNER JOIN fla_mensalidade men ON (men.cod_mensalidade = menusu.cod_mensalidade)
+							INNER JOIN fla_clientes cli ON (cli.cod_cliente = menusu.cod_cliente)
+						where
+							menusu.data_pagamento BETWEEN '".$periodo_inicial."' AND '".$periodo_final."'
+							and cli.tipo_cliente = 'M'
+						ORDER BY
+							cli.dia_vencimento asc, cli.nom_cliente asc
                     )";
                 break;
                 
                 case "Q":
-                    $sql = "SELECT
-                                cli.dia_vencimento
-                                , cli.cod_cliente
-                                , cli.nom_cliente
-                                , 'Q' as situacao
-                                , men.des_mensalidade
-                                , men.val_mensalidade
-                            FROM
-                                fla_clientes cli
-                                LEFT JOIN fla_mensalidade_usuario menusu ON (menusu.cod_cliente = cli.cod_cliente)
-                                LEFT JOIN fla_mensalidade men ON (cli.tip_mensalidade = men.cod_mensalidade)
-                            WHERE
-                                cli.dia_vencimento > 0
-                                AND cli.ind_ativo = 1
-                                AND
-                                cli.cod_cliente IN 
-                                (
-                                        SELECT 
-                                            cod_cliente 
-                                        FROM 
-                                            fla_mensalidade_usuario
-                                        WHERE 
-                                            periodo_inicial BETWEEN '".$periodo_inicial."' AND '".$periodo_final."' OR periodo_final BETWEEN '".$periodo_inicial."' AND '".$periodo_final."'
-                                )
-                            GROUP BY
-                                cli.cod_cliente
-                            ORDER BY
-                                cli.dia_vencimento ASC , cli.nom_cliente ASC";
+                    $sql = "select
+								cli.nom_cliente
+								, men.des_mensalidade
+								, men.val_mensalidade
+								, cli.dia_vencimento
+								,'Q' as situacao
+							from
+								fla_mensalidade_usuario menusu
+								INNER JOIN fla_mensalidade men ON (men.cod_mensalidade = menusu.cod_mensalidade)
+								INNER JOIN fla_clientes cli ON (cli.cod_cliente = menusu.cod_cliente)
+							where
+								menusu.data_pagamento BETWEEN '".$periodo_inicial."' AND '".$periodo_final."'
+								and cli.tipo_cliente = 'M'
+							ORDER BY
+								cli.dia_vencimento asc, cli.nom_cliente asc";
                     break;
                 case "A":
-                    $sql = "SELECT
-                                cli.dia_vencimento
-                                , cli.cod_cliente
-                                , cli.nom_cliente
-                                , 'A' as situacao
-                                , men.des_mensalidade
-                                , men.val_mensalidade
-                            FROM
-                                fla_clientes cli
-                                LEFT JOIN fla_mensalidade_usuario menusu ON (menusu.cod_cliente = cli.cod_cliente)
-                                LEFT JOIN fla_mensalidade men ON (cli.tip_mensalidade = men.cod_mensalidade)
-                            WHERE
-                                cli.dia_vencimento > 0
-                                AND cli.ind_ativo = 1
-                                AND
-                                cli.cod_cliente NOT IN 
-                                (
-                                        SELECT 
-                                            cod_cliente 
-                                        FROM 
-                                            fla_mensalidade_usuario
-                                        WHERE 
-                                            (periodo_inicial BETWEEN '".$periodo_inicial."' AND '".$periodo_final."' AND '".$periodo_inicial."' AND '".$periodo_final."'
-                                             OR periodo_final BETWEEN '".$periodo_inicial."' AND '".$periodo_final."' AND '".$periodo_inicial."' AND '".$periodo_final."'
-                                             )
-                                )
-                            GROUP BY
-                                cli.cod_cliente
-                            ORDER BY
-                                cli.dia_vencimento ASC , cli.nom_cliente ASC";
+                    $sql = "select 
+								cli.nom_cliente
+								, men.des_mensalidade
+								, men.val_mensalidade
+								, cli.dia_vencimento
+								,'A' as situacao
+							from
+								fla_clientes cli
+								INNER JOIN fla_mensalidade men ON (men.cod_mensalidade = cli.tip_mensalidade)
+							where
+								cli.tip_mensalidade > 0
+								and CONCAT('".$arrPeriodo_inicial[0]."/".$arrPeriodo_inicial[1]."/',LPAD(dia_vencimento,2,0))  >= '".$periodo_inicial."' AND CONCAT('".$arrPeriodo_inicial[0]."/".$arrPeriodo_inicial[1]."/',LPAD(dia_vencimento,2,0))  <= '".$periodo_final."'
+								and cli.cod_cliente NOT IN (select cod_cliente FROM fla_mensalidade_usuario where data_pagamento BETWEEN '2014/09/01' and '2014/09/18')
+								and cli.tipo_cliente = 'M'
+							ORDER BY
+								cli.dia_vencimento asc, cli.nom_cliente asc";
                     break;                
         }
-        //echo "<pre>$sql</pre>";
         $rsMensalidadeAtrasada = $objConexao->prepare($sql);
         $rsMensalidadeAtrasada->execute();
         $count = $rsMensalidadeAtrasada->rowCount();

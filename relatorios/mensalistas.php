@@ -12,7 +12,6 @@ $dat_final = date("Y-m-d");
 if (isset($_POST['_submit'])) {
     $dat_inicio = gravaData($_POST['dat_inicio']);
     $dat_final = gravaData($_POST['dat_final']);
-    $situacao = "T";
     if (!empty($_POST['situacao']))
         $situacao = $_POST['situacao'];
 
@@ -73,7 +72,7 @@ if (isset($_POST['_submit'])) {
                     Data Inicial <input type="text" value="<?php echo mostraData($dat_inicio); ?>" name="dat_inicio" id="dat_inicio">
                     Data Final <input type="text" value="<?php echo mostraData($dat_final); ?>" name="dat_final" id="dat_final">				
                     Situação: <select name="situacao">
-                        <option value="">Todos</option>
+                        <option value="T">Todos</option>
                         <option value="Q">Somente quitados</option>
                         <option value="A">Somente em aberto</option>
                     </select>
