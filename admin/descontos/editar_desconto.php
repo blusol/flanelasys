@@ -15,14 +15,15 @@
 		$cod_desconto = $_POST['cod_desconto'];
 		$des_desconto = $_POST['des_desconto'];
 		$val_desconto = $_POST['val_desconto'];
-		if (isset($_POST['ind_ativo'])) {
-			$ind_ativo    = $_POST['ind_ativo'];
+		if (isset($_POST['ind_disponivel'])) {
+			$ind_disponivel    = $_POST['ind_disponivel'];
 		} else {
-		    $ind_ativo    = 0;
+		    $ind_disponivel    = 0;
 		}
 		
 		$objDescontos->set_cod_desconto($cod_desconto);
 		$objDescontos->set_des_desconto($des_desconto);
+		$objDescontos->set_ind_disponivel($ind_disponivel);
 		$objDescontos->set_val_desconto($val_desconto);
 		
 		if (empty($cod_desconto)) {
@@ -57,7 +58,25 @@
 		<script type="text/javascript">
 			jQuery(function($){   
 				$("#val_desconto").mask("99.99");
-			});									
+
+			
+			$("#btnSalvar").click(function() {
+				var msg = '';
+				if($("#des_desconto").val() == "") {
+					msg += 'Informe a descrição do desconto. \n';
+				} 
+				
+				if($("#val_desconto").val() == "" || $("#val_desconto").val() == 0) {
+					msg += 'Informe o valor de desconto. \n';
+				}
+				
+				if (msg != '')
+					alert('Por favor: \n'+msg);
+				else
+					$("#frm").submit();
+			});			
+			
+			});	
 		</script>		
 	</head>
 	<body>
@@ -65,7 +84,7 @@
 <?php
 			include_once("../../cabecalho.php");
 ?>
-			<form method="POST" action="">
+			<form method="POST" actio05.00n="" id="frm">
 			<div class="data">
 				<h1> Módulo de descontos </h1>				
 					<table>
@@ -77,11 +96,17 @@
 						<tr>
 							<td> Valor R$ </td>
 							<td> <input class="text" type="text" value="<?php echo str_pad($arrDesconto[0]['val_desconto'], 5, "0", STR_PAD_LEFT);  ?>" id="val_desconto" name="val_desconto"></td>
-						</tr>					
+						</tr>		
+
+						<tr>
+							<td> Disponível </td>
+							<td> <input class="text" type="checkbox" value="1" id="ind_disponivel" name="ind_disponivel" <?php echo $arrDesconto[0]['ind_disponivel'] == 1 ? 'checked' : ''; ?>></td>
+						</tr>	
+						
 						<tr>
 						    <td>
 						        <input type="hidden" name="cod_desconto" value="<?php echo $cod_desconto; ?>">
-						        <input type="submit" value="Salvar">
+						        <input type="button" value="Salvar" id="btnSalvar">
 						    </td>
 						</tr>
 					</table>

@@ -21,6 +21,7 @@ $arrPrecos = $objPrecos->buscaPrecos($objPrecos);
 
 $arrDescontos = array();
 $objDescontos = new fla_descontos();
+$objDescontos->set_ind_disponivel(1);
 $arrDescontos = $objDescontos->buscaDescontos($objDescontos);
 
 $objRotatividade = new fla_rotatividade();

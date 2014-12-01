@@ -27,17 +27,20 @@
 			include_once("../../cabecalho.php");
 ?>
 			<div class="data">		
-				<h1 style="text-align:center;"> Preços </h1>
+				<h1 style="text-align:center;"> Descontos </h1>
 				<p style="border-bottom:none;"> <a href="editar_desconto.php"> Cadastrar desconto </a> </p>
 				<table style="width:100%;" border="1" align="center">
 					<tr>
-						<th> Preços </th>
+						<th> Descontos </th>
+						<th> Disponível </th>
 						<th> Editar </th>
 					</tr>
 <?php
 				for ($i=0;$i < count($arrDescontos); $i++) {
+					$disponivel = $arrDescontos[$i]['ind_disponivel'] == 1 ? 'Sim' : 'Não';
 					echo '<tr>'.chr(10);
 					echo '<td>' . $arrDescontos[$i]['des_desconto'] . '</td>'.chr(10);		
+					echo '<td>' . $disponivel . '</td>'.chr(10);		
 					echo sprintf('<td> <a href="editar_desconto.php?cod_desconto=%s">Alterar dados</a> </td>',$arrDescontos[$i]['cod_desconto']).chr(10);
 					echo '</tr>'.chr(10);
 				}

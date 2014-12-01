@@ -97,22 +97,48 @@ if (isset($_POST['_submit'])) {
                     </tr>
                     <?php
                     $aux = 0;
+					$total_quitados_qtd = 0;
+					$total_quitados_valor = 0;
+					$total_abertos_qtd = 0;
+					$total_abertos_valor = 0;
                     for ($aux = 0;$aux < count($arrRelatorioMensalistas);$aux++) {
-                        $situacao = $arrRelatorioMensalistas[$aux]['situacao'] == "Q" ? "Quitado" : "Em aberto";
-                        $style_css = $arrRelatorioMensalistas[$aux]['situacao'] == "Q" ? "green;" : "red";
+						if ($arrRelatorioMensalistas[$aux]['situacao'] == "Q") {
+							$situacao_mensalidade = "Quitado";
+							$style_css = "green";
+							$total_quitados_qtd++;
+							$total_quitados_valor += $arrRelatorioMensalistas[$aux]['val_mensalidade'];
+						} else {
+							$situacao_mensalidade = "Em aberto";
+							$style_css = "red";
+							$total_abertos_qtd++;
+							$total_abertos_valor += $arrRelatorioMensalistas[$aux]['val_mensalidade'];
+						}
+
                         echo '<tr>' . chr(10);
                         echo sprintf('<td>%s</td>', $aux+1) . chr(10);
                         echo sprintf('<td>%s</td>', $arrRelatorioMensalistas[$aux]['nom_cliente']) . chr(10);
                         echo sprintf('<td>%s</td>', $arrRelatorioMensalistas[$aux]['des_mensalidade']) . chr(10);
                         echo sprintf('<td>R$ %s</td>', str_replace('.',',',$arrRelatorioMensalistas[$aux]['val_mensalidade'])) . chr(10);
                         echo sprintf('<td>%s</td>', $arrRelatorioMensalistas[$aux]['dia_vencimento']) . chr(10);
-                        echo sprintf('<td style="color:%s;font-weight:bolder;">%s</td>', $style_css, $situacao) . chr(10);
+                        echo sprintf('<td style="color:%s;font-weight:bolder;">%s</td>', $style_css, $situacao_mensalidade) . chr(10);
                         echo '</tr>' . chr(10);
                     }
                     ?>
                     <tr>
                         <td colspan="7"> <strong> Total de registros: </strong> <?php echo $aux; ?> </td>
                     </tr>
+					<?php if ($situacao == 'T' || $situacao == 'Q') { ?>
+                    <tr>
+                        <td colspan="5"> <strong> Quantidade quitados: </strong> <?php echo $total_quitados_qtd; ?> </td>
+                        <td colspan="1"> <strong> Valor R$: </strong> <?php echo number_format($total_quitados_valor,2,',','.'); ?> </td>
+                    </tr>
+					<?php } ?>
+					<?php if ($situacao == 'T' || $situacao == 'A') { ?>
+                    <tr>
+                        <td colspan="5"> <strong> Quantidade em aberto: </strong> <?php echo $total_abertos_qtd; ?> </td>
+                        <td colspan="1"> <strong> Valor R$: </strong> <?php echo number_format($total_abertos_valor,2,',','.'); ?> </td>
+                    </tr>						
+					<?php } ?>
                     <?php
                 }
                 ?>					

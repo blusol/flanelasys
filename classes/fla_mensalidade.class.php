@@ -253,22 +253,23 @@ class fla_mensalidade {
         switch ($situacao) {
             case "T":
                 $sql = "(
-						select 
-							cli.nom_cliente
-							, men.des_mensalidade
-							, men.val_mensalidade
-							, cli.dia_vencimento
-							,'A' as situacao
-						from
-							fla_clientes cli
-							INNER JOIN fla_mensalidade men ON (men.cod_mensalidade = cli.tip_mensalidade)
-						where
-							cli.tip_mensalidade > 0
-							and CONCAT('".$arrPeriodo_inicial[0]."/".$arrPeriodo_inicial[1]."/',LPAD(dia_vencimento,2,0))  >= '".$periodo_inicial."' AND CONCAT('".$arrPeriodo_inicial[0]."/".$arrPeriodo_inicial[1]."/',LPAD(dia_vencimento,2,0))  <= '".$periodo_final."'
-							and cli.cod_cliente NOT IN (select cod_cliente FROM fla_mensalidade_usuario where data_pagamento BETWEEN '2014/09/01' and '2014/09/18')
-							and cli.tipo_cliente = 'M'
-						ORDER BY
-							cli.dia_vencimento asc, cli.nom_cliente asc
+							select 
+								cli.nom_cliente
+								, men.des_mensalidade
+								, men.val_mensalidade
+								, cli.dia_vencimento
+								,'A' as situacao
+							from
+								fla_clientes cli
+								INNER JOIN fla_mensalidade men ON (men.cod_mensalidade = cli.tip_mensalidade)
+							where
+								cli.tip_mensalidade > 0
+								and CONCAT('".$arrPeriodo_inicial[0]."/".$arrPeriodo_inicial[1]."/',LPAD(dia_vencimento,2,0))  >= '".$periodo_inicial."' AND CONCAT('".$arrPeriodo_inicial[0]."/".$arrPeriodo_inicial[1]."/',LPAD(dia_vencimento,2,0))  <= '".$periodo_final."'
+								and cli.cod_cliente NOT IN (select cod_cliente FROM fla_mensalidade_usuario where periodo_final >= '".$periodo_final."')
+								and cli.tipo_cliente = 'M'
+								and cli.ind_ativo = 1
+							ORDER BY
+								cli.dia_vencimento asc, cli.nom_cliente asc
                      )
                     UNION ALL
                     (
@@ -285,6 +286,7 @@ class fla_mensalidade {
 						where
 							menusu.data_pagamento BETWEEN '".$periodo_inicial."' AND '".$periodo_final."'
 							and cli.tipo_cliente = 'M'
+							and cli.ind_ativo = 1
 						ORDER BY
 							cli.dia_vencimento asc, cli.nom_cliente asc
                     )";
@@ -304,6 +306,7 @@ class fla_mensalidade {
 							where
 								menusu.data_pagamento BETWEEN '".$periodo_inicial."' AND '".$periodo_final."'
 								and cli.tipo_cliente = 'M'
+								and cli.ind_ativo = 1
 							ORDER BY
 								cli.dia_vencimento asc, cli.nom_cliente asc";
                     break;
@@ -320,8 +323,9 @@ class fla_mensalidade {
 							where
 								cli.tip_mensalidade > 0
 								and CONCAT('".$arrPeriodo_inicial[0]."/".$arrPeriodo_inicial[1]."/',LPAD(dia_vencimento,2,0))  >= '".$periodo_inicial."' AND CONCAT('".$arrPeriodo_inicial[0]."/".$arrPeriodo_inicial[1]."/',LPAD(dia_vencimento,2,0))  <= '".$periodo_final."'
-								and cli.cod_cliente NOT IN (select cod_cliente FROM fla_mensalidade_usuario where data_pagamento BETWEEN '2014/09/01' and '2014/09/18')
+								and cli.cod_cliente NOT IN (select cod_cliente FROM fla_mensalidade_usuario where periodo_final >= '".$periodo_final."')
 								and cli.tipo_cliente = 'M'
+								and cli.ind_ativo = 1
 							ORDER BY
 								cli.dia_vencimento asc, cli.nom_cliente asc";
                     break;                

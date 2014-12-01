@@ -19,6 +19,10 @@ class fla_descontos {
 		return $this->val_desconto;
 	}
 	
+	public function get_ind_disponivel() {
+		return $this->ind_disponivel;
+	}	
+	
 	public function set_cod_desconto($cod_desconto) {
 		$this->cod_desconto = $cod_desconto;
 	}
@@ -31,6 +35,10 @@ class fla_descontos {
 		$this->val_desconto = $val_desconto;
 	}
 	
+	public function set_ind_disponivel($ind_disponivel) {
+		$this->ind_disponivel = $ind_disponivel;
+	}	
+	
     public function buscaDescontos($objDesconto){
         $objConexao = new fla_conexao();
         $where = "";
@@ -39,10 +47,15 @@ class fla_descontos {
 		    $where = " WHERE cod_desconto = " . $objDesconto->get_cod_desconto();
 		}				
 		
+		if ($objDesconto->get_ind_disponivel() != "") {
+		    $where = " WHERE ind_disponivel = " . $objDesconto->get_ind_disponivel();
+		}						
+		
         $SQL = "SELECT
                     cod_desconto,
                     des_desconto,
-                    val_desconto
+                    val_desconto,
+					ind_disponivel
                 FROM
                     fla_descontos "
 				. $where . "							
@@ -56,6 +69,7 @@ class fla_descontos {
             $arrDescontos[$aux]['cod_desconto'] = $desconto['cod_desconto'];
             $arrDescontos[$aux]['des_desconto'] = $desconto['des_desconto'];
             $arrDescontos[$aux]['val_desconto'] = $desconto['val_desconto'];
+            $arrDescontos[$aux]['ind_disponivel'] = $desconto['ind_disponivel'];
             $aux++;
         }
         return $arrDescontos;
@@ -68,15 +82,18 @@ class fla_descontos {
 							fla_descontos
 						(
 							des_desconto,
-							val_desconto
+							val_desconto,
+							ind_disponivel
 						)
 						VALUES
 						(
 							'%s',
+							%s,
 							%s
 						)",
 						$objDesconto->get_des_desconto(),
-						$objDesconto->get_val_desconto()
+						$objDesconto->get_val_desconto(),
+						$objDesconto->get_ind_disponivel()
 		              );
        $query = $objConexao->prepare($SQL);
 	   $query->Execute();
@@ -89,11 +106,13 @@ class fla_descontos {
 							fla_descontos
 						SET
 							des_desconto = '%s',
-							val_desconto = %s
+							val_desconto = %s,
+							ind_disponivel = %s
 						WHERE
 							cod_desconto = %s",
 						$objDesconto->get_des_desconto(),
 						$objDesconto->get_val_desconto(),
+						$objDesconto->get_ind_disponivel(),
 						$objDesconto->get_cod_desconto()
 					  );
          $query = $objConexao->prepare($SQL);
