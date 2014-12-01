@@ -14,6 +14,7 @@ class fla_precos {
     private $tem_tolerancia;
     private $tem_diaria;
     private $tem_minimo;
+	private $ind_disponivel;
 
     public function get_cod_preco() {
         return $this->cod_preco;
@@ -53,6 +54,10 @@ class fla_precos {
 
     public function get_val_diaria() {
         return $this->val_diaria;
+    }
+
+    public function get_ind_disponivel() {
+        return $this->ind_disponivel;
     }
 
     public function set_cod_preco($cod_preco) {
@@ -95,6 +100,10 @@ class fla_precos {
         $this->val_diaria = $val_diaria;
     }
 
+    public function set_ind_disponivel($ind_disponivel) {
+        $this->ind_disponivel = $ind_disponivel;
+    }
+
     function buscaPrecos($objPreco) {
         $objConexao = new fla_conexao();
         $where = "";
@@ -102,6 +111,9 @@ class fla_precos {
         if ($objPreco->get_cod_preco() != "") {
             $where = " WHERE cod_preco = " . $objPreco->get_cod_preco();
         }
+		if ($objPreco->get_ind_disponivel() != "") {
+			$where = " WHERE ind_disponivel = " . $objPreco->get_ind_disponivel();
+		}
 
         $SQL = "SELECT
                     cod_preco,
@@ -113,7 +125,8 @@ class fla_precos {
                     tip_cobranca,
 					tem_tolerancia,
 					tem_diaria,
-					tem_minimo
+					tem_minimo,
+					ind_disponivel
                 FROM
                     fla_precos "
                 . $where . "		
@@ -134,6 +147,7 @@ class fla_precos {
             $arrPrecos[$aux]['tem_tolerancia'] = $preco['tem_tolerancia'];
             $arrPrecos[$aux]['tem_diaria'] = $preco['tem_diaria'];
             $arrPrecos[$aux]['tem_minimo'] = $preco['tem_minimo'];
+            $arrPrecos[$aux]['ind_disponivel'] = $preco['ind_disponivel'];
             $aux++;
         }
         return $arrPrecos;
@@ -153,7 +167,8 @@ class fla_precos {
 					tip_cobranca = '%s',
 					tem_tolerancia = '%d',
 					tem_diaria = '%d',
-					tem_minimo = '%d'
+					tem_minimo = '%d',
+					ind_disponivel = '%s'
 				WHERE
 					cod_preco = %d"
                 , $objPreco->get_des_preco()
@@ -165,6 +180,7 @@ class fla_precos {
                 , $objPreco->get_tem_tolerancia()
                 , $objPreco->get_tem_diaria()
                 , $objPreco->get_tem_minimo()
+                , $objPreco->get_ind_disponivel()
                 , $objPreco->get_cod_preco());
 
         $query = $objConexao->prepare($SQL);
@@ -182,9 +198,10 @@ class fla_precos {
 							 tip_cobranca,
 							 tem_tolerancia,
 							 tem_diaria,
-							 tem_minimo) 
+							 tem_minimo,
+							 ind_disponivel) 
 							 VALUES 
-							 ('%s','%d','%d','%d','%s','%s')"
+							 ('%s','%d','%d','%d','%s','%s','%s')"
                 , $objPreco->get_des_preco()
                 , $objPreco->get_val_minimo()
                 , $objPreco->get_val_hora()
@@ -194,6 +211,7 @@ class fla_precos {
                 , $objPreco->get_tem_tolerancia()
                 , $objPreco->get_tem_diaria()
                 , $objPreco->get_tem_minimo()
+                , $objPreco->get_ind_disponivel()
         );
         $query = $objConexao->prepare($SQL);
         $query->Execute();

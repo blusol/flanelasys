@@ -17,6 +17,7 @@ $mktime = mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y"
 $mktime = substr($mktime, 6, 4);
 $arrPrecos = array();
 $objPrecos = new fla_precos();
+$objPrecos->set_ind_disponivel(1);
 $arrPrecos = $objPrecos->buscaPrecos($objPrecos);
 
 $arrDescontos = array();
@@ -153,7 +154,7 @@ $arrPlacas = $objPlacas->buscaClientes($objPlacas);
         <script language="javascript">
 
             function carrega() {
-                document.getElementById("cod_cartao").focus();
+                document.getElementById("des_placa").focus();
 				
             }
                     
@@ -396,7 +397,7 @@ $arrPlacas = $objPlacas->buscaClientes($objPlacas);
                                     $des_modelo = $arrRotatividade[$i]['des_modelo'];
                                 }
                                 echo '<tr>' . chr(10);
-                                echo sprintf('<td style="font-size:12pt;"><a href="#" onClick="consultaCartao(%1$s)">%s</a></td>', $arrRotatividade[$i]['cod_cartao']) . chr(10);
+                                echo sprintf('<td style="font-size:12pt;"><a href="#" style="color:#002AF6;" onClick="consultaCartao(%1$s)">%s</a></td>', $arrRotatividade[$i]['cod_cartao']) . chr(10);
                                 echo sprintf('<td style="font-size:12pt;">%s</td>', $arrRotatividade[$i]['des_placa']) . chr(10);
                                 echo sprintf('<td style="font-size:12pt;">%s</td>', $des_modelo) . chr(10);
                                 echo '</tr>';

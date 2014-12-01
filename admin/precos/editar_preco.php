@@ -21,6 +21,8 @@ if (!empty($_GET['cod_preco'])) {
     $tem_tolerancia = $_POST['tem_tolerancia'];
     $tem_diaria = $_POST['tem_diaria'];
     $tem_minimo = $_POST['tem_minimo'];
+    $ind_disponivel = (int) $_POST['ind_disponivel'];
+	
     $objPreco->set_cod_preco($cod_preco);
     $objPreco->set_des_preco($des_preco);
     $objPreco->set_tip_cobranca($tip_cobranca);
@@ -31,6 +33,7 @@ if (!empty($_GET['cod_preco'])) {
     $objPreco->set_tem_tolerancia($tem_tolerancia);
     $objPreco->set_tem_diaria($tem_diaria);
     $objPreco->set_tem_minimo($tem_minimo);
+    $objPreco->set_ind_disponivel($ind_disponivel);
 
     if ($_POST['cod_preco'] != "") {
         $objPreco->editaPrecos($objPreco);
@@ -124,6 +127,11 @@ if (!empty($_GET['cod_preco'])) {
                             <td> <input type="text" name="tem_minimo" id="tem_minimo" value="<?php echo $arrPrecos[0]['tem_minimo']; ?>"> </td>
                         </tr>						
 
+                        <tr>
+                            <td> Disponível </td>
+                            <td> <input class="text" type="checkbox" value="1" id="ind_disponivel" name="ind_disponivel" <?php echo $arrPrecos[0]['ind_disponivel'] == 1 ? 'checked' : ''; ?>> </td>
+                        </tr>							
+						
                         <tr>
                             <td>
                                 <input type="hidden" id="cod_preco" name="cod_preco" value="<?php echo $arrPrecos[0]['cod_preco']; ?>">
